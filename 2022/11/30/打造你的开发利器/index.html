@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.13.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="前言：作为一只程序猿，一套趁手的开发工具就像一把利器能极大程度地提高开发效率。曾在会上见识过软件使用率极高的同事，能够在极短的时间内打开开发软件，调用各类功能命令，而双手却几乎没有离开过键盘，这也让我意识到效率的重要性。今天我们就来聊一聊如何打造你的开发利器。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="打造你的开发利器">
+<meta property="og:url" content="http://example.com/2022/11/30/%E6%89%93%E9%80%A0%E4%BD%A0%E7%9A%84%E5%BC%80%E5%8F%91%E5%88%A9%E5%99%A8/index.html">
+<meta property="og:site_name" content="蓝扬阳的博客">
+<meta property="og:description" content="前言：作为一只程序猿，一套趁手的开发工具就像一把利器能极大程度地提高开发效率。曾在会上见识过软件使用率极高的同事，能够在极短的时间内打开开发软件，调用各类功能命令，而双手却几乎没有离开过键盘，这也让我意识到效率的重要性。今天我们就来聊一聊如何打造你的开发利器。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/9ce8777a-71a7-4df4-946b-8f7c461e66c4.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/3193d015-5350-42a1-89f8-65b9b2beeff0.gif">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/0bd1a192-5a3b-41f2-b6ab-6cefeec8a50e.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/2dc76fde-2d53-4367-bb8c-638f1b6012c0.gif">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/237ac249-9faa-49e8-8a93-9ecb8ab607d6.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/314e98fd-19ec-46c3-ab13-ea5cfcee6ea1.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/2b9b8a75-d457-45c4-be60-05da4973846f.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/ba2abaaf-e9ba-4d43-9413-73653d18c76e.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/29a9e4c3-efb8-41b1-b0ab-fefce55d177a.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/b3d60f1b-6323-43d1-9076-c4c3d5769fbe.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/4f91a2db-db83-4012-bf29-ee28cfec2700.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/b5fec513-6c5e-4f3d-b844-d515c2309c93.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/eb0b00c1-88e9-4503-933d-81d9e5a1d314.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/b27e4db9-dfff-4067-99bb-91f6ea2f48ed.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/a98342d5-5050-475e-ab2d-dd68a3f4c633.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/9ef88ba2-2963-4cd5-b4ba-59df1de32139.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/5ae8eb41-0182-490e-b9ab-80e2f91b3b1c.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/bfdcba4d-adfc-4d32-afa5-ec17387d81a0.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/0e8b2810-1e0b-4a5d-b4d9-8120aae9fe9b.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/d6bfea6b-0616-4798-bc83-621d55c6d1a1.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/94ce88f3-b0f8-4177-aa4c-e1ccb07d9626.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/c641f3fb-a7d0-4dbe-b303-6f3d2cdeeee1.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/c1b1597e-6bf2-4e41-b13d-fbc5730289cb.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/8d2d4025-8119-44f9-a91b-051112bde420.png">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/e1c40403-5e6d-4519-a73a-8973c860616d.gif">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/7a05fb56-d43c-46e7-965d-690ac1cdfb35.jpg">
+<meta property="og:image" content="https://files.mdnice.com/user/13305/86f6c81b-4b09-4679-b862-31ac6ded0491.png">
+<meta property="article:published_time" content="2022-11-30T09:18:20.000Z">
+<meta property="article:modified_time" content="2022-11-30T09:18:53.962Z">
+<meta property="article:author" content="Jun Yang">
+<meta property="article:tag" content="个人博客">
+<meta property="article:tag" content="前端">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://files.mdnice.com/user/13305/9ce8777a-71a7-4df4-946b-8f7c461e66c4.png">
+
+
+<link rel="canonical" href="http://example.com/2022/11/30/%E6%89%93%E9%80%A0%E4%BD%A0%E7%9A%84%E5%BC%80%E5%8F%91%E5%88%A9%E5%99%A8/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2022/11/30/%E6%89%93%E9%80%A0%E4%BD%A0%E7%9A%84%E5%BC%80%E5%8F%91%E5%88%A9%E5%99%A8/","path":"2022/11/30/打造你的开发利器/","title":"打造你的开发利器"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>打造你的开发利器 | 蓝扬阳的博客</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝扬阳的博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">代码生活</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81Mac-%E7%BB%88%E7%AB%AF%E5%B7%A5%E5%85%B7"><span class="nav-number">1.</span> <span class="nav-text">一、Mac 终端工具</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Iterm2-Oh-My-Zsh"><span class="nav-number">1.1.</span> <span class="nav-text">Iterm2 + Oh My Zsh</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%89%E8%A3%85-iTerm2"><span class="nav-number">1.1.1.</span> <span class="nav-text">1. 安装 iTerm2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AE%89%E8%A3%85-Oh-my-zsh"><span class="nav-number">1.1.2.</span> <span class="nav-text">2. 安装 Oh my zsh</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%B8%BB%E9%A2%98%E5%8F%8A%E6%8F%92%E4%BB%B6"><span class="nav-number">1.1.3.</span> <span class="nav-text">3. 主题及插件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E4%B8%BB%E9%A2%98%E9%80%89%E6%8B%A9"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">1. 主题选择</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E6%8F%92%E4%BB%B6%E9%80%89%E6%8B%A9"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">2. 插件选择</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-iTerm2-%E9%85%8D%E7%BD%AE"><span class="nav-number">1.1.4.</span> <span class="nav-text">4. iTerm2 配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%BF%AB%E6%8D%B7%E9%94%AE"><span class="nav-number">1.1.5.</span> <span class="nav-text">5. 快捷键</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%BC%80%E5%8F%91%E7%BC%96%E8%BE%91%E5%99%A8%EF%BC%9AVisual-Studio-Code"><span class="nav-number">2.</span> <span class="nav-text">二、开发编辑器：Visual Studio Code</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#VS-Code-%E5%BF%AB%E6%8D%B7%E9%94%AE%E5%8F%8A%E5%85%B6%E4%BB%96%E6%93%8D%E4%BD%9C"><span class="nav-number">2.1.</span> <span class="nav-text">VS Code 快捷键及其他操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%AB%E6%8D%B7%E9%94%AE"><span class="nav-number">2.1.1.</span> <span class="nav-text">快捷键</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-code-%E5%91%BD%E4%BB%A4%E5%BF%AB%E9%80%9F%E6%89%93%E5%BC%80-VSCode-%E9%A1%B9%E7%9B%AE"><span class="nav-number">2.1.2.</span> <span class="nav-text">使用 code 命令快速打开 VSCode 项目</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E6%8F%92%E4%BB%B6%E6%8E%A8%E8%8D%90"><span class="nav-number">2.2.</span> <span class="nav-text">扩展插件推荐</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%9F%BA%E7%A1%80%E5%BF%85%E5%A4%87%E6%8F%92%E4%BB%B6"><span class="nav-number">2.2.1.</span> <span class="nav-text">1. 基础必备插件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Auto-Rename-Tag"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">&gt;&gt; Auto Rename Tag</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Auto-Close-Tag"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">&gt;&gt; Auto Close Tag</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-EditorConfig-for-VS-Code"><span class="nav-number">2.2.1.3.</span> <span class="nav-text">&gt;&gt; EditorConfig for VS Code</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-ESLint"><span class="nav-number">2.2.1.4.</span> <span class="nav-text">&gt;&gt; ESLint</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Prettier-Code-formatter"><span class="nav-number">2.2.1.5.</span> <span class="nav-text">&gt;&gt; Prettier - Code formatter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Chinese-Language-Pack-for-VSCode"><span class="nav-number">2.2.1.6.</span> <span class="nav-text">&gt;&gt; Chinese Language Pack for VSCode</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-minapp"><span class="nav-number">2.2.1.7.</span> <span class="nav-text">&gt;&gt; minapp</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-wechat-snippet"><span class="nav-number">2.2.1.8.</span> <span class="nav-text">&gt;&gt; wechat-snippet</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-JavaScript-ES6-code-snippets"><span class="nav-number">2.2.1.9.</span> <span class="nav-text">&gt;&gt; JavaScript (ES6) code snippets</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%8F%90%E6%95%88%E5%BF%85%E5%A4%87%E6%8F%92%E4%BB%B6"><span class="nav-number">2.2.2.</span> <span class="nav-text">2. 提效必备插件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-CSS-Peek"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">&gt;&gt; CSS Peek</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Path-Intellisense"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">&gt;&gt; Path Intellisense</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Path-Autocomplete"><span class="nav-number">2.2.2.3.</span> <span class="nav-text">&gt;&gt; Path Autocomplete</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Open-in-Browser"><span class="nav-number">2.2.2.4.</span> <span class="nav-text">&gt;&gt; Open in Browser</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Live-Server"><span class="nav-number">2.2.2.5.</span> <span class="nav-text">&gt;&gt; Live Server</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Code-Runner"><span class="nav-number">2.2.2.6.</span> <span class="nav-text">&gt;&gt; Code Runner</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Todo-Tree"><span class="nav-number">2.2.2.7.</span> <span class="nav-text">&gt;&gt; Todo Tree</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Better-Comments"><span class="nav-number">2.2.2.8.</span> <span class="nav-text">&gt;&gt; Better Comments</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-REST-Client"><span class="nav-number">2.2.2.9.</span> <span class="nav-text">&gt;&gt; REST Client</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Turbo-Console-Log"><span class="nav-number">2.2.2.10.</span> <span class="nav-text">&gt;&gt; Turbo Console Log</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Error-Lens"><span class="nav-number">2.2.2.11.</span> <span class="nav-text">&gt;&gt; Error Lens</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-ImgCook"><span class="nav-number">2.2.2.12.</span> <span class="nav-text">&gt;&gt; ImgCook</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Code-Spell-Checker"><span class="nav-number">2.2.2.13.</span> <span class="nav-text">&gt;&gt; Code Spell Checker</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Git-%E7%9B%B8%E5%85%B3%E6%8F%92%E4%BB%B6"><span class="nav-number">2.2.3.</span> <span class="nav-text">3. Git 相关插件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Git-Graph"><span class="nav-number">2.2.3.1.</span> <span class="nav-text">&gt;&gt; Git Graph</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-GitLens"><span class="nav-number">2.2.3.2.</span> <span class="nav-text">&gt;&gt; GitLens</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Git-History"><span class="nav-number">2.2.3.3.</span> <span class="nav-text">&gt;&gt; Git History</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E8%A7%82%E6%84%9F%E6%A0%B7%E5%BC%8F%E7%B1%BB%E6%8F%92%E4%BB%B6"><span class="nav-number">2.2.4.</span> <span class="nav-text">4. 观感样式类插件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-%E9%A2%9C%E8%89%B2%E4%B8%BB%E9%A2%98%E6%8F%92%E4%BB%B6"><span class="nav-number">2.2.4.1.</span> <span class="nav-text">&gt;&gt; 颜色主题插件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-%E6%96%87%E4%BB%B6%E5%9B%BE%E6%A0%87%E6%8F%92%E4%BB%B6"><span class="nav-number">2.2.4.2.</span> <span class="nav-text">&gt;&gt; 文件图标插件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Bracket-Pair-Colorizer-2"><span class="nav-number">2.2.4.3.</span> <span class="nav-text">&gt;&gt; Bracket Pair Colorizer 2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Indent-Rainbow"><span class="nav-number">2.2.4.4.</span> <span class="nav-text">&gt;&gt; Indent-Rainbow</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Color-the-tag-name"><span class="nav-number">2.2.4.5.</span> <span class="nav-text">&gt;&gt; Color the tag name</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Color-Highlight"><span class="nav-number">2.2.4.6.</span> <span class="nav-text">&gt;&gt; Color Highlight</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%B3%A8%E9%87%8A%E7%9B%B8%E5%85%B3%E6%8F%92%E4%BB%B6"><span class="nav-number">2.2.5.</span> <span class="nav-text">5. 注释相关插件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Vscode-Fileheader"><span class="nav-number">2.2.5.1.</span> <span class="nav-text">&gt;&gt; Vscode-Fileheader</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Doxygen-Documentation-Generator"><span class="nav-number">2.2.5.2.</span> <span class="nav-text">&gt;&gt; Doxygen Documentation Generator</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-koroFileHeader"><span class="nav-number">2.2.5.3.</span> <span class="nav-text">&gt;&gt; koroFileHeader</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Document-This"><span class="nav-number">2.2.5.4.</span> <span class="nav-text">&gt;&gt; Document This</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-Markdown-%E7%9B%B8%E5%85%B3%E6%8F%92%E4%BB%B6"><span class="nav-number">2.2.6.</span> <span class="nav-text">6. Markdown 相关插件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Markdown-Preview-Enhanced"><span class="nav-number">2.2.6.1.</span> <span class="nav-text">&gt;&gt; Markdown Preview Enhanced</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Markdown-All-in-One"><span class="nav-number">2.2.6.2.</span> <span class="nav-text">&gt;&gt; Markdown All in One</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E5%85%B6%E4%BB%96%E6%8F%92%E4%BB%B6"><span class="nav-number">2.2.7.</span> <span class="nav-text">7. 其他插件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-HTML-to-CSS-autocompletion"><span class="nav-number">2.2.7.1.</span> <span class="nav-text">&gt;&gt; HTML to CSS autocompletion</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-HTML-CSS-Support"><span class="nav-number">2.2.7.2.</span> <span class="nav-text">&gt;&gt; HTML CSS Support</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Filesize"><span class="nav-number">2.2.7.3.</span> <span class="nav-text">&gt;&gt; Filesize</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Image-preview"><span class="nav-number">2.2.7.4.</span> <span class="nav-text">&gt;&gt; Image preview</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-vscode-faker"><span class="nav-number">2.2.7.5.</span> <span class="nav-text">&gt;&gt; vscode-faker</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Partial-Diff"><span class="nav-number">2.2.7.6.</span> <span class="nav-text">&gt;&gt; Partial Diff</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Paste-JSON-as-Code"><span class="nav-number">2.2.7.7.</span> <span class="nav-text">&gt;&gt; Paste JSON as Code</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Rainbow-Fart"><span class="nav-number">2.2.7.8.</span> <span class="nav-text">&gt;&gt; Rainbow Fart</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-Live-Share"><span class="nav-number">2.2.7.9.</span> <span class="nav-text">&gt;&gt; Live Share</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gt-gt-RDHelper"><span class="nav-number">2.2.7.10.</span> <span class="nav-text">&gt;&gt; RDHelper</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%85%B6%E4%BB%96%E5%B7%A5%E5%85%B7"><span class="nav-number">3.</span> <span class="nav-text">三、其他工具</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jun Yang</p>
+  <div class="site-description" itemprop="description">欢迎来到Jun的前端游乐园</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/11/30/%E6%89%93%E9%80%A0%E4%BD%A0%E7%9A%84%E5%BC%80%E5%8F%91%E5%88%A9%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jun Yang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝扬阳的博客">
+      <meta itemprop="description" content="欢迎来到Jun的前端游乐园">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="打造你的开发利器 | 蓝扬阳的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          打造你的开发利器
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-11-30 17:18:20 / 修改时间：17:18:53" itemprop="dateCreated datePublished" datetime="2022-11-30T17:18:20+08:00">2022-11-30</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<p>前言：作为一只程序猿，一套趁手的开发工具就像一把利器能极大程度地提高开发效率。曾在会上见识过软件使用率极高的同事，能够在极短的时间内打开开发软件，调用各类功能命令，而双手却几乎没有离开过键盘，这也让我意识到效率的重要性。今天我们就来聊一聊如何打造你的开发利器。</p>
+</blockquote>
+<span id="more"></span>
+
+<h1 id="一、Mac-终端工具"><a href="#一、Mac-终端工具" class="headerlink" title="一、Mac 终端工具"></a>一、Mac 终端工具</h1><p>之前自己一直使用 MacOS 自带的终端 terminal，虽然使用的感觉一般但由于功能都能满足也就一直使用着，直到同事介绍了 mac 的终端利器 iTerm2 再加上 Oh My Zsh，我才知道什么才真叫“香”。</p>
+<h2 id="Iterm2-Oh-My-Zsh"><a href="#Iterm2-Oh-My-Zsh" class="headerlink" title="Iterm2 + Oh My Zsh"></a>Iterm2 + Oh My Zsh</h2><p>首先介绍一下这两个工具：</p>
+<ul>
+<li>据官网的说明，iTerm2 是 Terminal 的替代品、iTerm 的后继产品。旨在把终端带入现代并赋予你从不知道你会想要的特性。</li>
+<li>Oh My Zsh 是开源的社区驱动框架用于管理 zsh 配置，提供了大量的插件及主题供使用。</li>
+</ul>
+<h3 id="1-安装-iTerm2"><a href="#1-安装-iTerm2" class="headerlink" title="1. 安装 iTerm2"></a>1. 安装 iTerm2</h3><p>从官网直接下载，<a target="_blank" rel="noopener" href="https://www.iterm2.com/">iTerm2 官网</a>。下载完成后，将应用拖入应用程序文件夹完成安装。</p>
+<p>使用命令查看系统现有的 shell：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/shells</span><br></pre></td></tr></table></figure>
+
+<p>Mac 默认为 dash，更改其为 zsh：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chsh -s /bin/zsh</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-安装-Oh-my-zsh"><a href="#2-安装-Oh-my-zsh" class="headerlink" title="2. 安装 Oh my zsh"></a>2. 安装 Oh my zsh</h3><p>安装 Oh my zsh 有两种方式：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>命令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>curl</td>
+<td>sh -c “$(curl -fsSL <a target="_blank" rel="noopener" href="https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)&quot;">https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)&quot;</a></td>
+</tr>
+<tr>
+<td>wget</td>
+<td>sh -c “$(wget <a target="_blank" rel="noopener" href="https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh">https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh</a> -O -)”</td>
+</tr>
+<tr>
+<td>安装成功后的截图：</td>
+<td></td>
+</tr>
+<tr>
+<td><img src="https://files.mdnice.com/user/13305/9ce8777a-71a7-4df4-946b-8f7c461e66c4.png"></td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="3-主题及插件"><a href="#3-主题及插件" class="headerlink" title="3. 主题及插件"></a>3. 主题及插件</h3><h4 id="1-主题选择"><a href="#1-主题选择" class="headerlink" title="1. 主题选择"></a>1. 主题选择</h4><p>Oh my zsh 提供了海量的主题供使用，并且绝大多数主题现均提供了<a target="_blank" rel="noopener" href="https://github.com/ohmyzsh/ohmyzsh/wiki/Themes">截图展示</a>，一旦有看中的主题，只需要编辑 <strong>~&#x2F;.zshrc</strong> 文件的 <em>ZSH_THEME</em> 值为选定的主题即可：</p>
+<p><code>ZSH_THEME=&quot;YOURTHEME&quot;</code></p>
+<p>特别指出的是，一些主题的使用需要下载<a target="_blank" rel="noopener" href="https://github.com/powerline/fonts"><em>Powerline Font</em></a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">clone</span></span></span><br><span class="line">git clone https://github.com/powerline/fonts.git --depth=1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">install</span></span><br><span class="line">cd fonts</span><br><span class="line">./install.sh</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">clean-up a bit</span></span><br><span class="line">cd ..</span><br><span class="line">rm -rf fonts</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-插件选择"><a href="#2-插件选择" class="headerlink" title="2. 插件选择"></a>2. 插件选择</h4><p>Oh my zsh 的另一大特点就是为使用者提供了大量的插件，以下将会介绍最为常用的高亮、补全推荐和 git-open 插件。</p>
+<ul>
+<li>高亮插件：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">下载安装</span></span><br><span class="line">git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-syntax-highlighting</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">编辑~/.zshrc文件</span></span><br><span class="line">vim ~/.zshrc</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">加入高亮插件</span></span><br><span class="line">plugins=(git zsh-syntax-highlighting)</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使修改生效</span></span><br><span class="line">source ~/.zshrc</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>自动推荐插件：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">下载安装</span></span><br><span class="line">git clone https://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">编辑~/.zshrc文件</span></span><br><span class="line">vim ~/.zshrc</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">加入高亮插件</span></span><br><span class="line">plugins=(git zsh-autosuggestions)</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使修改生效</span></span><br><span class="line">source ~/.zshrc</span><br></pre></td></tr></table></figure>
+
+<p>下载安装完插件后，不仅在 iterm2 终端命令能生效，在 VS Code 的终端中也可以生效。以后再也不用每次都重复输入长长的执行命令了，借助插件的自动推荐，快速完成命令。</p>
+<ul>
+<li>git-open 插件：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">下载安装</span></span><br><span class="line">git clone https://github.com/paulirish/git-open.git $ZSH_CUSTOM/plugins/git-open</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">编辑~/.zshrc文件</span></span><br><span class="line">vim ~/.zshrc</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">加入高亮插件</span></span><br><span class="line">plugins=(git git-open)</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使修改生效</span></span><br><span class="line">source ~/.zshrc</span><br></pre></td></tr></table></figure>
+
+<p>安装完 git-open 插件后，在终端进入 git 项目目录后使用 git-open 可以直接打开远程仓库浏览项目。</p>
+<p><img src="https://files.mdnice.com/user/13305/3193d015-5350-42a1-89f8-65b9b2beeff0.gif"></p>
+<h3 id="4-iTerm2-配置"><a href="#4-iTerm2-配置" class="headerlink" title="4. iTerm2 配置"></a>4. iTerm2 配置</h3><ol>
+<li>颜色配置： <em>iTerm2-&gt;Preferences-&gt;Profiles -&gt; Colors -&gt; Color Presets</em></li>
+<li>背景选择： <em>iTerm2-&gt;Preferences-&gt;Profiles -&gt; Window -&gt; Background Image</em></li>
+</ol>
+<p>最终我的效果图长这样：</p>
+<p><img src="https://files.mdnice.com/user/13305/0bd1a192-5a3b-41f2-b6ab-6cefeec8a50e.png"></p>
+<h3 id="5-快捷键"><a href="#5-快捷键" class="headerlink" title="5. 快捷键"></a>5. 快捷键</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>快捷键</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>左右分屏</td>
+<td>Command+D</td>
+</tr>
+<tr>
+<td>上下分屏</td>
+<td>Command+Shift+D</td>
+</tr>
+<tr>
+<td>全屏</td>
+<td>Command+Enter</td>
+</tr>
+<tr>
+<td>新建窗口标签</td>
+<td>Command+T</td>
+</tr>
+<tr>
+<td>打开配置</td>
+<td>Command+,</td>
+</tr>
+<tr>
+<td>搜索</td>
+<td>Command+F</td>
+</tr>
+<tr>
+<td>自动完成提示</td>
+<td>Command+;</td>
+</tr>
+<tr>
+<td>显示执行时间</td>
+<td>view-&gt;show timestamps</td>
+</tr>
+<tr>
+<td>按键回放</td>
+<td>Command+Option+B</td>
+</tr>
+</tbody></table>
+<h1 id="二、开发编辑器：Visual-Studio-Code"><a href="#二、开发编辑器：Visual-Studio-Code" class="headerlink" title="二、开发编辑器：Visual Studio Code"></a>二、开发编辑器：Visual Studio Code</h1><p>说起前端的编辑器，大家最常用的选择应该就是 VS Code。它是由微软开发的且跨平台的免费源代码编辑器，由于它不仅默认支持语法高亮、代码补全、内置命令行等功能且拥有强大的扩展程序库支持用户安装以拓展软件功能，在 Stack Overflow 组织的开发者调查中，VScode 被认为是最受开发者欢迎的开发环境。</p>
+<h2 id="VS-Code-快捷键及其他操作"><a href="#VS-Code-快捷键及其他操作" class="headerlink" title="VS Code 快捷键及其他操作"></a>VS Code 快捷键及其他操作</h2><h3 id="快捷键"><a href="#快捷键" class="headerlink" title="快捷键"></a>快捷键</h3><ol>
+<li>Command+Shift+P: 打开命令面板</li>
+<li>Command+F: 在当前文档中搜索选中文档</li>
+<li>Command+Shift+F: 在所有文件中搜索文本，显示在编辑器侧边栏</li>
+<li>Command+J: 打开&#x2F;关闭终端</li>
+<li>Command+Option+左&#x2F;右箭头: 切换编辑界面</li>
+<li>Command+W:关闭</li>
+<li>Command+Shift+T: 重新打开关闭的页面</li>
+<li>Option+Shift+Up&#x2F;Down: 往上&#x2F;下复制行</li>
+<li>Option+上&#x2F;下箭头: 向上&#x2F;下移动行</li>
+<li>Control+Shift+左&#x2F;右箭头: 选择上&#x2F;下一级代码块内容</li>
+<li>Command+Option+上&#x2F;下箭头: 向上&#x2F;下复制光标</li>
+<li>Command+Option+[ &#x2F; ]: 折叠&#x2F;展开代码</li>
+<li>Command+Shift+左&#x2F;右箭头: 选择光标左&#x2F;右侧内容</li>
+<li>Command+Shift+V: 预览.md 文件</li>
+<li>Command+\: 分开编辑器</li>
+<li>Command+K+W: 关闭所有</li>
+</ol>
+<h3 id="使用-code-命令快速打开-VSCode-项目"><a href="#使用-code-命令快速打开-VSCode-项目" class="headerlink" title="使用 code 命令快速打开 VSCode 项目"></a>使用 code 命令快速打开 VSCode 项目</h3><p>在 mac 终端我们可以通过使用 code 命令实现直接用 VSCode 打开要打开的项目文件。我们需要在 VSCode 中安装 code：_command+shift+P -&gt; 输入 shell command -&gt;选择 install ‘code’ command in PATH_。</p>
+<p>安装完成后，直接打开桌面上的 memory-game 项目：<code>code Desktop/memory-game</code>即可。</p>
+<h2 id="扩展插件推荐"><a href="#扩展插件推荐" class="headerlink" title="扩展插件推荐"></a>扩展插件推荐</h2><p>相信每一位前端程序员都有自己一套熟悉且常用 VScode 插件，下面我将收集到的插件分为：基本必备类、提效必备类、Git 相关类、观感样式类、注释相关类、markdown 相关类和其他插件。大家可以按需查看，希望能给你的武器库添加一些火力。</p>
+<h3 id="1-基础必备插件"><a href="#1-基础必备插件" class="headerlink" title="1. 基础必备插件"></a>1. 基础必备插件</h3><h4 id="gt-gt-Auto-Rename-Tag"><a href="#gt-gt-Auto-Rename-Tag" class="headerlink" title="&gt;&gt; Auto Rename Tag"></a>&gt;&gt; Auto Rename Tag</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-rename-tag">Auto Rename Tag</a> 插件能够自动同步同组的 HTML&#x2F;XML 标签。默认自动同步是对所有语言文件生效，可以通过<br><code>&#123;&quot;auto-rename-tag.activationOnLanguage&quot;: [&quot;html&quot;, &quot;xml&quot;, &quot;php&quot;, &quot;javascript&quot;]&#125;</code><br>进行修改。特别需要注意的是，如果要自定义生效语言，所选的语言必须是 VS Code 定义的(<em>.js</em> 和 <em>.es6</em>需要 <strong>javascript</strong>、*.jsx*需要 <strong>javascriptreact</strong>)</p>
+<p><img src="https://files.mdnice.com/user/13305/2dc76fde-2d53-4367-bb8c-638f1b6012c0.gif"></p>
+<h4 id="gt-gt-Auto-Close-Tag"><a href="#gt-gt-Auto-Close-Tag" class="headerlink" title="&gt;&gt; Auto Close Tag"></a>&gt;&gt; Auto Close Tag</h4><p>自动添加 HTML&#x2F;XML 闭合标签插件。</p>
+<h4 id="gt-gt-EditorConfig-for-VS-Code"><a href="#gt-gt-EditorConfig-for-VS-Code" class="headerlink" title="&gt;&gt; EditorConfig for VS Code"></a>&gt;&gt; EditorConfig for VS Code</h4><p>一个项目不可能永远是一个人开发维护，当多个使用不同编辑器、代码风格不同的人参与到一个项目中，难免会有规范问题，<a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig">EditorConfig for VS Code</a> 插件就能解决这个问题。</p>
+<p><code>.editorConfig</code> 代码规范规则的优先级高于编辑器默认的代码格式化规则，如果没有配置 editorconfig 则执行的就是编辑器默认的代码格式化规则。<br>安装此插件后，在 VScode 的文件目录中右键即可通过 <code>Generate .editorconfig</code>创建 <em>.editorconfig</em> 文件。</p>
+<p>配置示例：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// http://editorconfig.org</span></span><br><span class="line">root = <span class="literal"><span class="keyword">true</span></span></span><br><span class="line"></span><br><span class="line"><span class="punctuation">[</span>*<span class="punctuation">]</span></span><br><span class="line">indent_style = space <span class="comment">// 缩进样式 = 空格</span></span><br><span class="line">indent_size = <span class="number">2</span> <span class="comment">// 缩进大小 = 2</span></span><br><span class="line">end_of_line = lf <span class="comment">// 换行符类型 = lf</span></span><br><span class="line">charset = utf<span class="number">-8</span> <span class="comment">// 字符集 = utf-8</span></span><br><span class="line">trim_trailing_whitespace = <span class="literal"><span class="keyword">true</span></span> <span class="comment">// 删除行尾空格 = 是</span></span><br><span class="line">insert_final_newline = <span class="literal"><span class="keyword">true</span></span> <span class="comment">// 插入最后一行=真</span></span><br><span class="line"></span><br><span class="line"><span class="punctuation">[</span>*.md<span class="punctuation">]</span></span><br><span class="line">trim_trailing_whitespace = <span class="literal"><span class="keyword">false</span></span></span><br><span class="line"></span><br><span class="line"><span class="punctuation">[</span>Makefile<span class="punctuation">]</span></span><br><span class="line">indent_style = tab</span><br></pre></td></tr></table></figure>
+
+<p>此插件只能简单的配置一些规范，还需要配合其他代码检查工具如<code>ESlint</code>去满足其他需求。</p>
+<h4 id="gt-gt-ESLint"><a href="#gt-gt-ESLint" class="headerlink" title="&gt;&gt; ESLint"></a>&gt;&gt; ESLint</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint">ESLint</a> 是一个用来识别 ECMAScript 且按照规则给出报告的代码检测工具，可以用来统一代码的风格和避免一些低级错误。两种配置方式：</p>
+<ol>
+<li>在注释中配置</li>
+<li>利用配置文件：<code>npx eslint --int</code>创建<code>.eslintrc.&#123;js,yml,json&#125;</code>文件</li>
+</ol>
+<p><img src="https://files.mdnice.com/user/13305/237ac249-9faa-49e8-8a93-9ecb8ab607d6.png"></p>
+<p><strong>配置文件属性：</strong></p>
+<ul>
+<li>extends：解析基本配置文件</li>
+<li>env：指定环境</li>
+<li>rules：项目中要使用的规则</li>
+<li>parser：指定解析器</li>
+<li>overrides：修改特定文件属性</li>
+<li>processor：指定处理器</li>
+<li>plugins：指定第三方插件，省略<code>eslint-plugin-</code>前缀</li>
+<li>settings：支持配置文件共享设置</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://cn.eslint.org/docs/user-guide/configuring">更多配置参考</a></p>
+<h4 id="gt-gt-Prettier-Code-formatter"><a href="#gt-gt-Prettier-Code-formatter" class="headerlink" title="&gt;&gt; Prettier - Code formatter"></a>&gt;&gt; Prettier - Code formatter</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode">Prettier</a> 是由 Facebook 公司开发的‘武断性’代码格式化工具，它移除了代码的原始风格，并确保了所有代码输出保持一致的风格。在 VS Code 中通常和 ESLint 插件结合使用，安装完插件后在 setting.json 文件中添加配置：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;editor.defaultFormatter&quot;</span><span class="punctuation">:</span> <span class="string">&quot;esbenp.prettier-vscode&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;[javascript]&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;editor.formatOnSave&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;editor.defaultFormatter&quot;</span><span class="punctuation">:</span> <span class="string">&quot;esbenp.prettier-vscode&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;[typescript]&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;editor.defaultFormatter&quot;</span><span class="punctuation">:</span> <span class="string">&quot;esbenp.prettier-vscode&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;[typescriptreact]&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;editor.defaultFormatter&quot;</span><span class="punctuation">:</span> <span class="string">&quot;esbenp.prettier-vscode&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;editor.formatOnSave&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>VSCode 读取配置列表(按优先级)：</p>
+<ul>
+<li>Prettier configuration file</li>
+<li>.editorconfig</li>
+<li>VSCode Default Settings</li>
+</ul>
+<p><strong>NOTE</strong>: 如果有任何本地的配置文件(i.e. .prettierrc)那么 VS Code settings 就不会被使用。</p>
+<h4 id="gt-gt-Chinese-Language-Pack-for-VSCode"><a href="#gt-gt-Chinese-Language-Pack-for-VSCode" class="headerlink" title="&gt;&gt; Chinese Language Pack for VSCode"></a>&gt;&gt; Chinese Language Pack for VSCode</h4><p>此插件为中文语言包能够为 VSCode 提供本地化界面。通过使用“配置显示语言”命令设置 VS Code 语言，可以替代默认的 UI 语言。<code>命令面板</code> -&gt; <code>配置显示语言</code> -&gt; <code>切换已安装的语言</code></p>
+<h4 id="gt-gt-minapp"><a href="#gt-gt-minapp" class="headerlink" title="&gt;&gt; minapp"></a>&gt;&gt; minapp</h4><p>微信小程序标签、属性的智能补全工具（同时支持原生小程序、mpvue 和 wepy 框架，wxml 格式化，并提供 snippets）主要应用于 wxml 文件。</p>
+<h4 id="gt-gt-wechat-snippet"><a href="#gt-gt-wechat-snippet" class="headerlink" title="&gt;&gt; wechat-snippet"></a>&gt;&gt; wechat-snippet</h4><p>wechat-snippet 可以在开发小程序时通过属性关键词提示代码片段模版。</p>
+<ul>
+<li>json 片段：在{}中输入 page，pages，window，tabbar 等属性关键字即可提示代码片段模板</li>
+<li>js 片段：输入 wx-page，wx-app，wx-request 等 wx-开头的关键字即可提示代码片段模板</li>
+<li>wxml 片段：直接输入组件名称，即可提示代码片段模板。 如输入 view，可自动生成 view 标签及其属性</li>
+</ul>
+<h4 id="gt-gt-JavaScript-ES6-code-snippets"><a href="#gt-gt-JavaScript-ES6-code-snippets" class="headerlink" title="&gt;&gt; JavaScript (ES6) code snippets"></a>&gt;&gt; JavaScript (ES6) code snippets</h4><p>此扩展包含用于 VS Code 编辑器（同时支持 JavaScript 和 TypeScript）的 ES6 语法中的 JavaScript 代码片段。触发器与对应代码片段：<a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=xabikos.JavaScriptSnippets">点击查看</a>。</p>
+<h3 id="2-提效必备插件"><a href="#2-提效必备插件" class="headerlink" title="2. 提效必备插件"></a>2. 提效必备插件</h3><h4 id="gt-gt-CSS-Peek"><a href="#gt-gt-CSS-Peek" class="headerlink" title="&gt;&gt; CSS Peek"></a>&gt;&gt; CSS Peek</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=pranaygp.vscode-css-peek">CSS Peek</a>插件支持快速跳转到样式的定义，查找 css 选择器的位置。</p>
+<h4 id="gt-gt-Path-Intellisense"><a href="#gt-gt-Path-Intellisense" class="headerlink" title="&gt;&gt; Path Intellisense"></a>&gt;&gt; Path Intellisense</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=christian-kohler.path-intellisense">Path Intellisense</a> 是一款自动补全文件名的 VSCode 插件。此插件会使用 <strong>ts(js).config.compilerOptions.baseUrl</strong> 作为映射，所以他会引用我们项目中 tsconfig.json 的设置。当我们自行要进行路径配置时，在 setting.json 文件中添加配置 mappings：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;path-intellisense.mappings&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;@&quot;</span><span class="punctuation">:</span> <span class="string">&quot;$&#123;workspaceRoot&#125;/src/&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;@/pages&quot;</span><span class="punctuation">:</span> <span class="string">&quot;$&#123;workspaceRoot&#125;/src/pages&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;@/component&quot;</span><span class="punctuation">:</span> <span class="string">&quot;$&#123;workspaceRoot&#125;/src/component&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;@/service&quot;</span><span class="punctuation">:</span> <span class="string">&quot;$&#123;workspaceRoot&#125;/src/service&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;@/utils&quot;</span><span class="punctuation">:</span> <span class="string">&quot;$&#123;workspaceRoot&#125;/src/utils&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>注意：尽管我们现在已经成功为我们的引用路径提供补全，但是光有路径引导还是不够的，我们需要文件的提示联想和跳转，所以需要在项目中配置 jsconfig.json 或者 tsconfig.json 文件。</p>
+<h4 id="gt-gt-Path-Autocomplete"><a href="#gt-gt-Path-Autocomplete" class="headerlink" title="&gt;&gt; Path Autocomplete"></a>&gt;&gt; Path Autocomplete</h4><p>跟 Path Intellisense 插件功能相似的路径补全插件，配置路径属性<code>path-autocomplete.pathMappings</code>以实现路径的引导。同样需要另外配置 jsconfig.json 或 tsconfig.json 实现文件跳转。</p>
+<h4 id="gt-gt-Open-in-Browser"><a href="#gt-gt-Open-in-Browser" class="headerlink" title="&gt;&gt; Open in Browser"></a>&gt;&gt; Open in Browser</h4><p>安装此插件可以允许开发者跳转到浏览器显示当前的代码文件。</p>
+<h4 id="gt-gt-Live-Server"><a href="#gt-gt-Live-Server" class="headerlink" title="&gt;&gt; Live Server"></a>&gt;&gt; Live Server</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer">Live Server</a> 插件是一款能够给加载静态或者动态页面并及时更新的本地开发服务器。安装完成后，编辑器右下角将会出现 Go Live 字样，点击即可在服务器上加载页面。更多配置<a target="_blank" rel="noopener" href="https://github.com/ritwickdey/vscode-live-server/blob/master/docs/settings.md">点击查看</a></p>
+<p>然而此插件现只能支持<code>.html</code>文件或者<code>.htm</code>文件，所以在使用上还是有一定的局限性，特别是当我们运用了前端框架开发项目之后。</p>
+<h4 id="gt-gt-Code-Runner"><a href="#gt-gt-Code-Runner" class="headerlink" title="&gt;&gt; Code Runner"></a>&gt;&gt; Code Runner</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner">Code Runner</a> 插件能够支持编辑器运行多种语言代码片段或者代码文件。用前端的 js 文件为例，js 文件的运行要基于 node 环境，通常我们会在终端使用 node 命令来执行我们的 js 文件。有了此插件我们可以一键运行代码。</p>
+<p>打开所要运行的文件，有多种方式快捷运行代码：</p>
+<ol>
+<li>快捷键：Control+Option+N</li>
+<li>Command+Shift+P，调出命令面板，输入选择 Run Code</li>
+<li>在编辑区，右键选择 Run Code</li>
+<li>点击编辑器右上角的运行小三角按钮</li>
+<li>在左侧的文件管理器，右键选择 Run Code</li>
+</ol>
+<p>停止代码运行：</p>
+<ol>
+<li>快捷键：Control+Option+M</li>
+<li>Command+Shift+P，调出命令框，输入选择 Stop Run Code</li>
+<li>在 Output 框中，右键选择 Stop Code Run</li>
+</ol>
+<p>此外，我们可以在<code>setting.json</code>文件中设置<code>&quot;code-runner.runInTerminal&quot;: true</code>将我们的代码运行于终端，<em>防止乱码</em>以及<em>支持输入</em>。</p>
+<p>添加<code>code-runner.executorMap</code>设置自定义代码运行逻辑。下面是对 html 文件配置的一个例子，默认的 Code Runner 是不支持 html 的快速运行的。我们可以通过设置 html 文件用 Google Chrome 运行实现快速的在浏览器中浏览我们的 html 文件。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;code-runner.executorMap&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;html&quot;</span><span class="punctuation">:</span> <span class="string">&quot;open -a \&quot;Google Chrome\&quot;&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="gt-gt-Todo-Tree"><a href="#gt-gt-Todo-Tree" class="headerlink" title="&gt;&gt; Todo Tree"></a>&gt;&gt; Todo Tree</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=Gruntfuggly.todo-tree">Todo Tree</a> 插件用于快速在项目中查找定位<code>标记</code>如：<code>TODO</code>和<code>FIXME</code>，并将其以树形结构展示在侧边菜单栏。使用者根据个人喜好可以配置高亮的标签名、高亮方式等。通过菜单栏进行快速跳转能够为开发者节省很多浪费在代码定位、跳转的时间，特别是操作代码行量很大的项目文件的时候。</p>
+<p>配置推荐：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// todo-tree settings</span></span><br><span class="line">  <span class="attr">&quot;todo-tree.general.tags&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;TODO&quot;</span><span class="punctuation">,</span> <span class="string">&quot;FIX&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;todo-tree.regex.regexCaseSensitive&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;todo-tree.highlights.customHighlight&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;TODO&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;background&quot;</span><span class="punctuation">:</span> <span class="string">&quot;DarkViolet&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;rulerColour&quot;</span><span class="punctuation">:</span> <span class="string">&quot;DarkViolet&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;iconColour&quot;</span><span class="punctuation">:</span> <span class="string">&quot;DarkViolet&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;FIX&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;background&quot;</span><span class="punctuation">:</span> <span class="string">&quot;FireBrick&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;rulerColour&quot;</span><span class="punctuation">:</span> <span class="string">&quot;FireBrick&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;iconColour&quot;</span><span class="punctuation">:</span> <span class="string">&quot;FireBrick&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>效果展示：</p>
+<p><img src="https://files.mdnice.com/user/13305/314e98fd-19ec-46c3-ab13-ea5cfcee6ea1.png"></p>
+<h4 id="gt-gt-Better-Comments"><a href="#gt-gt-Better-Comments" class="headerlink" title="&gt;&gt; Better Comments"></a>&gt;&gt; Better Comments</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments">Better Comments</a> 插件能够帮助开发者建立更多交互友好的代码注释，包括警告、TODOs、高亮以及其他所有自行设立的标注。此插件结合 Todo Tree 可以完美的实现标签、todo、注释高亮方面的功能。<br>配置推荐：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;better-comments.tags&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;tag&quot;</span><span class="punctuation">:</span> <span class="string">&quot;!&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;color&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#FF2D00&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;strikethrough&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;underline&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;backgroundColor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;transparent&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bold&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;italic&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;tag&quot;</span><span class="punctuation">:</span> <span class="string">&quot;?&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;color&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#3498DB&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;strikethrough&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;underline&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;backgroundColor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;transparent&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bold&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;italic&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;tag&quot;</span><span class="punctuation">:</span> <span class="string">&quot;//&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;color&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#474747&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;strikethrough&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;underline&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;backgroundColor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;transparent&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bold&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;italic&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;tag&quot;</span><span class="punctuation">:</span> <span class="string">&quot;todo&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;color&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#FF8C00&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;strikethrough&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;underline&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;backgroundColor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;transparent&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bold&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;italic&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;tag&quot;</span><span class="punctuation">:</span> <span class="string">&quot;*&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;color&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#98C379&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;strikethrough&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;underline&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;backgroundColor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;transparent&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bold&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;italic&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;tag&quot;</span><span class="punctuation">:</span> <span class="string">&quot;fix&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;color&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#DC143C&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;strikethrough&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;underline&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;backgroundColor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;transparent&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bold&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;italic&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<img src="https://files.mdnice.com/user/13305/2b9b8a75-d457-45c4-be60-05da4973846f.png" width="50%" height="50%" />
+
+<h4 id="gt-gt-REST-Client"><a href="#gt-gt-REST-Client" class="headerlink" title="&gt;&gt; REST Client"></a>&gt;&gt; REST Client</h4><p>在测试 REST API 的时候大家可能会选择 cURL 命令或者 Postman 工具，而在 VScode 中，REST Client 插件可以很好的完成我们的测试任务，它同时支持了 cURL 和 RFC2616 两种标准来调用 REST API。</p>
+<ul>
+<li>cURL：直接在命令行中输入符合 cURL 标准的 POST 请求:<br><code>curl -X POST &quot;http://dummy.restapiexample.com/api/v1/create&quot; -d &quot;Hello World&quot;</code></li>
+<li>RFC 2616 标准 POST 请求：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">POST http://dummy.restapiexample.com/api/v1/create HTTP/1.1</span><br><span class="line">content-type: application/json</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    &quot;name&quot;:&quot;Jun&quot;,</span><br><span class="line">    &quot;salary&quot;:&quot;1000000&quot;,</span><br><span class="line">    &quot;age&quot;:&quot;26&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在项目中添加 <strong>.http</strong> 或者是 <strong>.rest</strong> 结尾的文件，输入 http 请求，右键选择 Send Request 执行 API 查看结果。</p>
+<p>插件其他功能：</p>
+<ol>
+<li>可以通过 Generate Code Snippet 命令快速将当前 http 请求生成你要的编程语言代码及方法。</li>
+<li>支持变量，官方给出的例子：</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">@hostname = api.example.com</span><br><span class="line">@port = 8080</span><br><span class="line">@host = &#123;&#123;hostname&#125;&#125;:&#123;&#123;port&#125;&#125;</span><br><span class="line">@contentType = application/json</span><br><span class="line">@createdAt = &#123;&#123;$datetime iso8601&#125;&#125;</span><br><span class="line">@modifiedBy = &#123;&#123;$processEnv USERNAME&#125;&#125;</span><br><span class="line"></span><br><span class="line">###</span><br><span class="line"></span><br><span class="line">@name = hello</span><br><span class="line"></span><br><span class="line">GET https://&#123;&#123;host&#125;&#125;/authors/&#123;&#123;name&#125;&#125; HTTP/1.1</span><br><span class="line"></span><br><span class="line">###</span><br><span class="line"></span><br><span class="line">PATCH https://&#123;&#123;host&#125;&#125;/authors/&#123;&#123;name&#125;&#125; HTTP/1.1</span><br><span class="line">Content-Type: &#123;&#123;contentType&#125;&#125;</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    &quot;content&quot;: &quot;foo bar&quot;,</span><br><span class="line">    &quot;created_at&quot;: &quot;&#123;&#123;createdAt&#125;&#125;&quot;,</span><br><span class="line">    &quot;modified_by&quot;: &quot;&#123;&#123;modifiedBy&#125;&#125;&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="gt-gt-Turbo-Console-Log"><a href="#gt-gt-Turbo-Console-Log" class="headerlink" title="&gt;&gt; Turbo Console Log"></a>&gt;&gt; Turbo Console Log</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=ChakrounAnas.turbo-console-log">Turbo Console Log</a> 插件能够自动生成有意义的 log 消息，选中要输出的字段之后，利用快捷键<code>control+option+L</code>生成对应 log 语句。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; selectedItem &#125; = <span class="variable language_">this</span>.<span class="property">state</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(</span><br><span class="line">  <span class="string">&#x27;🚀 ~ file: playPage.js ~ line 47 ~ PlayPage ~ selectedItem&#x27;</span>,</span><br><span class="line">  selectedItem</span><br><span class="line">);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ file: playPage.js ~ line 47 ~ selectedItem&#x27;</span>, selectedItem);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ selectedItem&#x27;</span>, selectedItem);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Option+Shift+U：取消所有扩展 log 的注释</strong></li>
+<li><strong>Option+Shift+C：注释所有扩展 log</strong></li>
+<li><strong>Option+Shift+D：删除所有扩展 log</strong></li>
+</ul>
+<p>插件 properties：</p>
+<ol>
+<li>turboConsoleLog.logMessagePrefix(string)：log 信息的前缀，默认为 🚀</li>
+<li>turboConsoleLog.addSemicolonInTheEnd(boolean)：log 语句后是否加分号</li>
+<li>turboConsoleLog.insertEnclosingClass(boolean)：log 语句是否添加包含选中字段的类名</li>
+<li>turboConsoleLog.insertEnclosingFunction(boolean)：log 语句是否添加包含选中字段的方法名</li>
+<li>turboConsoleLog.includeFileNameAndLineNum(boolean)：是否包括文件名和 log 语句所在行</li>
+<li>turboConsoleLog.quote(enum)：引号形式</li>
+<li>turboConsoleLog.wrapLogMessage(boolean)：是否要将 log 输出包装(要选择 false，选择 true 的话会有问题)</li>
+</ol>
+<h4 id="gt-gt-Error-Lens"><a href="#gt-gt-Error-Lens" class="headerlink" title="&gt;&gt; Error Lens"></a>&gt;&gt; Error Lens</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens">Error Lens</a> 插件是一款能够很大程度上提高开发效率的插件，他将会把代码的报错和告警信息及时显示在代码行，所以当代码有问题时，我们不需要再将光标移至该问题处就能查看问题。</p>
+<p><img src="https://files.mdnice.com/user/13305/ba2abaaf-e9ba-4d43-9413-73653d18c76e.png"></p>
+<h4 id="gt-gt-ImgCook"><a href="#gt-gt-ImgCook" class="headerlink" title="&gt;&gt; ImgCook"></a>&gt;&gt; ImgCook</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=imgcook.imgcook">ImgCook</a> 插件是一款将设计转换为代码的智能工具，包括视图代码、数据绑定代码、组件代码以及来自不同类型设计文档的部分业务逻辑代码。</p>
+<p>使用方法：</p>
+<ol>
+<li>安装完 imgcook 插件后，在资源管理器任意文件夹右键选择<code>Open With imgcook studio</code>打开 imgcook studio 界面。(需要预先在官网注册账号，并查询获得 AccessId)</li>
+<li>从<a target="_blank" rel="noopener" href="https://www.imgcook.com/">官网</a>下载插件，现在支持 Sketch、Figma 和 Photoshop(VSCode 插件直接从 VSCode 插件商城下载)。</li>
+<li>在选中框中点击导出，此时自动复制了设计图数据(必须要拥有编辑权限)<br><img src="https://files.mdnice.com/user/13305/29a9e4c3-efb8-41b1-b0ab-fefce55d177a.png"></li>
+<li>回到 imgcook studio 页面(也可以是 imgcook 网站)，粘贴数据后，便可在页面容器中看到样式图，在组件树一栏看见我们的组件结构</li>
+<li>保存修改后的样式(此时会加入到 imgcook 项目中)</li>
+<li>导出代码到项目，运行查看结果。<br><img src="https://files.mdnice.com/user/13305/b3d60f1b-6323-43d1-9076-c4c3d5769fbe.png"></li>
+</ol>
+<h4 id="gt-gt-Code-Spell-Checker"><a href="#gt-gt-Code-Spell-Checker" class="headerlink" title="&gt;&gt; Code Spell Checker"></a>&gt;&gt; Code Spell Checker</h4><p>一款基本的拼写检查工具同时支持驼峰式命名。此拼写检查器的目标是帮助捕获常见的拼写错误。当出现的单词没有收录在字典里时，将会产生波浪线下划线。可以利用快捷键 <code>Command+.</code> 看到推荐的修复方式：相似单词推荐或者添加新单词入字典库。</p>
+<img src="https://files.mdnice.com/user/13305/4f91a2db-db83-4012-bf29-ee28cfec2700.png" width="50%" height="50%" />
+
+<h3 id="3-Git-相关插件"><a href="#3-Git-相关插件" class="headerlink" title="3. Git 相关插件"></a>3. Git 相关插件</h3><h4 id="gt-gt-Git-Graph"><a href="#gt-gt-Git-Graph" class="headerlink" title="&gt;&gt; Git Graph"></a>&gt;&gt; Git Graph</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph">Git Graph</a> 插件能够将 git 历史操作用图表的形式展现出来，并在图表上提供了简单的 git 操作。点击左下角状态栏中的 Git Graph 按钮，进入 Git Graph 图表界面。</p>
+<ul>
+<li>图表展示了分支的走向图、分支的 commit 描述、时间、作者和 commit 编号。</li>
+<li>在上方的工具栏中，我们可以选择查看的分支、是否显示远程的分支、搜索等功能。</li>
+<li>点击一条信息，我们可以查看当前 commit 改动的文件列表，以及 git 的更多详细信息。</li>
+</ul>
+<h4 id="gt-gt-GitLens"><a href="#gt-gt-GitLens" class="headerlink" title="&gt;&gt; GitLens"></a>&gt;&gt; GitLens</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens">GitLens</a> 能够很大程度上帮助开发者理解代码。开发者可以通过代码行中快速看出是谁、什么时候、为什么以及如何对当前代码进行修改。<br>特性：</p>
+<ul>
+<li>提供修改版本间的切换</li>
+<li>提供代码块作者信息</li>
+<li>提供代码行变化情况</li>
+</ul>
+<p><img src="https://files.mdnice.com/user/13305/b5fec513-6c5e-4f3d-b844-d515c2309c93.png"></p>
+<h4 id="gt-gt-Git-History"><a href="#gt-gt-Git-History" class="headerlink" title="&gt;&gt; Git History"></a>&gt;&gt; Git History</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=donjayamanne.githistory">Git History</a> 是另一款帮助开发者进行 git 操作的插件。安装此插件后，开发者可以右键自己想要查看的文件查看文件历史(包括分支历史、文件历史、行历史和作者历史)，也可以进行文件对比、cherry-picking 操作、创建 tag 标签、创建分支，进行 reset 和 revert 操作等等。</p>
+<img src="https://files.mdnice.com/user/13305/eb0b00c1-88e9-4503-933d-81d9e5a1d314.png" width="30%" height="30%" />
+
+<p>优势：</p>
+<ol>
+<li>支持当前选中版本代码与本地代码、与上一版本代码对比</li>
+<li>查询作者提交记录</li>
+<li>分支操作：在选中分支上可以快速进行各类 git 操作(新建分支、reset 操作、revert 操作等)</li>
+</ol>
+<h3 id="4-观感样式类插件"><a href="#4-观感样式类插件" class="headerlink" title="4. 观感样式类插件"></a>4. 观感样式类插件</h3><h4 id="gt-gt-颜色主题插件"><a href="#gt-gt-颜色主题插件" class="headerlink" title="&gt;&gt; 颜色主题插件"></a>&gt;&gt; 颜色主题插件</h4><p>相比 VScode 自带的 Dark 主题，插件扩展中提供的主题在视觉感官上更加舒服。安装颜色主题插件后输入<code>shift+command+p</code>调出命令面板，输入<code>Color Theme</code>后选择主题为安装的主题即可切换颜色主题。</p>
+<p>颜色主题类插件：Atom One Dark Theme，One Dark Pro，Dracula，Tokyo Night，Sublime Material Theme 等。</p>
+<h4 id="gt-gt-文件图标插件"><a href="#gt-gt-文件图标插件" class="headerlink" title="&gt;&gt; 文件图标插件"></a>&gt;&gt; 文件图标插件</h4><p>VSCode 默认是没有文件的图标，文件列表只显示各文件的名称以及用<code>&gt;</code>表示可扩展的文件夹，这让我们选择目标文件更不易。通过安装文件图标插件能够很大程度上减少视觉疲劳、使得项目目录更直观可视。安装文件图标插件后输入<code>shift+command+p</code>调出命令面板，输入<code>File Icon Theme</code>后选择主题为安装的文件图标主题即可生效。</p>
+<p>文件图标类插件：vscode-icons、Material Icon Theme 等。</p>
+<h4 id="gt-gt-Bracket-Pair-Colorizer-2"><a href="#gt-gt-Bracket-Pair-Colorizer-2" class="headerlink" title="&gt;&gt; Bracket Pair Colorizer 2"></a>&gt;&gt; Bracket Pair Colorizer 2</h4><p>开发过程中，我们难免会遇到使用很多{},[],()符号甚至还会有嵌套又嵌套的情况。这时 <a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=CoenraadS.bracket-pair-colorizer-2">Bracket Pair Colorizer 2</a> 就能够派上用场了。此组件能够给配对的符号添加颜色并且在点击左括号的同时，能够通过颜色展示出右括号，让代码块展示的更加清晰明了。<br>颜色设置：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;bracket-pair-colorizer-2.colors&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;Gold&quot;</span><span class="punctuation">,</span><span class="string">&quot;Orchid&quot;</span><span class="punctuation">,</span><span class="string">&quot;LightSkyBlue&quot;</span><span class="punctuation">,</span><span class="string">&quot;AntiqueWhite&quot;</span><span class="punctuation">,</span><span class="string">&quot;Chocolate&quot;</span><span class="punctuation">,</span><span class="string">&quot;Chartreuse&quot;</span><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<p><code>bracket-pair-colorizer-2.colorMode</code>属性用来设置括号使用颜色池的类型</p>
+<img src="https://files.mdnice.com/user/13305/b27e4db9-dfff-4067-99bb-91f6ea2f48ed.png" />
+<img src="https://files.mdnice.com/user/13305/a98342d5-5050-475e-ab2d-dd68a3f4c633.png" />
+
+<p><code>bracket-pair-colorizer-2.forceUniqueOpeningColor</code>属性可以用来设置相邻括号的颜色的使用规则</p>
+<img src="https://files.mdnice.com/user/13305/9ef88ba2-2963-4cd5-b4ba-59df1de32139.png" />
+<img src="https://files.mdnice.com/user/13305/5ae8eb41-0182-490e-b9ab-80e2f91b3b1c.png" />
+
+<p>最后效果图：</p>
+<p><img src="https://files.mdnice.com/user/13305/bfdcba4d-adfc-4d32-afa5-ec17387d81a0.png"></p>
+<h4 id="gt-gt-Indent-Rainbow"><a href="#gt-gt-Indent-Rainbow" class="headerlink" title="&gt;&gt; Indent-Rainbow"></a>&gt;&gt; Indent-Rainbow</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=oderwat.indent-rainbow">Indent Rainbow</a> 插件可以通过利用颜色来对代码的缩进进行区分。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 以下二者使用其一</span></span><br><span class="line"><span class="attr">&quot;indentRainbow.includedLanguages&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">]</span><span class="comment">// 应用的文件类型，&quot;javascript&quot;、&quot;tpyescript&quot;</span></span><br><span class="line"><span class="attr">&quot;indentRainbow.excludedLanguages&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;plaintext&quot;</span><span class="punctuation">]</span><span class="comment">// 不应用的文件类型</span></span><br><span class="line"><span class="comment">// 自定义颜色(需要重启生效)</span></span><br><span class="line"><span class="attr">&quot;indentRainbow.colors&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;rgba(255,255,64,0.07)&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;rgba(127,255,127,0.07)&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;rgba(255,127,255,0.07)&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;rgba(79,236,236,0.07)&quot;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<p>样式图：</p>
+<p><img src="https://files.mdnice.com/user/13305/0e8b2810-1e0b-4a5d-b4d9-8120aae9fe9b.png"></p>
+<h4 id="gt-gt-Color-the-tag-name"><a href="#gt-gt-Color-the-tag-name" class="headerlink" title="&gt;&gt; Color the tag name"></a>&gt;&gt; Color the tag name</h4><p>此插件能够为 html 的标签添加颜色，同时在 react 的组件中也能生效。</p>
+<p>效果图：</p>
+<img src="https://files.mdnice.com/user/13305/d6bfea6b-0616-4798-bc83-621d55c6d1a1.png" width="70%" height="70%"/>
+
+<h4 id="gt-gt-Color-Highlight"><a href="#gt-gt-Color-Highlight" class="headerlink" title="&gt;&gt; Color Highlight"></a>&gt;&gt; Color Highlight</h4><p>此插件能够在编辑器中突出网页的颜色</p>
+<h3 id="5-注释相关插件"><a href="#5-注释相关插件" class="headerlink" title="5. 注释相关插件"></a>5. 注释相关插件</h3><h4 id="gt-gt-Vscode-Fileheader"><a href="#gt-gt-Vscode-Fileheader" class="headerlink" title="&gt;&gt; Vscode-Fileheader"></a>&gt;&gt; Vscode-Fileheader</h4><p>此插件能够提供顶部注释模板，可定义作者、时间等信息，并会自动更新最后修改时间。利用快捷键 Control+Option+I 快速生成顶部注释。配置 setting 不生效，坑！！！</p>
+<h4 id="gt-gt-Doxygen-Documentation-Generator"><a href="#gt-gt-Doxygen-Documentation-Generator" class="headerlink" title="&gt;&gt; Doxygen Documentation Generator"></a>&gt;&gt; Doxygen Documentation Generator</h4><p>自动生成代码注释插件，现在安装无效，无法生成配置属性。</p>
+<h4 id="gt-gt-koroFileHeader"><a href="#gt-gt-koroFileHeader" class="headerlink" title="&gt;&gt; koroFileHeader"></a>&gt;&gt; koroFileHeader</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=OBKoro1.korofileheader">koroFileHeader</a> 插件支持在 vscode 中生成文件头部注释和函数注释。</p>
+<ol>
+<li>文件头部添加注释：利用快捷键 Command+Control+I，在文件头部快速添加注释，记录文件信息，并能在保存时自动更新最后编辑时间和编辑者</li>
+<li>光标处添加函数注释：利用快捷键 Command+Control+T 在光标处自动生成一个注释模版，自动解析函数参数。</li>
+</ol>
+<p>配置字段：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 头部注释</span></span><br><span class="line"><span class="attr">&quot;fileheader.customMade&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="comment">// 头部注释默认字段</span></span><br><span class="line">    <span class="attr">&quot;Author&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Jun Yang&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;Date&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Do not edit&quot;</span><span class="punctuation">,</span> <span class="comment">// 设置后默认设置文件生成时间</span></span><br><span class="line">    <span class="attr">&quot;LastEditTime&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Do not edit&quot;</span><span class="punctuation">,</span> <span class="comment">// 设置后，保存文件更改默认更新最后编辑时间</span></span><br><span class="line">    <span class="attr">&quot;LastEditors&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Jun Yang&quot;</span><span class="punctuation">,</span> <span class="comment">// 设置后，保存文件更改默认更新最后编辑人</span></span><br><span class="line">    <span class="attr">&quot;Description&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;FilePath&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Do not edit&quot;</span><span class="punctuation">,</span> <span class="comment">// 设置后，默认生成文件相对于项目的路径</span></span><br><span class="line">    <span class="attr">&quot;custom_string_obkoro1&quot;</span><span class="punctuation">:</span> <span class="string">&quot;可以输入预定的版权声明、个性签名、空行等&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line"><span class="comment">// 函数注释</span></span><br><span class="line"><span class="attr">&quot;fileheader.cursorMode&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">  <span class="comment">// 默认字段</span></span><br><span class="line">  <span class="attr">&quot;description&quot;</span><span class="punctuation">:</span><span class="string">&quot;&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;param&quot;</span><span class="punctuation">:</span><span class="string">&quot;&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;return&quot;</span><span class="punctuation">:</span><span class="string">&quot;&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="gt-gt-Document-This"><a href="#gt-gt-Document-This" class="headerlink" title="&gt;&gt; Document This"></a>&gt;&gt; Document This</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=oouo-diogo-perdigao.docthis">Document This</a> 插件能够为我们自动快速在插入符号所在或内部的任何内容生成文档。<br>使用方法：</p>
+<ol>
+<li>选中目标后利用快捷键：Control+Option+D+D</li>
+<li>在目标上方输入<code>/**</code>后选择 Document This，再回车</li>
+</ol>
+<p>配置推荐：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;docthis.includeDescriptionTag&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line"><span class="attr">&quot;docthis.includeAuthorTag&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line"><span class="attr">&quot;docthis.authorName&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Jun&quot;</span><span class="punctuation">,</span></span><br><span class="line"><span class="attr">&quot;docthis.includeMemberOfOnClassMembers&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line"><span class="attr">&quot;docthis.includeMemberOfOnInterfaceMembers&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line"><span class="attr">&quot;docthis.includeDateTag&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br></pre></td></tr></table></figure>
+
+<p>效果图：</p>
+<img src="https://files.mdnice.com/user/13305/94ce88f3-b0f8-4177-aa4c-e1ccb07d9626.png" width="70%" height="70%"/>
+
+<h3 id="6-Markdown-相关插件"><a href="#6-Markdown-相关插件" class="headerlink" title="6. Markdown 相关插件"></a>6. Markdown 相关插件</h3><h4 id="gt-gt-Markdown-Preview-Enhanced"><a href="#gt-gt-Markdown-Preview-Enhanced" class="headerlink" title="&gt;&gt; Markdown Preview Enhanced"></a>&gt;&gt; Markdown Preview Enhanced</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=shd101wyy.markdown-preview-enhanced">Markdown Preview Enhanced</a> 扩展为我们在编写 md 文件时提供了许多有用的功能，例如自动滚动同步、数学排版、PDF 导出、代码块、演示文稿编写器等。</p>
+<h4 id="gt-gt-Markdown-All-in-One"><a href="#gt-gt-Markdown-All-in-One" class="headerlink" title="&gt;&gt; Markdown All in One"></a>&gt;&gt; Markdown All in One</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one">Markdown All in One</a> 插件提供了编辑 Markdown 文件的所有功能需要：快捷键、表格样式、列表操作、自动预览等。此插件配合上<a target="_blank" rel="noopener" href="https://mdnice.com/">墨滴</a>，就可以满足编写.md 文件的绝大部分需求。</p>
+<p>Mac 快捷键：</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Command + B</td>
+<td>粗体</td>
+</tr>
+<tr>
+<td>Command + I</td>
+<td>斜体</td>
+</tr>
+<tr>
+<td>Control + Shift + ]</td>
+<td>增加一级标题</td>
+</tr>
+<tr>
+<td>Control + Shift + [</td>
+<td>减小一级标题</td>
+</tr>
+<tr>
+<td>Option + Shift + F</td>
+<td>格式化(包括表格)</td>
+</tr>
+<tr>
+<td>Command + Shift + V</td>
+<td>预览样式</td>
+</tr>
+</tbody></table>
+<p>常用命令：</p>
+<ol>
+<li>Markdown：Create Table of Contents</li>
+<li>Markdown：Update Table of Contents</li>
+<li>Markdown：Toggle code span</li>
+<li>Markdown：Print current document to HTML</li>
+</ol>
+<h3 id="7-其他插件"><a href="#7-其他插件" class="headerlink" title="7. 其他插件"></a>7. 其他插件</h3><h4 id="gt-gt-HTML-to-CSS-autocompletion"><a href="#gt-gt-HTML-to-CSS-autocompletion" class="headerlink" title="&gt;&gt; HTML to CSS autocompletion"></a>&gt;&gt; HTML to CSS autocompletion</h4><p>HTML to CSS autocompletion 插件能够实现 HTML 到 CSS 的选择器智能完成。支持的流：HTML&#x2F;PHP -&gt; CSS, SCSS, Less, Sass。</p>
+<p><code>html-to-css-autocompletion.autocompletionFilesScope</code>定义匹配的范围：</p>
+<ul>
+<li>默认为 multi-root：根文件夹中找到的所有选择器对定义的样式表都是可见的。</li>
+<li>workspace：在特定工作区文件夹&#x2F;项目中找到的所有选择器将对该工作区文件夹中的样式表可见。</li>
+<li>linked files：选择器将只为关联的样式表提供。</li>
+</ul>
+<p>为了减少其他文件带来的干扰，可以将值设为 linked files。</p>
+<p>虽然<code>html-to-css-autocompletion.getSelectorsFromFileTypes</code>属性是来判断定义要搜索类和 ID 的文件类型，默认为 html 和 php，但是添加 js 或者 ts 文件类型，依旧无法生效。</p>
+<h4 id="gt-gt-HTML-CSS-Support"><a href="#gt-gt-HTML-CSS-Support" class="headerlink" title="&gt;&gt; HTML CSS Support"></a>&gt;&gt; HTML CSS Support</h4><p>HTML CSS Support 插件支持 CSS 到 HTML 的选择智能完成。</p>
+<h4 id="gt-gt-Filesize"><a href="#gt-gt-Filesize" class="headerlink" title="&gt;&gt; Filesize"></a>&gt;&gt; Filesize</h4><p>安装了此插件之后，能够在状态栏显示当前文件的大小，点击可以查看更多信息包括文件类型、创建时间和修改时间。</p>
+<p><img src="https://files.mdnice.com/user/13305/c641f3fb-a7d0-4dbe-b303-6f3d2cdeeee1.png"></p>
+<h4 id="gt-gt-Image-preview"><a href="#gt-gt-Image-preview" class="headerlink" title="&gt;&gt; Image preview"></a>&gt;&gt; Image preview</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=kisstkondoros.vscode-gutter-preview">Image preview</a> 插件能够在代码行左侧显示导入的图片：</p>
+<p><img src="https://files.mdnice.com/user/13305/c1b1597e-6bf2-4e41-b13d-fbc5730289cb.png"></p>
+<h4 id="gt-gt-vscode-faker"><a href="#gt-gt-vscode-faker" class="headerlink" title="&gt;&gt; vscode-faker"></a>&gt;&gt; vscode-faker</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=deerawan.vscode-faker">vscode-faker</a> 插件能够支持生成假数据，使用快捷键 Command+Shift+P 引出命令板后，输入 faker 选择要 mock 的数据类型，此插件就能随机生成相对应的数据，再也不用担心如何编写假数据了！！</p>
+<h4 id="gt-gt-Partial-Diff"><a href="#gt-gt-Partial-Diff" class="headerlink" title="&gt;&gt; Partial Diff"></a>&gt;&gt; Partial Diff</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=ryu1kn.partial-diff">Partial Diff</a> 插件能够支持文件内、跨文件、与写字板间的代码对比。</p>
+<p><img src="https://files.mdnice.com/user/13305/8d2d4025-8119-44f9-a91b-051112bde420.png"></p>
+<h4 id="gt-gt-Paste-JSON-as-Code"><a href="#gt-gt-Paste-JSON-as-Code" class="headerlink" title="&gt;&gt; Paste JSON as Code"></a>&gt;&gt; Paste JSON as Code</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=quicktype.quicktype">Paste JSON as Code</a>插件支持根据示例 json 数据判断数据类型，输出强类型模式以供所需的编程语言处理该数据。</p>
+<p>使用方法：复制 json 目标数据，在其他文件中用 Command+Shift+P 快捷键打开命令板输入选择 Paste JSON as Code，输入顶层类型名，即可自动生成代码。</p>
+<p><img src="https://files.mdnice.com/user/13305/e1c40403-5e6d-4519-a73a-8973c860616d.gif"></p>
+<h4 id="gt-gt-Rainbow-Fart"><a href="#gt-gt-Rainbow-Fart" class="headerlink" title="&gt;&gt; Rainbow Fart"></a>&gt;&gt; Rainbow Fart</h4><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=saekiraku.rainbow-fart">VSCode Rainbow Fart</a> 是一款可以根据代码关键词播放贴近代码意义的真人语音扩展插件—彩虹屁插件。</p>
+<p>使用方法：</p>
+<ol>
+<li>在 VSCode 中打开命令面板(Command+Shift+P),输入&gt;Enable Rainbow Fart 并回车。</li>
+<li>在右下角弹出的消息通知中点击 Open 按钮</li>
+<li>在授权页面上点击<em>授权</em>，选择语音包(页面不能关闭)</li>
+<li>最后就可以去敲代码感受彩虹屁啦。</li>
+</ol>
+<p>授权设置页面：</p>
+<p><img src="https://files.mdnice.com/user/13305/7a05fb56-d43c-46e7-965d-690ac1cdfb35.jpg"></p>
+<p>更多语音包链接：<a target="_blank" rel="noopener" href="https://github.com/topics/rainbow-fart">https://github.com/topics/rainbow-fart</a></p>
+<h4 id="gt-gt-Live-Share"><a href="#gt-gt-Live-Share" class="headerlink" title="&gt;&gt; Live Share"></a>&gt;&gt; Live Share</h4><p>2018 年微软正式发布 <a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=MS-vsliveshare.vsliveshare">Live Share</a> 插件，此插件使得开发者能够在 IDE 中进行实时的协同开发和调试。</p>
+<p>核心功能：</p>
+<ul>
+<li>实时共享代码编辑</li>
+<li>跟随团队其他成员的光标</li>
+<li>协作调试代码</li>
+<li>共享本地服务器</li>
+<li>共享终端</li>
+</ul>
+<p>还有很多和 Live Share 集成的插件：</p>
+<ol>
+<li>通过 <em>Live Share Audio</em> 插件，可以进行实时的团队语音。</li>
+<li>通过 <em>Live Share Chat</em> 插件，可以在 VS Code 中直接进行聊天，同时还支持 Slack 和 Discord。</li>
+<li>通过 _Live Share Whiteboard_，实时共享白板。</li>
+</ol>
+<p><img src="https://files.mdnice.com/user/13305/86f6c81b-4b09-4679-b862-31ac6ded0491.png"></p>
+<h4 id="gt-gt-RDHelper"><a href="#gt-gt-RDHelper" class="headerlink" title="&gt;&gt; RDHelper"></a>&gt;&gt; RDHelper</h4><p>RDHelper 是一款为了提高开发人员的效率的基于 IDE 工具的添翼·研发助手（RDHelper）插件，支持 JetBrains 全家桶和 VS Code，希望开发人员在自己熟悉的 IDE 工具上就能完成大部分的流程工作，包括代码评审、需求管理、bug 管理、代码扫描等。</p>
+<p>具体安装配置和使用，<a target="_blank" rel="noopener" href="https://km.woa.com/group/40552/articles/show/393480?kmref=search&from_page=1&no=2">点击查看</a>。</p>
+<h1 id="三、其他工具"><a href="#三、其他工具" class="headerlink" title="三、其他工具"></a>三、其他工具</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://www.alfredapp.com/">Alfred4</a> Alfred4 可以代替 spotlight 通过热键、关键字、文本扩展等提高工作效率，并支持自定义操作来控制 Mac，从而提高工作效率。提供强大的 workflow 功能(<em>不免费</em>)。</li>
+<li><a target="_blank" rel="noopener" href="https://www.mdnice.com/">墨滴</a>：自定义样式的在线 Markdown 编辑器。</li>
+<li><a target="_blank" rel="noopener" href="https://www.keka.io/zh-cn/">Keka</a> 压缩或解压缩应用，开源免费，压缩比高，不仅支持众多压缩格式(rar)，而且解压不乱码！</li>
+<li><a target="_blank" rel="noopener" href="https://www.xmind.cn/">XMind</a> 思维导图应用, 适合业务及思路梳理。</li>
+<li><a target="_blank" rel="noopener" href="https://www.cockos.com/licecap/">Licecap</a> 极简的 gif 录制应用，使用免费，支持 FPS 帧率调整且无录制时间限制，真的很好用！！！</li>
+<li><a target="_blank" rel="noopener" href="https://www.soogif.com/">SooGif</a> 集视频截取 GIF，动态图压缩，裁剪，加水印，加特效等等于一身的动图制作工具。</li>
+<li><a target="_blank" rel="noopener" href="https://www.json.cn/">https://www.json.cn/</a>：json 在线解析网站。</li>
+<li><a target="_blank" rel="noopener" href="https://www.typora.io/">Typora</a> 免费 Markdown 写作软件，特点：将源码编辑和预览功能整合在一起</li>
+<li><a target="_blank" rel="noopener" href="https://code.fun/">CodeFun</a> UI 设计稿智能生成源代码工具，现只支持 Sketch 和 Photoshop 上传设计稿。</li>
+<li><a target="_blank" rel="noopener" href="https://typescript-play.js.org/">Typescript Playground</a>在线编译 ts 文件</li>
+</ol>
+<blockquote>
+<p>写在最后：虽然工具只能起辅助作用，但是打造一套自己熟悉且实用的开发工具能够让我们的工作事半功倍。希望读过这文章的你们都能有所收获。PS. 如果有其他工具推荐的话，欢迎留言评论交流～</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/11/30/hello-world/" rel="prev" title="Hello World">
+                  <i class="fa fa-chevron-left"></i> Hello World
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jun Yang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
