@@ -1,6 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>JS 中的声明提升</title>
+    <url>/2022/11/03/JS%E4%B8%AD%E7%9A%84%E5%A3%B0%E6%98%8E%E6%8F%90%E5%8D%87/</url>
+    <content><![CDATA[<p>通常情况下变量都需要先声明后使用，但是在 js 中如果我们先使用变量再用 var 声明将不会抛异常，但是由于未赋值，该变量将会以 undefined 存在。</p>
+<p>Javascript 中，函数及变量的声明都将提升到作用域的顶部。</p>
+<span id="more"></span>
+
+<h1 id="变量提升"><a href="#变量提升" class="headerlink" title="变量提升"></a>变量提升</h1><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> x1 = <span class="number">1</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x1&#x27;</span>, x1);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 不会报错，输出undefined</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x2&#x27;</span>, x2);</span><br><span class="line"><span class="keyword">var</span> x2 = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<p>Javascript 允许先使用变量再用 var 去定义，像上述代码对于 x2 变量相当于：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> x2;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x2&#x27;</span>, x2);</span><br><span class="line">x2 = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<p>可以看出 var 声明会提升，但是变量定义不会提升，上述输出的 x2 为 undefined。</p>
+<p>除去 var 声明，javascript 中还有 const 和 let 声明变量，和 var 一样的是声明操作会被提升到代码块顶部，但是在未定义之前使用变量将会抛出 ReferenceError 错误。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> x1 = <span class="number">0</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x1&#x27;</span>, x1);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x2&#x27;</span>, x2); <span class="comment">// ReferenceError: Cannot access &#x27;x2&#x27; before initialization</span></span><br><span class="line"><span class="keyword">const</span> x2 = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x3&#x27;</span>, x3); <span class="comment">// ReferenceError: x3 is not defined</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="函数提升"><a href="#函数提升" class="headerlink" title="函数提升"></a>函数提升</h1><p>Javascript 中的函数 function 声明也会被提升至代码块顶部，但是函数表达式不会提升，在定义函数表达式之前不能使用函数表达式。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="title function_">testFn1</span>(); <span class="comment">// testFn1</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">testFn1</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ testFn1&#x27;</span>, <span class="string">&#x27;testFn1&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">testFn2</span>(); <span class="comment">// ReferenceError: Cannot access &#x27;testFn2&#x27; before initialization</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">testFn2</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ testFn2&#x27;</span>, <span class="string">&#x27;testFn2&#x27;</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="title function_">testFn3</span>(); <span class="comment">// TypeError: testFn3 is not a function</span></span><br><span class="line"><span class="keyword">var</span> <span class="title function_">testFn3</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ testFn2&#x27;</span>, <span class="string">&#x27;testFn2&#x27;</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h1 id="几个-🌰"><a href="#几个-🌰" class="headerlink" title="几个 🌰"></a>几个 🌰</h1><p>var 声明是全局作用域或函数作用域，而 let 和 const 是块作用域。var 变量可以在其范围内更新和重新声明，但是 let 只能被更新不能重新声明，const 不能更新也不能重新声明。</p>
+<p>结合 var，let 和 const 的特点，具体可以体现在下面两个代码块：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 将两块函数顺序互换输出不变</span></span><br><span class="line"><span class="keyword">var</span> test = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">1</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">test</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">test</span>(); <span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> test = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">1</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">test</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">test</span>(); <span class="comment">// SyntaxError: Identifier &#x27;test&#x27; has already been declared</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Javascript</category>
+      </categories>
+      <tags>
+        <tag>Javascript</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>三招应对小程序多次跳转</title>
     <url>/2022/10/12/%E4%B8%89%E6%8B%9B%E5%BA%94%E5%AF%B9%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%A4%9A%E6%AC%A1%E8%B7%B3%E8%BD%AC/</url>
     <content><![CDATA[<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>近日收到产品的反馈，说小程序商品列表页中的商品卡片连续快速点击跳转商品详情页的话有时会出现两次跳转。小程序跳转为什么会跳转两次呢，如果这问题存在，小程序其他涉及跳转的地方是否都会有这问题呢？带着疑问，笔者开始了对项目此部分的探究。</p>
@@ -51,6 +83,123 @@
       <tags>
         <tag>小程序</tag>
         <tag>路由跳转</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>几个涉及变化的CSS属性知多少</title>
+    <url>/2022/11/02/%E5%87%A0%E4%B8%AA%E6%B6%89%E5%8F%8A%E5%8F%98%E5%8C%96%E7%9A%84CSS%E5%B1%9E%E6%80%A7%E7%9F%A5%E5%A4%9A%E5%B0%91/</url>
+    <content><![CDATA[<p>本文主要对 CSS 中的 <strong>transform</strong>、<strong>translate</strong>、<strong>transition</strong> 和 <strong>animation</strong> 这些容易混淆的属性进行梳理归纳，希望帮你一文搞定这些属性。</p>
+<span id="more"></span>
+
+<h1 id="Transform"><a href="#Transform" class="headerlink" title="Transform"></a>Transform</h1><p>CSS 中 <strong>transform</strong> 属性允许元素进行旋转 <em>rotate()</em> ，缩放 <em>scale()</em> ，倾斜 <em>skew()</em> ，平移 <em>translate()</em> 或矩阵 <em>matrix()</em> 等操作，通过修改 CSS 视觉格式化模型的坐标空间实现。</p>
+<p>语法：<code>transform: none | &lt;transform-function&gt;</code></p>
+<p>复合变化应用顺序：从右到左。</p>
+<p><strong>transform-origin</strong> 属性允许设置 <strong>transform</strong> 变化的原点。可以有 1-3 个值分别代表 X，Y，Z 轴的偏移量，其中 X，Y 轴可以为具体长度，百分比或者是关键字，Z 轴只能是具体长度。如果没值则默认为 <em>center</em> 。</p>
+<p>关键字有: left，top，center，right，bottom。</p>
+<p><strong>transform</strong> 常见用法：</p>
+<ol>
+<li>居中操作</li>
+</ol>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.transform-panel</span> &#123;</span><br><span class="line">  <span class="attribute">position</span>: absolute;</span><br><span class="line">  <span class="attribute">right</span>: <span class="number">50%</span>;</span><br><span class="line">  <span class="attribute">left</span>: <span class="number">50%</span>;</span><br><span class="line">  <span class="attribute">transform</span>: <span class="built_in">translate</span>(-<span class="number">50%</span>, -<span class="number">50%</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>元素 <em>hover</em> 时的特殊处理</li>
+</ol>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.transform-panel</span><span class="selector-pseudo">:hover</span> &#123;</span><br><span class="line">  // 放大</span><br><span class="line">  <span class="attribute">transform</span>: <span class="built_in">scale</span>(<span class="number">2</span>, <span class="number">2</span>);</span><br><span class="line">  // 旋转<span class="number">45</span>度</span><br><span class="line">  <span class="attribute">transform</span>: <span class="built_in">rotate</span>(<span class="number">45deg</span>);</span><br><span class="line">  // 向x、y轴偏移</span><br><span class="line">  <span class="attribute">transform</span>: <span class="built_in">translate</span>(<span class="number">12px</span>, <span class="number">50%</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>动态改变元素属性实现动画</li>
+</ol>
+<p>主要通过逻辑改变元素的 <strong>transform</strong> 的值来实现，具体常用场景如：</p>
+<ul>
+<li>弹幕滑动</li>
+<li>小球滚动</li>
+<li>轮播展示</li>
+</ul>
+<h1 id="Translate"><a href="#Translate" class="headerlink" title="Translate"></a>Translate</h1><p>CSS 中的 <strong>translate</strong> 属性允许单独声明元素的平移，并独立于 <strong>transform</strong> 属性。用户不需要通过 <strong>transform</strong> 属性去声明 <strong>translate</strong> 函数，也不需要记住其顺序，在很多涉及平移的场景使用更加友好。</p>
+<p>translate 的值可以为 1-3 个平移量值或者是 <em>none</em> 值，并且当值为 1 个或 2 个时等同于 2D 平移函数 <em>translate()</em> ，当值有 3 个时等同于 3D 平移函数 <em>translate3d()</em> 。</p>
+<h1 id="Transition"><a href="#Transition" class="headerlink" title="Transition"></a>Transition</h1><p>CSS 中的 <strong>transition</strong> 属性定义了元素不同状态的过渡效果，是 <strong>transition-property</strong>、<strong>transition-duration</strong>、<strong>transition-timing-function</strong> 和 <strong>transition-delay</strong> 属性的集合。可以指定多个属性需用逗号分隔。</p>
+<p>语法：<code>transition： property name | duration | timing function | delay</code></p>
+<p><strong>transition-property</strong> 属性：指定应用过渡属性的名称。</p>
+<ul>
+<li>none： 没有过渡动画</li>
+<li>all：所有表现此过渡动画</li>
+<li>&lt;特定属性&gt;</li>
+</ul>
+<p><strong>transition-timing-function</strong> 属性：描述了在过渡过程中的变化速度。可选值有 <em>linear</em> | <em>ease</em> | <em>ease-in-out</em> 等。<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function">查看更多</a></p>
+<p><strong>transition</strong> 常见用法：</p>
+<ol>
+<li>为元素的:hovor，:active 添加动画</li>
+<li>结合 <strong>translate</strong> 更加柔和展示轮播效果</li>
+</ol>
+<h1 id="Animation"><a href="#Animation" class="headerlink" title="Animation"></a>Animation</h1><p>CSS 中的 <strong>animation</strong> 属性用来指定一组或多组动画，是 <strong>animation-name</strong>，<strong>animation-duration</strong>，<strong>animation-timing-function</strong>，<strong>animation-delay</strong>，<strong>animation-iteration-count</strong>，<strong>animation-direction</strong>，<strong>animation-fill-mode</strong> 和 <strong>animation-play-state</strong> 的集合。</p>
+<p>语法：<code>animation：@keyframes name | duration | timing-function | delay | iteration-count | direction | fill-mode | play-state</code></p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>意义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>animation-name</td>
+<td>指定动画名，由@keyframes 定义的动画序列</td>
+</tr>
+<tr>
+<td>animation-duration</td>
+<td>一个动画周期的时长</td>
+</tr>
+<tr>
+<td>animation-timing-function</td>
+<td>定义于一个关键帧区块的缓动函数</td>
+</tr>
+<tr>
+<td>animation-delay</td>
+<td>动画响应延时</td>
+</tr>
+<tr>
+<td>animation-iteration-count</td>
+<td>循环次数，可以为数字或者 infinite</td>
+</tr>
+<tr>
+<td>animation-direction</td>
+<td>播放方向，可选值：normal，reverse，alternate，alternate-reverse</td>
+</tr>
+<tr>
+<td>animation-fill-mode</td>
+<td>动画在执行之前和之后如何将样式应用于其目标，可选值：none，forwards，backwards，both</td>
+</tr>
+<tr>
+<td>animation-play-state</td>
+<td>动画是否运行或者暂停，可选值：paused，running</td>
+</tr>
+</tbody></table>
+<p>在 <strong>animation</strong> 的属性使用过程中需要先创建带名称的 <strong>@keyframes</strong> 关键帧规则，然后设置 <strong>animation-name</strong> 与之相匹配。 <strong>@keyframes</strong> 关键帧能控制 CSS 动画序列中的中间步骤。中间步骤取值：from(0%)，百分比，to(100%)。要注意的是 <em>!important</em> 属性将被忽略。</p>
+<p>一个简单的背景颜色变化 🌰：</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.transform-panel</span> &#123;</span><br><span class="line">  <span class="attribute">width</span>: <span class="number">100px</span>;</span><br><span class="line">  <span class="attribute">height</span>: <span class="number">100px</span>;</span><br><span class="line">  <span class="attribute">background</span>: red;</span><br><span class="line">  <span class="attribute">animation</span>: animationDemo <span class="number">5s</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@keyframes</span> animationDemo &#123;</span><br><span class="line">  <span class="selector-tag">from</span> &#123;</span><br><span class="line">    <span class="attribute">background-color</span>: red;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="number">10%</span> &#123;</span><br><span class="line">    <span class="attribute">background-color</span>: blue;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="number">60%</span> &#123;</span><br><span class="line">    <span class="attribute">background-color</span>: green;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="selector-tag">to</span> &#123;</span><br><span class="line">    <span class="attribute">background-color</span>: yellow;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>animation</strong> 常用使用场景：</p>
+<ol>
+<li>自动执行的过渡动画</li>
+<li>利用 js 触发动画执行、改变动画效果、改变次数等</li>
+</ol>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ul>
+<li>为了更好理解，我对几个名词有个定义：<strong>transform</strong> 是变换、<strong>translate</strong> 是平移、<strong>transition</strong> 是变换的效果、<strong>animation</strong> 是动画。</li>
+<li><strong>transform</strong> 并不是一种动画，要实现动画需要配合 <strong>transition</strong> 和 <strong>animation</strong>。</li>
+<li><strong>translate</strong> 是 <em>translate()</em> 函数独立出来的 CSS 属性</li>
+<li><strong>transition</strong> 的动画只有开始和结束状态，没有中间态，<strong>animation</strong> 可以定义动画中间态。</li>
+<li><strong>transition</strong> 的动画需要触发事件去执行的，<strong>animation</strong> 动画不需要触发可以自定义甚至无限执行。</li>
+<li>结合 js 动态改变属性可以丰富效果。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>CSS</category>
+      </categories>
+      <tags>
+        <tag>transform</tag>
+        <tag>translate</tag>
+        <tag>transition</tag>
+        <tag>animation</tag>
       </tags>
   </entry>
   <entry>

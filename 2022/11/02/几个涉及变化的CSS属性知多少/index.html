@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#333" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#333" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#333">
+  <meta name="baidu-site-verification" content="code-b5GLitMUyE">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.13.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="本文主要对 CSS 中的 transform、translate、transition 和 animation 这些容易混淆的属性进行梳理归纳，希望帮你一文搞定这些属性。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="几个涉及变化的CSS属性知多少">
+<meta property="og:url" content="http://example.com/2022/11/02/%E5%87%A0%E4%B8%AA%E6%B6%89%E5%8F%8A%E5%8F%98%E5%8C%96%E7%9A%84CSS%E5%B1%9E%E6%80%A7%E7%9F%A5%E5%A4%9A%E5%B0%91/index.html">
+<meta property="og:site_name" content="蓝扬阳的博客">
+<meta property="og:description" content="本文主要对 CSS 中的 transform、translate、transition 和 animation 这些容易混淆的属性进行梳理归纳，希望帮你一文搞定这些属性。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-01T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-12-01T13:02:56.381Z">
+<meta property="article:author" content="Jun Yang">
+<meta property="article:tag" content="transform">
+<meta property="article:tag" content="translate">
+<meta property="article:tag" content="transition">
+<meta property="article:tag" content="animation">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2022/11/02/%E5%87%A0%E4%B8%AA%E6%B6%89%E5%8F%8A%E5%8F%98%E5%8C%96%E7%9A%84CSS%E5%B1%9E%E6%80%A7%E7%9F%A5%E5%A4%9A%E5%B0%91/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2022/11/02/%E5%87%A0%E4%B8%AA%E6%B6%89%E5%8F%8A%E5%8F%98%E5%8C%96%E7%9A%84CSS%E5%B1%9E%E6%80%A7%E7%9F%A5%E5%A4%9A%E5%B0%91/","path":"2022/11/02/几个涉及变化的CSS属性知多少/","title":"几个涉及变化的CSS属性知多少"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>几个涉及变化的CSS属性知多少 | 蓝扬阳的博客</title>
+  
+
+  <script src="/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?4941ea79f83fdafda461e6340ad1544b"></script>
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝扬阳的博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">代码生活</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Transform"><span class="nav-text">Transform</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Translate"><span class="nav-text">Translate</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Transition"><span class="nav-text">Transition</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Animation"><span class="nav-text">Animation</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jun Yang"
+      src="/uploads/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Jun Yang</p>
+  <div class="site-description" itemprop="description">欢迎来到Jun的前端游乐园</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jjunyang" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jjunyang" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jjy_yang@163.com" title="E-Mail → mailto:jjy_yang@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/11/02/%E5%87%A0%E4%B8%AA%E6%B6%89%E5%8F%8A%E5%8F%98%E5%8C%96%E7%9A%84CSS%E5%B1%9E%E6%80%A7%E7%9F%A5%E5%A4%9A%E5%B0%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+      <meta itemprop="name" content="Jun Yang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝扬阳的博客">
+      <meta itemprop="description" content="欢迎来到Jun的前端游乐园">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="几个涉及变化的CSS属性知多少 | 蓝扬阳的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          几个涉及变化的CSS属性知多少
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-11-02 00:00:00" itemprop="dateCreated datePublished" datetime="2022-11-02T00:00:00+08:00">2022-11-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/CSS/" itemprop="url" rel="index"><span itemprop="name">CSS</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>本文主要对 CSS 中的 <strong>transform</strong>、<strong>translate</strong>、<strong>transition</strong> 和 <strong>animation</strong> 这些容易混淆的属性进行梳理归纳，希望帮你一文搞定这些属性。</p>
+<span id="more"></span>
+
+<h1 id="Transform"><a href="#Transform" class="headerlink" title="Transform"></a>Transform</h1><p>CSS 中 <strong>transform</strong> 属性允许元素进行旋转 <em>rotate()</em> ，缩放 <em>scale()</em> ，倾斜 <em>skew()</em> ，平移 <em>translate()</em> 或矩阵 <em>matrix()</em> 等操作，通过修改 CSS 视觉格式化模型的坐标空间实现。</p>
+<p>语法：<code>transform: none | &lt;transform-function&gt;</code></p>
+<p>复合变化应用顺序：从右到左。</p>
+<p><strong>transform-origin</strong> 属性允许设置 <strong>transform</strong> 变化的原点。可以有 1-3 个值分别代表 X，Y，Z 轴的偏移量，其中 X，Y 轴可以为具体长度，百分比或者是关键字，Z 轴只能是具体长度。如果没值则默认为 <em>center</em> 。</p>
+<p>关键字有: left，top，center，right，bottom。</p>
+<p><strong>transform</strong> 常见用法：</p>
+<ol>
+<li>居中操作</li>
+</ol>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.transform-panel</span> &#123;</span><br><span class="line">  <span class="attribute">position</span>: absolute;</span><br><span class="line">  <span class="attribute">right</span>: <span class="number">50%</span>;</span><br><span class="line">  <span class="attribute">left</span>: <span class="number">50%</span>;</span><br><span class="line">  <span class="attribute">transform</span>: <span class="built_in">translate</span>(-<span class="number">50%</span>, -<span class="number">50%</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>元素 <em>hover</em> 时的特殊处理</li>
+</ol>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.transform-panel</span><span class="selector-pseudo">:hover</span> &#123;</span><br><span class="line">  // 放大</span><br><span class="line">  <span class="attribute">transform</span>: <span class="built_in">scale</span>(<span class="number">2</span>, <span class="number">2</span>);</span><br><span class="line">  // 旋转<span class="number">45</span>度</span><br><span class="line">  <span class="attribute">transform</span>: <span class="built_in">rotate</span>(<span class="number">45deg</span>);</span><br><span class="line">  // 向x、y轴偏移</span><br><span class="line">  <span class="attribute">transform</span>: <span class="built_in">translate</span>(<span class="number">12px</span>, <span class="number">50%</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>动态改变元素属性实现动画</li>
+</ol>
+<p>主要通过逻辑改变元素的 <strong>transform</strong> 的值来实现，具体常用场景如：</p>
+<ul>
+<li>弹幕滑动</li>
+<li>小球滚动</li>
+<li>轮播展示</li>
+</ul>
+<h1 id="Translate"><a href="#Translate" class="headerlink" title="Translate"></a>Translate</h1><p>CSS 中的 <strong>translate</strong> 属性允许单独声明元素的平移，并独立于 <strong>transform</strong> 属性。用户不需要通过 <strong>transform</strong> 属性去声明 <strong>translate</strong> 函数，也不需要记住其顺序，在很多涉及平移的场景使用更加友好。</p>
+<p>translate 的值可以为 1-3 个平移量值或者是 <em>none</em> 值，并且当值为 1 个或 2 个时等同于 2D 平移函数 <em>translate()</em> ，当值有 3 个时等同于 3D 平移函数 <em>translate3d()</em> 。</p>
+<h1 id="Transition"><a href="#Transition" class="headerlink" title="Transition"></a>Transition</h1><p>CSS 中的 <strong>transition</strong> 属性定义了元素不同状态的过渡效果，是 <strong>transition-property</strong>、<strong>transition-duration</strong>、<strong>transition-timing-function</strong> 和 <strong>transition-delay</strong> 属性的集合。可以指定多个属性需用逗号分隔。</p>
+<p>语法：<code>transition： property name | duration | timing function | delay</code></p>
+<p><strong>transition-property</strong> 属性：指定应用过渡属性的名称。</p>
+<ul>
+<li>none： 没有过渡动画</li>
+<li>all：所有表现此过渡动画</li>
+<li>&lt;特定属性&gt;</li>
+</ul>
+<p><strong>transition-timing-function</strong> 属性：描述了在过渡过程中的变化速度。可选值有 <em>linear</em> | <em>ease</em> | <em>ease-in-out</em> 等。<a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function">查看更多</a></p>
+<p><strong>transition</strong> 常见用法：</p>
+<ol>
+<li>为元素的:hovor，:active 添加动画</li>
+<li>结合 <strong>translate</strong> 更加柔和展示轮播效果</li>
+</ol>
+<h1 id="Animation"><a href="#Animation" class="headerlink" title="Animation"></a>Animation</h1><p>CSS 中的 <strong>animation</strong> 属性用来指定一组或多组动画，是 <strong>animation-name</strong>，<strong>animation-duration</strong>，<strong>animation-timing-function</strong>，<strong>animation-delay</strong>，<strong>animation-iteration-count</strong>，<strong>animation-direction</strong>，<strong>animation-fill-mode</strong> 和 <strong>animation-play-state</strong> 的集合。</p>
+<p>语法：<code>animation：@keyframes name | duration | timing-function | delay | iteration-count | direction | fill-mode | play-state</code></p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>意义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>animation-name</td>
+<td>指定动画名，由@keyframes 定义的动画序列</td>
+</tr>
+<tr>
+<td>animation-duration</td>
+<td>一个动画周期的时长</td>
+</tr>
+<tr>
+<td>animation-timing-function</td>
+<td>定义于一个关键帧区块的缓动函数</td>
+</tr>
+<tr>
+<td>animation-delay</td>
+<td>动画响应延时</td>
+</tr>
+<tr>
+<td>animation-iteration-count</td>
+<td>循环次数，可以为数字或者 infinite</td>
+</tr>
+<tr>
+<td>animation-direction</td>
+<td>播放方向，可选值：normal，reverse，alternate，alternate-reverse</td>
+</tr>
+<tr>
+<td>animation-fill-mode</td>
+<td>动画在执行之前和之后如何将样式应用于其目标，可选值：none，forwards，backwards，both</td>
+</tr>
+<tr>
+<td>animation-play-state</td>
+<td>动画是否运行或者暂停，可选值：paused，running</td>
+</tr>
+</tbody></table>
+<p>在 <strong>animation</strong> 的属性使用过程中需要先创建带名称的 <strong>@keyframes</strong> 关键帧规则，然后设置 <strong>animation-name</strong> 与之相匹配。 <strong>@keyframes</strong> 关键帧能控制 CSS 动画序列中的中间步骤。中间步骤取值：from(0%)，百分比，to(100%)。要注意的是 <em>!important</em> 属性将被忽略。</p>
+<p>一个简单的背景颜色变化 🌰：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.transform-panel</span> &#123;</span><br><span class="line">  <span class="attribute">width</span>: <span class="number">100px</span>;</span><br><span class="line">  <span class="attribute">height</span>: <span class="number">100px</span>;</span><br><span class="line">  <span class="attribute">background</span>: red;</span><br><span class="line">  <span class="attribute">animation</span>: animationDemo <span class="number">5s</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@keyframes</span> animationDemo &#123;</span><br><span class="line">  <span class="selector-tag">from</span> &#123;</span><br><span class="line">    <span class="attribute">background-color</span>: red;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="number">10%</span> &#123;</span><br><span class="line">    <span class="attribute">background-color</span>: blue;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="number">60%</span> &#123;</span><br><span class="line">    <span class="attribute">background-color</span>: green;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="selector-tag">to</span> &#123;</span><br><span class="line">    <span class="attribute">background-color</span>: yellow;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>animation</strong> 常用使用场景：</p>
+<ol>
+<li>自动执行的过渡动画</li>
+<li>利用 js 触发动画执行、改变动画效果、改变次数等</li>
+</ol>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ul>
+<li>为了更好理解，我对几个名词有个定义：<strong>transform</strong> 是变换、<strong>translate</strong> 是平移、<strong>transition</strong> 是变换的效果、<strong>animation</strong> 是动画。</li>
+<li><strong>transform</strong> 并不是一种动画，要实现动画需要配合 <strong>transition</strong> 和 <strong>animation</strong>。</li>
+<li><strong>translate</strong> 是 <em>translate()</em> 函数独立出来的 CSS 属性</li>
+<li><strong>transition</strong> 的动画只有开始和结束状态，没有中间态，<strong>animation</strong> 可以定义动画中间态。</li>
+<li><strong>transition</strong> 的动画需要触发事件去执行的，<strong>animation</strong> 动画不需要触发可以自定义甚至无限执行。</li>
+<li>结合 js 动态改变属性可以丰富效果。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/transform/" rel="tag"><i class="fa fa-tag"></i> transform</a>
+              <a href="/tags/translate/" rel="tag"><i class="fa fa-tag"></i> translate</a>
+              <a href="/tags/transition/" rel="tag"><i class="fa fa-tag"></i> transition</a>
+              <a href="/tags/animation/" rel="tag"><i class="fa fa-tag"></i> animation</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/10/12/%E4%B8%89%E6%8B%9B%E5%BA%94%E5%AF%B9%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%A4%9A%E6%AC%A1%E8%B7%B3%E8%BD%AC/" rel="prev" title="三招应对小程序多次跳转">
+                  <i class="fa fa-chevron-left"></i> 三招应对小程序多次跳转
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/11/03/JS%E4%B8%AD%E7%9A%84%E5%A3%B0%E6%98%8E%E6%8F%90%E5%8D%87/" rel="next" title="JS 中的声明提升">
+                  JS 中的声明提升 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa-sharp fa-solid fa-star"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jun Yang</span>
+</div>
+<div class="busuanzi-count">
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/jjunyang" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
