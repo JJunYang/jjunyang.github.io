@@ -65,7 +65,7 @@
 <p>假设有一个场景需要渲染一个拥有上千商品的商品列表，且商品数据较为复杂，我们该如何保持其性能呢？</p>
 <span id="more"></span>
 
-<h1 id="小程序长列表渲染初探"><a href="#小程序长列表渲染初探" class="headerlink" title="小程序长列表渲染初探"></a>小程序长列表渲染初探</h1><p><img src="/banner.jpg"></p>
+<h1 id="小程序长列表渲染初探"><a href="#小程序长列表渲染初探" class="headerlink" title="小程序长列表渲染初探"></a>小程序长列表渲染初探</h1><p><img src="banner.png"></p>
 <h2 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h2><p>在前端的业务开发中，列表的渲染是很常见的场景。不管在 Web 端还是小程序，当 DOM 节点越多，每一次重绘对性能的影响也越大。如果一个小程序页面渲染过多的 DOM 节点时，很容易造成页面卡顿、数据渲染较慢甚至白屏问题，当内存占用过多时，页面也会被回收。</p>
 <p>假设有一个场景需要渲染一个拥有上千商品的商品列表，且商品数据较为复杂，我们该如何保持其性能呢？</p>
 <p>Web 端处理此类问题常见的处理方式有两种：</p>
@@ -79,8 +79,8 @@
 <h2 id="二、普通长列表渲染"><a href="#二、普通长列表渲染" class="headerlink" title="二、普通长列表渲染"></a>二、普通长列表渲染</h2><p>普通的长列表我们直接利用 <strong>wx:for</strong> 对列表进行遍历渲染，这里我们模拟构建了长度为 3000 的列表，每个列表项只含有 title 和 image 属性（真实业务场景下可能会更多更复杂）。</p>
 <p>list.wxml 文件:<br><img src="https://files.mdnice.com/user/13305/200a9fb7-a454-4384-9ef1-52c7a5ca9615.png"></p>
 <p>list.ts 文件:<br><img src="https://files.mdnice.com/user/13305/605218d0-7406-440d-adea-0cfcfad60062.png"></p>
-<p>效果展示：<br><img src="https://files.mdnice.com/user/13305/50134869-3e48-4b7a-b2f1-2fff6c122685.gif" width = "220" height = "375" alt="慢滑效果图" align=center /></p>
-<p>同时利用开发者工具中的 Audits 面板对页面进行体验评分，得到以下体验报告：<br><img src="https://files.mdnice.com/user/13305/2f067494-b915-4a65-a943-f7575ffb6266.png" width = "550" height = "385" alt="慢滑效果图" align=center /></p>
+<p>效果展示：<br><img src="https://files.mdnice.com/user/13305/50134869-3e48-4b7a-b2f1-2fff6c122685.gif" width="220" height="375" alt="慢滑效果图" align="center"></p>
+<p>同时利用开发者工具中的 Audits 面板对页面进行体验评分，得到以下体验报告：<br><img src="https://files.mdnice.com/user/13305/2f067494-b915-4a65-a943-f7575ffb6266.png" width="550" height="385" alt="慢滑效果图" align="center"></p>
 <p>我们可以看出我们的列表渲染了太多 WXML 节点，且渲染界面存在耗时过长的情况，最长耗时达到 1495ms。</p>
 <p>另外如果将列表项增加至 4000 以上的话，页面会因为内存问题直接被回收不进行渲染。此处模拟的每个列表项还只是简单的一张图和名称，真实场景下，列表项可能更为复杂，性能也会更差。</p>
 <h2 id="三、应用虚拟列表思想"><a href="#三、应用虚拟列表思想" class="headerlink" title="三、应用虚拟列表思想"></a>三、应用虚拟列表思想</h2><h3 id="1-虚拟列表概念"><a href="#1-虚拟列表概念" class="headerlink" title="1. 虚拟列表概念"></a>1. 虚拟列表概念</h3><p>了解虚拟列表前，我想引入<strong>懒渲染</strong>这概念。懒渲染就是当组件要在视图展示才渲染的一种方案。常见的组件有 Modal 组件，当用户触发了展示事件才会展示，通常由一个字段属性比如 visible 属性去控制展示与否。小程序中的 <a href="https://developers.weixin.qq.com/miniprogram/dev/reference/wxml/conditional.html">wx:if</a> 就是<strong>惰性</strong>的，如果初始渲染条件为<code>false</code>，框架什么都不会做，在条件第一次变为<code>true</code>时才会开始局部渲染，这也是我们实现列表渲染优化的核心。</p>
@@ -110,12 +110,12 @@
 <p><img src="https://files.mdnice.com/user/13305/33f99eef-f0b6-4519-a222-eb2fa4d68998.png"></p>
 <p>list.ts 文件<br><img src="https://files.mdnice.com/user/13305/a1e5856d-b04f-47b0-b086-44879987c7c4.png"></p>
 <p>慢滑效果展示：</p>
-<img src="https://files.mdnice.com/user/13305/0deac704-227e-4706-92fb-f3c587c791c3.gif" width = "220" height = "375" alt="慢滑效果图" align=center />
+<img src="https://files.mdnice.com/user/13305/0deac704-227e-4706-92fb-f3c587c791c3.gif" width="220" height="375" alt="慢滑效果图" align="center">
 
 <p>快滑效果展示：</p>
-<img src="https://files.mdnice.com/user/13305/a744193e-78e9-4d53-9c18-e816c3b28cf8.gif" width = "220" height = "375" alt="慢滑效果图" align=center />
+<img src="https://files.mdnice.com/user/13305/a744193e-78e9-4d53-9c18-e816c3b28cf8.gif" width="220" height="375" alt="慢滑效果图" align="center">
 
-<img src="https://files.mdnice.com/user/13305/497774a8-e235-4d58-8f75-1cd96d4bf922.png" width = "550" height = "450" alt="慢滑效果图" align=center />
+<img src="https://files.mdnice.com/user/13305/497774a8-e235-4d58-8f75-1cd96d4bf922.png" width="550" height="450" alt="慢滑效果图" align="center">
 
 <p>由上体验报告可以看出，通过卸载显示区域以外的节点可以很大程度上优化我们的小程序性能。既避免了使用过大的 WXML 节点数目，又避免了渲染界面耗时过长的情况。与此同时我们又遇到了一个性能问题：<strong>setData 的调用过于频繁</strong>。</p>
 <p>从页面体验来看，在滚动过程中也会有短暂的白屏情况。此外如果滚动速度很快的时候，会存在有节点不能成功卸载导致列表展示出现问题。</p>
@@ -128,20 +128,20 @@
 <p>由于我们是在滚动事件中进行监听并执行 setData，所以随着滚动事件的发生，将会不断触发 setData 执行。因此，这里我们可以对 onPageScroll 引入节流。</p>
 <p>节流函数：<br><img src="https://files.mdnice.com/user/13305/6a83a998-a15e-4142-97ed-a70cb04ad88b.png"></p>
 <p><img src="https://files.mdnice.com/user/13305/e9a5456c-1135-4d1c-a6a4-21a50f795b7b.png"></p>
-<p>效果展示：<br><img src="https://files.mdnice.com/user/13305/056f62bb-875d-4bd7-9bf2-830be10dd5d6.gif" width = "220" height = "375" alt="慢滑效果图" align=center /></p>
-<img src="https://files.mdnice.com/user/13305/9b7a30fa-84a3-4e3c-aa3b-a23b40c0899f.png" width = "550" height = "390" alt="慢滑效果图" align=center />
+<p>效果展示：<br><img src="https://files.mdnice.com/user/13305/056f62bb-875d-4bd7-9bf2-830be10dd5d6.gif" width="220" height="375" alt="慢滑效果图" align="center"></p>
+<img src="https://files.mdnice.com/user/13305/9b7a30fa-84a3-4e3c-aa3b-a23b40c0899f.png" width="550" height="390" alt="慢滑效果图" align="center">
 
 <p>从体验评分上来看，我们的方案在性能和体验方面满足了要求。然而当屏幕快速滚动时由于节流的缘故，没法保证 curFIndex 与 firstIndex 以及 curLIndex 与 lastIndex 之间的差值为 1，所以只对首末项进行操作容易使我们的列表出现遗漏的情况。</p>
 <p>Tips:节流不能把间隔设置太长，毕竟太长了也会导致卡顿。</p>
 <h3 id="5-列表遗漏问题处理"><a href="#5-列表遗漏问题处理" class="headerlink" title="5. 列表遗漏问题处理"></a>5. 列表遗漏问题处理</h3><p>由于是 curFIndex 与 firstIndex 以及 curLIndex 与 lastIndex 之间的差值不能保证不超过 1 的缘故，我们需要将此之间的值进行统一处理，以达到快速滚动时改变能覆盖到所有涉及列表项。修改 onPageScroll 中的滚动事件：<br><img src="https://files.mdnice.com/user/13305/23dc67d1-99d2-4c00-b794-c12044a031b6.png"></p>
 <p>一开始想当然用了两个简单的循环渲染，滚动慢的话没有问题，可一旦滚动过快导致一次更新中 curFIndex &gt; lastIndex 时，本该隐藏的列表项又被展示了，同理向上滑也是一样。因此，为了能让列表统一，计算获得容器内的列表项的项数，以此来对列表下方项数进行操作。同时也要保证显示视图中的最后一项始终保持展示。<br><img src="https://files.mdnice.com/user/13305/db7fb9e0-4d3b-455d-8ba6-47906437a3ee.png"></p>
 <p>效果展示：</p>
-<img src="https://files.mdnice.com/user/13305/754debe0-346c-4e84-adbe-0374408c9bb8.gif" width = "220" height = "375" alt="慢滑效果图" align=center />
+<img src="https://files.mdnice.com/user/13305/754debe0-346c-4e84-adbe-0374408c9bb8.gif" width="220" height="375" alt="慢滑效果图" align="center">
 
 <p>至此，我们的列表已经可以完整的展示，但是还需要解决白屏闪动问题。</p>
 <h3 id="6-白屏闪动优化"><a href="#6-白屏闪动优化" class="headerlink" title="6. 白屏闪动优化"></a>6. 白屏闪动优化</h3><p>由于我们现在对列表的处理都是依照显示区域的第一项进行操作，当列表项数很大时快速上下滚动很容易产生短暂的白屏。要解决此问题引入的方案就是添加“缓冲区”。也就是在可视区域的上下部分额外添加渲染的节点，来防止白屏的出现。通过<strong>bufferNum</strong>字段控制缓冲区要展示的列表项数。<br><img src="https://files.mdnice.com/user/13305/20ae13d4-eea2-4ff3-a7f6-7c9092c200c6.png"></p>
 <p>对于 bufferNum 值的设置，这里采取微信 recycle-view 的方案，渲染当前屏幕前后两个屏幕的内容。</p>
-<p>效果展示：<br><img src="https://files.mdnice.com/user/13305/bb124ec7-6440-4d07-8e30-ad2ad79cf2c8.gif" width = "220" height = "375" alt="慢滑效果图" align=center /></p>
+<p>效果展示：<br><img src="https://files.mdnice.com/user/13305/bb124ec7-6440-4d07-8e30-ad2ad79cf2c8.gif" width="220" height="375" alt="慢滑效果图" align="center"></p>
 <p>至此，一个虚拟列表的实现已经完成，可以支持我们继续增加列表的长度或者增加列表项的复杂度。</p>
 <h3 id="7-添加-showListConfig-配置"><a href="#7-添加-showListConfig-配置" class="headerlink" title="7. 添加 showListConfig 配置"></a>7. 添加 showListConfig 配置</h3><p>原先的实现是通过改变列表数据，为列表的每一项数据额外添加 isDisplay 字段去控制列表是否展示。这样会污染原数据，并且在添加新数据时会引起新旧两个列表的不一致。改进后：额外用 showListConfig 数组来控制列表项的展示与否，同时监听列表数据，如果有改变则对新增的列表项进行设置。</p>
 <p>Component: virtual-list.ts<br><img src="https://files.mdnice.com/user/13305/f664c912-0cec-440d-a8d8-aee3543464d0.png"></p>
@@ -201,7 +201,7 @@
 <p>virtual-observer.ts:<br><img src="https://files.mdnice.com/user/13305/c37c146a-b0b4-47f2-8ce5-b96f2e5ff374.png"></p>
 <p>调用：<br><img src="https://files.mdnice.com/user/13305/56bbeb8c-3ad4-467a-8da9-9b2834acab73.png"></p>
 <p>效果展示：<br><img src="https://files.mdnice.com/user/13305/e4e2f1ac-1d2a-4368-8b12-c5d99365b7be.gif"></p>
-<img src="https://files.mdnice.com/user/13305/18069053-5785-4cbc-92e1-4c3294b99d36.png" width = "550" height = "325" alt="慢滑效果图" align=center />
+<img src="https://files.mdnice.com/user/13305/18069053-5785-4cbc-92e1-4c3294b99d36.png" width="550" height="325" alt="慢滑效果图" align="center">
 
 <p>此方案由于为了给每一个 list-item 组件都添加对应的 IntersectionObserver，所以每个 item 节点都需要存在，卸载的是内部的内容，所以如果列表很长的话节点数变多不可避免。其次尽管未显示的列表项我们不进行内部渲染，但由于根节点还是需要存在，所以可能会影响初次加载性能。</p>
 <p>考虑的优化方案：</p>
@@ -213,19 +213,19 @@
 <p>因为 IntersectionObserver Api 是对节点的监听，所以无法做到被监听的节点卸载，方案不可行。</p>
 <p><strong>方案二：懒加载</strong></p>
 <p>同之前方法一样，当页面触发了 onReachBottom 方法时，添加新的列表项与列表最后。</p>
-<p>修改初次加载列表项为 30 个，每次触底加载 10 个后：<br><img src="https://files.mdnice.com/user/13305/50ec7e7b-fd8a-40b8-b384-7ad148e64e4c.png" width = "550" height = "435" alt="慢滑效果图" align=center /></p>
-<p>效果展示：<br><img src="https://files.mdnice.com/user/13305/29f696af-d59a-4021-abda-e92f6ed8f06d.gif" width = "220" height = "375" alt="慢滑效果图" align=center /></p>
+<p>修改初次加载列表项为 30 个，每次触底加载 10 个后：<br><img src="https://files.mdnice.com/user/13305/50ec7e7b-fd8a-40b8-b384-7ad148e64e4c.png" width="550" height="435" alt="慢滑效果图" align="center"></p>
+<p>效果展示：<br><img src="https://files.mdnice.com/user/13305/29f696af-d59a-4021-abda-e92f6ed8f06d.gif" width="220" height="375" alt="慢滑效果图" align="center"></p>
 <p>由于无法将监听节点卸载，当列表项数少时可以达到预期效果。但当列表项过多时，最大子节点数与子节点数会超过预期，影响性能。</p>
-<h2 id="五、实际应用"><a href="#五、实际应用" class="headerlink" title="五、实际应用"></a>五、实际应用</h2><p>现阶段的项目中的商品列表页中使用的是懒加载的方式，每次调取接口获取 10 项列表数据添加到商品列表底部，同时也并没有对页面进行节点卸载。利用小程序开发工具的 Audits 进行评分发现只加载了 30 个列表项性能就出了“使用了过大的 WXML 节点数目”问题。<br><img src="https://files.mdnice.com/user/13305/0e9183e4-6520-4d3e-a9cb-79b8bcf6e5b3.png" width = "550" height = "410" alt="慢滑效果图" align=center /></p>
+<h2 id="五、实际应用"><a href="#五、实际应用" class="headerlink" title="五、实际应用"></a>五、实际应用</h2><p>现阶段的项目中的商品列表页中使用的是懒加载的方式，每次调取接口获取 10 项列表数据添加到商品列表底部，同时也并没有对页面进行节点卸载。利用小程序开发工具的 Audits 进行评分发现只加载了 30 个列表项性能就出了“使用了过大的 WXML 节点数目”问题。<br><img src="https://files.mdnice.com/user/13305/0e9183e4-6520-4d3e-a9cb-79b8bcf6e5b3.png" width="550" height="410" alt="慢滑效果图" align="center"></p>
 <p><strong>IntersectionObserver 监听</strong></p>
 <p>利用上述的思想，将商品的一行展示视为列表的一项，对其进行监听，当其离开视图可见区域则对其内部节点进行卸载。</p>
 <p>原来的.wxml 文件<br><img src="https://files.mdnice.com/user/13305/9604cd4a-4e78-4e76-ba78-eb27ca5b209c.png"></p>
 <p>修改后的.wxml 文件<br><img src="https://files.mdnice.com/user/13305/6f35de42-965f-45c1-9b25-c090c11932e0.png"></p>
-<p>调整后商品列表页性能：<br><img src="https://files.mdnice.com/user/13305/3d1798c4-42f7-4ff3-a784-ca881e2f4e5f.png" width = "550" height = "320" alt="慢滑效果图" align=center /></p>
-<p>然而随着商品加载越来越多，最大子节点数超过了标准：<br><img src="https://files.mdnice.com/user/13305/6ec69c6c-f91b-4094-83c4-46c069abf83f.png" width = "550" height = "325" alt="慢滑效果图" align=center /></p>
+<p>调整后商品列表页性能：<br><img src="https://files.mdnice.com/user/13305/3d1798c4-42f7-4ff3-a784-ca881e2f4e5f.png" width="550" height="320" alt="慢滑效果图" align="center"></p>
+<p>然而随着商品加载越来越多，最大子节点数超过了标准：<br><img src="https://files.mdnice.com/user/13305/6ec69c6c-f91b-4094-83c4-46c069abf83f.png" width="550" height="325" alt="慢滑效果图" align="center"></p>
 <p>从上图可见，应用了此方案解决了最大节点数超出预期的问题，在列表项小于 60 个的时候能够很大程度上改进商品列表的整体体验评分，也进一步优化了性能；但如果列表项超过 60 个时，性能也会因为子节点数过多而降低。</p>
 <p><strong>滚动监听</strong></p>
-<p>将列表项用 scroll-view 组件包装，并进行滚动监听。唯一不同的是因为列表项是两行并排展示，所以列表的行数需要统一除以 2，包括配置数组 showListConfig 的长度也对应需要除以 2，得到 Audits 体验评分如下：<br><img src="https://files.mdnice.com/user/13305/45b48b8c-b41f-4249-8155-fc218e7e336d.png" width = "550" height = "265" alt="慢滑效果图" align=center /></p>
+<p>将列表项用 scroll-view 组件包装，并进行滚动监听。唯一不同的是因为列表项是两行并排展示，所以列表的行数需要统一除以 2，包括配置数组 showListConfig 的长度也对应需要除以 2，得到 Audits 体验评分如下：<br><img src="https://files.mdnice.com/user/13305/45b48b8c-b41f-4249-8155-fc218e7e336d.png" width="550" height="265" alt="慢滑效果图" align="center"></p>
 <h2 id="六、总结"><a href="#六、总结" class="headerlink" title="六、总结"></a>六、总结</h2><h3 id="1-虚拟长列表-Vs-懒加载"><a href="#1-虚拟长列表-Vs-懒加载" class="headerlink" title="1. 虚拟长列表 Vs 懒加载"></a>1. 虚拟长列表 Vs 懒加载</h3><p>虚拟长列表：</p>
 <ul>
 <li>优点：可以尽可能减少渲染在页面上的节点数</li>
@@ -478,7 +478,7 @@
 <h4 id="gt-gt-Better-Comments"><a href="#gt-gt-Better-Comments" class="headerlink" title="&gt;&gt; Better Comments"></a>&gt;&gt; Better Comments</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments">Better Comments</a> 插件能够帮助开发者建立更多交互友好的代码注释，包括警告、TODOs、高亮以及其他所有自行设立的标注。此插件结合 Todo Tree 可以完美的实现标签、todo、注释高亮方面的功能。<br>配置推荐：</p>
 <figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="attr">&quot;better-comments.tags&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;tag&quot;</span><span class="punctuation">:</span> <span class="string">&quot;!&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;color&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#FF2D00&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;strikethrough&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;underline&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;backgroundColor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;transparent&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bold&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;italic&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;tag&quot;</span><span class="punctuation">:</span> <span class="string">&quot;?&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;color&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#3498DB&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;strikethrough&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;underline&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;backgroundColor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;transparent&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bold&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;italic&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;tag&quot;</span><span class="punctuation">:</span> <span class="string">&quot;//&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;color&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#474747&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;strikethrough&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;underline&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;backgroundColor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;transparent&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bold&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;italic&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;tag&quot;</span><span class="punctuation">:</span> <span class="string">&quot;todo&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;color&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#FF8C00&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;strikethrough&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;underline&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;backgroundColor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;transparent&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bold&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;italic&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;tag&quot;</span><span class="punctuation">:</span> <span class="string">&quot;*&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;color&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#98C379&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;strikethrough&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;underline&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;backgroundColor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;transparent&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bold&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;italic&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;tag&quot;</span><span class="punctuation">:</span> <span class="string">&quot;fix&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;color&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#DC143C&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;strikethrough&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;underline&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;backgroundColor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;transparent&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bold&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;italic&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
 
-<img src="https://files.mdnice.com/user/13305/2b9b8a75-d457-45c4-be60-05da4973846f.png" width="50%" height="50%" />
+<img src="https://files.mdnice.com/user/13305/2b9b8a75-d457-45c4-be60-05da4973846f.png" width="50%" height="50%">
 
 <h4 id="gt-gt-REST-Client"><a href="#gt-gt-REST-Client" class="headerlink" title="&gt;&gt; REST Client"></a>&gt;&gt; REST Client</h4><p>在测试 REST API 的时候大家可能会选择 cURL 命令或者 Postman 工具，而在 VScode 中，REST Client 插件可以很好的完成我们的测试任务，它同时支持了 cURL 和 RFC2616 两种标准来调用 REST API。</p>
 <ul>
@@ -526,7 +526,7 @@
 <li>导出代码到项目，运行查看结果。<br><img src="https://files.mdnice.com/user/13305/b3d60f1b-6323-43d1-9076-c4c3d5769fbe.png"></li>
 </ol>
 <h4 id="gt-gt-Code-Spell-Checker"><a href="#gt-gt-Code-Spell-Checker" class="headerlink" title="&gt;&gt; Code Spell Checker"></a>&gt;&gt; Code Spell Checker</h4><p>一款基本的拼写检查工具同时支持驼峰式命名。此拼写检查器的目标是帮助捕获常见的拼写错误。当出现的单词没有收录在字典里时，将会产生波浪线下划线。可以利用快捷键 <code>Command+.</code> 看到推荐的修复方式：相似单词推荐或者添加新单词入字典库。</p>
-<img src="https://files.mdnice.com/user/13305/4f91a2db-db83-4012-bf29-ee28cfec2700.png" width="50%" height="50%" />
+<img src="https://files.mdnice.com/user/13305/4f91a2db-db83-4012-bf29-ee28cfec2700.png" width="50%" height="50%">
 
 <h3 id="3-Git-相关插件"><a href="#3-Git-相关插件" class="headerlink" title="3. Git 相关插件"></a>3. Git 相关插件</h3><h4 id="gt-gt-Git-Graph"><a href="#gt-gt-Git-Graph" class="headerlink" title="&gt;&gt; Git Graph"></a>&gt;&gt; Git Graph</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph">Git Graph</a> 插件能够将 git 历史操作用图表的形式展现出来，并在图表上提供了简单的 git 操作。点击左下角状态栏中的 Git Graph 按钮，进入 Git Graph 图表界面。</p>
 <ul>
@@ -542,7 +542,7 @@
 </ul>
 <p><img src="https://files.mdnice.com/user/13305/b5fec513-6c5e-4f3d-b844-d515c2309c93.png"></p>
 <h4 id="gt-gt-Git-History"><a href="#gt-gt-Git-History" class="headerlink" title="&gt;&gt; Git History"></a>&gt;&gt; Git History</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=donjayamanne.githistory">Git History</a> 是另一款帮助开发者进行 git 操作的插件。安装此插件后，开发者可以右键自己想要查看的文件查看文件历史(包括分支历史、文件历史、行历史和作者历史)，也可以进行文件对比、cherry-picking 操作、创建 tag 标签、创建分支，进行 reset 和 revert 操作等等。</p>
-<img src="https://files.mdnice.com/user/13305/eb0b00c1-88e9-4503-933d-81d9e5a1d314.png" width="30%" height="30%" />
+<img src="https://files.mdnice.com/user/13305/eb0b00c1-88e9-4503-933d-81d9e5a1d314.png" width="30%" height="30%">
 
 <p>优势：</p>
 <ol>
@@ -558,12 +558,12 @@
 <figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="attr">&quot;bracket-pair-colorizer-2.colors&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;Gold&quot;</span><span class="punctuation">,</span><span class="string">&quot;Orchid&quot;</span><span class="punctuation">,</span><span class="string">&quot;LightSkyBlue&quot;</span><span class="punctuation">,</span><span class="string">&quot;AntiqueWhite&quot;</span><span class="punctuation">,</span><span class="string">&quot;Chocolate&quot;</span><span class="punctuation">,</span><span class="string">&quot;Chartreuse&quot;</span><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
 
 <p><code>bracket-pair-colorizer-2.colorMode</code>属性用来设置括号使用颜色池的类型</p>
-<img src="https://files.mdnice.com/user/13305/b27e4db9-dfff-4067-99bb-91f6ea2f48ed.png" />
-<img src="https://files.mdnice.com/user/13305/a98342d5-5050-475e-ab2d-dd68a3f4c633.png" />
+<img src="https://files.mdnice.com/user/13305/b27e4db9-dfff-4067-99bb-91f6ea2f48ed.png">
+<img src="https://files.mdnice.com/user/13305/a98342d5-5050-475e-ab2d-dd68a3f4c633.png">
 
 <p><code>bracket-pair-colorizer-2.forceUniqueOpeningColor</code>属性可以用来设置相邻括号的颜色的使用规则</p>
-<img src="https://files.mdnice.com/user/13305/9ef88ba2-2963-4cd5-b4ba-59df1de32139.png" />
-<img src="https://files.mdnice.com/user/13305/5ae8eb41-0182-490e-b9ab-80e2f91b3b1c.png" />
+<img src="https://files.mdnice.com/user/13305/9ef88ba2-2963-4cd5-b4ba-59df1de32139.png">
+<img src="https://files.mdnice.com/user/13305/5ae8eb41-0182-490e-b9ab-80e2f91b3b1c.png">
 
 <p>最后效果图：</p>
 <p><img src="https://files.mdnice.com/user/13305/bfdcba4d-adfc-4d32-afa5-ec17387d81a0.png"></p>
@@ -574,7 +574,7 @@
 <p><img src="https://files.mdnice.com/user/13305/0e8b2810-1e0b-4a5d-b4d9-8120aae9fe9b.png"></p>
 <h4 id="gt-gt-Color-the-tag-name"><a href="#gt-gt-Color-the-tag-name" class="headerlink" title="&gt;&gt; Color the tag name"></a>&gt;&gt; Color the tag name</h4><p>此插件能够为 html 的标签添加颜色，同时在 react 的组件中也能生效。</p>
 <p>效果图：</p>
-<img src="https://files.mdnice.com/user/13305/d6bfea6b-0616-4798-bc83-621d55c6d1a1.png" width="70%" height="70%"/>
+<img src="https://files.mdnice.com/user/13305/d6bfea6b-0616-4798-bc83-621d55c6d1a1.png" width="70%" height="70%">
 
 <h4 id="gt-gt-Color-Highlight"><a href="#gt-gt-Color-Highlight" class="headerlink" title="&gt;&gt; Color Highlight"></a>&gt;&gt; Color Highlight</h4><p>此插件能够在编辑器中突出网页的颜色</p>
 <h3 id="5-注释相关插件"><a href="#5-注释相关插件" class="headerlink" title="5. 注释相关插件"></a>5. 注释相关插件</h3><h4 id="gt-gt-Vscode-Fileheader"><a href="#gt-gt-Vscode-Fileheader" class="headerlink" title="&gt;&gt; Vscode-Fileheader"></a>&gt;&gt; Vscode-Fileheader</h4><p>此插件能够提供顶部注释模板，可定义作者、时间等信息，并会自动更新最后修改时间。利用快捷键 Control+Option+I 快速生成顶部注释。配置 setting 不生效，坑！！！</p>
@@ -596,7 +596,7 @@
 <figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="attr">&quot;docthis.includeDescriptionTag&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line"><span class="attr">&quot;docthis.includeAuthorTag&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line"><span class="attr">&quot;docthis.authorName&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Jun&quot;</span><span class="punctuation">,</span></span><br><span class="line"><span class="attr">&quot;docthis.includeMemberOfOnClassMembers&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line"><span class="attr">&quot;docthis.includeMemberOfOnInterfaceMembers&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line"><span class="attr">&quot;docthis.includeDateTag&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br></pre></td></tr></table></figure>
 
 <p>效果图：</p>
-<img src="https://files.mdnice.com/user/13305/94ce88f3-b0f8-4177-aa4c-e1ccb07d9626.png" width="70%" height="70%"/>
+<img src="https://files.mdnice.com/user/13305/94ce88f3-b0f8-4177-aa4c-e1ccb07d9626.png" width="70%" height="70%">
 
 <h3 id="6-Markdown-相关插件"><a href="#6-Markdown-相关插件" class="headerlink" title="6. Markdown 相关插件"></a>6. Markdown 相关插件</h3><h4 id="gt-gt-Markdown-Preview-Enhanced"><a href="#gt-gt-Markdown-Preview-Enhanced" class="headerlink" title="&gt;&gt; Markdown Preview Enhanced"></a>&gt;&gt; Markdown Preview Enhanced</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=shd101wyy.markdown-preview-enhanced">Markdown Preview Enhanced</a> 扩展为我们在编写 md 文件时提供了许多有用的功能，例如自动滚动同步、数学排版、PDF 导出、代码块、演示文稿编写器等。</p>
 <h4 id="gt-gt-Markdown-All-in-One"><a href="#gt-gt-Markdown-All-in-One" class="headerlink" title="&gt;&gt; Markdown All in One"></a>&gt;&gt; Markdown All in One</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one">Markdown All in One</a> 插件提供了编辑 Markdown 文件的所有功能需要：快捷键、表格样式、列表操作、自动预览等。此插件配合上<a href="https://mdnice.com/">墨滴</a>，就可以满足编写.md 文件的绝大部分需求。</p>
