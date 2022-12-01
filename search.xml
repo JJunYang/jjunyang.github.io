@@ -1,0 +1,709 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>实战中了解useRef</title>
+    <url>/2022/09/27/%E5%AE%9E%E6%88%98%E4%B8%AD%E4%BA%86%E8%A7%A3useRef/</url>
+    <content><![CDATA[<p>在 React 数据流中，props 是父子组件交互的唯一方式，要修改一个子组件只能通过改变 props 重新渲染。而 refs 提供了另一种方式，允许我们操作 DOM 元素和组件实例，及 Refs 提供了一种获取在渲染过程中生成的 DOM 节点和 React 元素的新方式。</p>
+<span id="more"></span>
+
+<h1 id="DOM-和-Refs"><a href="#DOM-和-Refs" class="headerlink" title="DOM 和 Refs"></a>DOM 和 Refs</h1><p>在 React 数据流中，props 是父子组件交互的唯一方式，要修改一个子组件只能通过改变 props 重新渲染。而 refs 提供了另一种方式，允许我们操作 DOM 元素和组件实例，及 Refs 提供了一种获取在渲染过程中生成的 DOM 节点和 React 元素的新方式。</p>
+<p>React 中有两种创建 ref 的方式<code>createRef()</code>和<code>useRef()</code>，本文只针对后者进行介绍。</p>
+<p><code>const ref = useRef(initValue)</code></p>
+<p>上面这一行就是 useRef 的用法啦，别看他简单，里面可有不少玄机～</p>
+<p>按照 React 官方文档的介绍，useRef 返回了一个可变对象，其.current 属性被入参 initValue 初始化，返回的值将保存在组件的完整生命周期内。</p>
+<h1 id="useRef-的几种用法"><a href="#useRef-的几种用法" class="headerlink" title="useRef()的几种用法"></a>useRef()的几种用法</h1><ul>
+<li>存储值，类似实例变量</li>
+<li>结合 forwardRef 和 useImperativeHandle hook 实现函数组件 ref 转发</li>
+<li>连接 DOM，这里可有坑喔～</li>
+</ul>
+<h2 id="用法一：值存储"><a href="#用法一：值存储" class="headerlink" title="用法一：值存储"></a>用法一：值存储</h2><p>因为 useRef 在组件每次 render 后返回值都是同一个，所以它可以用来存储一些在组件生命周期内都不会变化的值。可以把它理解成全局的一个变量。</p>
+<p>定义：<code>const myRef = useRef(initValue)</code></p>
+<p>使用：<code>console.log(myRef.current)</code></p>
+<h2 id="用法二：转发"><a href="#用法二：转发" class="headerlink" title="用法二：转发"></a>用法二：转发</h2><p>使用 forwardRef 包裹函数组件并获取实例</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">RefGuideChild</span>: <span class="title class_">React</span>.<span class="property">FC</span> = <span class="title class_">React</span>.<span class="title function_">memo</span>(</span><br><span class="line">  <span class="title function_">forwardRef</span>(<span class="function">(<span class="params">props, ref</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      <span class="language-xml"><span class="tag">&lt;<span class="name">button</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">        <span class="attr">ref</span>=<span class="string">&#123;ref&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">        <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> &#123;</span></span><br><span class="line"><span class="language-xml">          console.log(&#x27;触发点击！&#x27;);</span></span><br><span class="line"><span class="language-xml">        &#125;&#125;</span></span><br><span class="line"><span class="language-xml">      /&gt;</span></span><br><span class="line">    );</span><br><span class="line">  &#125;)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">RefGuideParent</span>: <span class="title class_">React</span>.<span class="property">FC</span> = <span class="title class_">React</span>.<span class="title function_">memo</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> childRef = <span class="title function_">useRef</span>(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">  <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    childRef.<span class="property">current</span>.<span class="title function_">click</span>();</span><br><span class="line">  &#125;, []);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">RefGuideChild</span> <span class="attr">ref</span>=<span class="string">&#123;childRef&#125;</span> /&gt;</span></span>;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>在上述例子中 RefGuideParent 组件拿到了 RefGuideChild 的实例并使用了 click 方法，当然也可以使用其他 DOM 方法，但是仔细的人发现，在这种情况下父组件将可以毫无限制的操纵子组件 DOM，这是不推荐的，应该用 useImperativeHandle 来限制暴露给父组件的方法：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">RefGuideChild</span>: <span class="title class_">React</span>.<span class="property">FC</span> = <span class="title class_">React</span>.<span class="title function_">memo</span>(</span><br><span class="line">  <span class="title function_">forwardRef</span>(<span class="function">(<span class="params">props, ref</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> btnRef = <span class="title function_">useRef</span>(<span class="literal">null</span>);</span><br><span class="line">    <span class="title function_">useImperativeHandle</span>(ref, <span class="function">() =&gt;</span> (&#123;</span><br><span class="line">      <span class="attr">click</span>: <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        btnRef.<span class="property">current</span>.<span class="title function_">click</span>();</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">customerFn</span>: <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;自定义方法&#x27;</span>);</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;));</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      <span class="language-xml"><span class="tag">&lt;<span class="name">button</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">        <span class="attr">ref</span>=<span class="string">&#123;btnRef&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">        <span class="attr">style</span>=<span class="string">&#123;&#123;</span> <span class="attr">color:</span> &#x27;<span class="attr">red</span>&#x27; &#125;&#125;</span></span></span><br><span class="line"><span class="tag"><span class="language-xml">        <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> &#123;</span></span><br><span class="line"><span class="language-xml">          console.log(&#x27;触发点击！&#x27;);</span></span><br><span class="line"><span class="language-xml">        &#125;&#125;</span></span><br><span class="line"><span class="language-xml">        onBlur=&#123;() =&gt; &#123;</span></span><br><span class="line"><span class="language-xml">          console.log(&#x27;触发blur！&#x27;);</span></span><br><span class="line"><span class="language-xml">        &#125;&#125;</span></span><br><span class="line"><span class="language-xml">      &gt;</span></span><br><span class="line"><span class="language-xml">        按钮</span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">  &#125;)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">RefGuideParent</span>: <span class="title class_">React</span>.<span class="property">FC</span> = <span class="title class_">React</span>.<span class="title function_">memo</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> childRef = <span class="title function_">useRef</span>(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">  <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    childRef.<span class="property">current</span>.<span class="title function_">click</span>();</span><br><span class="line">    childRef.<span class="property">current</span>.<span class="title function_">customerFn</span>();</span><br><span class="line">  &#125;, []);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">RefGuideChild</span> <span class="attr">ref</span>=<span class="string">&#123;childRef&#125;</span> /&gt;</span></span>;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>改造后子组件可以将方法暴露给父组件调用，同时又可以在内部维护自己的 ref，父子组件可以实现完美通信。</p>
+<h2 id="用法三：连接-DOM"><a href="#用法三：连接-DOM" class="headerlink" title="用法三：连接 DOM"></a>用法三：连接 DOM</h2><p>其实在用法二中就已经体现了，使用 useRef 定义完后赋值给组件节点的 ref 属性。这里我想讲一下在实际场景中我遇到的坑供大家在未来参考。</p>
+<p>先表述一下笔者的场景，笔者项目的某一子菜单要从父菜单 A 移入菜单 B，并且需要针对 B 菜单生成蒙层提示用户，蒙层组件的实现需要依据菜单 B 节点定位。</p>
+<p>蒙层组件的使用，会依据 content 的内容生成弹出气泡，定位依照 element 属性的节点定位，代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;Link to=&#123;href&#125; ref=&#123;menuRef&#125;&gt;菜单B&lt;/Link&gt;</span><br><span class="line">&lt;Guide</span><br><span class="line">  className=&#123;styles[&#x27;guide-wrap&#x27;]&#125;</span><br><span class="line">  visible=&#123;visible&#125;</span><br><span class="line">  onVisibleChange=&#123;(v) =&gt; &#123;</span><br><span class="line">    setVisible(v);</span><br><span class="line">    setDone(&#x27;done&#x27;);</span><br><span class="line">  &#125;&#125;</span><br><span class="line">  content=&#123;[</span><br><span class="line">    &#123;</span><br><span class="line">      description: (</span><br><span class="line">        &lt;span style=&#123;&#123; whiteSpace: &#x27;pre-wrap&#x27; &#125;&#125;&gt;</span><br><span class="line">          相关功能已迁移至此</span><br><span class="line">        &lt;/span&gt;</span><br><span class="line">      ),</span><br><span class="line">      element: menuRef.current!,</span><br><span class="line">      placement: &#x27;right&#x27;,</span><br><span class="line">    &#125;,</span><br><span class="line">  ]&#125;</span><br><span class="line">/&gt;</span><br></pre></td></tr></table></figure>
+
+<p>添加生成逻辑，利用 useLocalStorageState 中存储的<code>&#39;GUIDE&#39;</code>值实现浏览器只需展示一次，后续进入不展示蒙层的功能：</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> menuRef = <span class="title function_">useRef</span>(<span class="literal">null</span>);</span><br><span class="line"><span class="keyword">const</span> [visible, setVisible] = <span class="title function_">useState</span>(<span class="literal">false</span>);</span><br><span class="line"><span class="keyword">const</span> [done, setDone] = <span class="title function_">useLocalStorageState</span>(<span class="string">&#x27;GUIDE&#x27;</span>, <span class="string">&#x27;&#x27;</span>);</span><br><span class="line"><span class="comment">/** 启动蒙层 */</span></span><br><span class="line"><span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (!done) &#123;</span><br><span class="line">    <span class="title function_">setVisible</span>(<span class="literal">true</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;, [done]);</span><br></pre></td></tr></table></figure>
+
+<p>至此刷新页面，蒙层展示，点击确定后再次刷新，蒙层不展示，功能实现达到预期！</p>
+<p>然后当笔者退出登录后清除 localStorage 数据，重新登录项目，发现首次并没有展示蒙层，反而是点击其他菜单后才展示，但是刷新页面又正常。为了验证是否是功能问题，笔者新起了一个简单页面就只有一个蒙层组件和指向节点，发现不管如何蒙层展示都没问题。为什么会出现这诡异的现象呢？</p>
+<p>推测：在蒙层组件渲染展示的时候，ref 未完成挂载。</p>
+<p>蒙层组件 Guide 明明已经设置了 visible 属性为 true 为什么还不展示呢，笔者试着将 menuRef.current 通过 console 打印发现，首次进入时 menuRef.current 值为 null，后续每次 render 的值都是我们要的菜单节点，罪魁祸首找到了！现在去看看<a href="https://reactjs.org/docs/hooks-reference.html#useref">官网的文档</a>：useRef 不会告诉你什么时候它的内容改变，.current 属性改变也不会引起重新渲染！！</p>
+<p>再仔细读了<a href="https://reactjs.org/docs/hooks-effect.html">useEffect 官方文档</a>，有这么两句话 You might find it easier to think that effects happen “after render”. React guarantees the DOM has been updated by the time it runs the effects. 就是说我们可以认为 useEffect 是在 render 后执行的，react 替我们保证了 DOM 更新完成前 useEffect 均已执行。</p>
+<p>总结一下原因：结合 useEffect 的执行顺序：组件更新挂载完成-&gt;浏览器 DOM 绘制完成 -&gt; 执行 useEffect 回调，且 useRef 的改变不会引起组件的重新渲染，造成此现象的原因是 ref 挂载晚于组件渲染完成，即渲染蒙层组件时 ref 还未成功挂载至节点，后续挂载成功后由于.current 变化不会引起重新渲染所以导致蒙层组件不会展示。</p>
+<p>解决整体思路：在 ref 挂载完成后，触发组件能够重新渲染即可。</p>
+<p>解决方式一：设置 setTimeout，即修改蒙层是否展示逻辑</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="comment">/** 启动蒙层 */</span></span><br><span class="line"><span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (!done) &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="title function_">setVisible</span>(<span class="literal">true</span>);</span><br><span class="line">    &#125;, <span class="number">100</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;, [done]);</span><br></pre></td></tr></table></figure>
+
+<p>解决方式二：使用 callback ref</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">const targetNode = useRef(null);</span><br><span class="line"></span><br><span class="line">const menuNodeRef = useCallback((node) =&gt; &#123;</span><br><span class="line">  if (node !== null) &#123;</span><br><span class="line">    targetNode.current = node;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;, []);</span><br><span class="line"></span><br><span class="line">// 同时改造目标节点ref和蒙层组件content中的element属性</span><br><span class="line">&lt;Link to=&#123;href&#125; ref=&#123;menuNodeRef&#125;&gt;菜单B&lt;/Link&gt;</span><br><span class="line">&lt;Guide</span><br><span class="line">  className=&#123;styles[&#x27;guide-wrap&#x27;]&#125;</span><br><span class="line">  visible=&#123;visible&#125;</span><br><span class="line">  onVisibleChange=&#123;(v) =&gt; &#123;</span><br><span class="line">    setVisible(v);</span><br><span class="line">    setDone(&#x27;done&#x27;);</span><br><span class="line">  &#125;&#125;</span><br><span class="line">  content=&#123;[</span><br><span class="line">    &#123;</span><br><span class="line">      description: (</span><br><span class="line">        &lt;span style=&#123;&#123; whiteSpace: &#x27;pre-wrap&#x27; &#125;&#125;&gt;</span><br><span class="line">          相关功能已迁移至此</span><br><span class="line">        &lt;/span&gt;</span><br><span class="line">      ),</span><br><span class="line">      element: targetNode!,</span><br><span class="line">      placement: &#x27;right&#x27;,</span><br><span class="line">    &#125;,</span><br><span class="line">  ]&#125;</span><br><span class="line">/&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>callback ref</strong> 能够实现在 ref 挂载后再进行逻辑处理，也保证了 ref 必有值。也推荐使用这种方式处理类似的问题。</p>
+<p>至此，问题也解决啦～</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>每次渲染 useRef 的返回值都相同（相同引用），所以尽量不要用 myRef.current 作为依赖项，可以将其视为全局的一个变量。</p>
+<p>我们可以用 useRef 获取真实 DOM 元素，但是要注意.current 改变不会引起组件重新渲染，要想在 ref 挂载完成后调用其他方法，需要使用官方给出的<a href="https://zh-hans.reactjs.org/docs/hooks-faq.html#how-can-i-measure-a-dom-node">callback ref</a></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://reactjs.org/docs/hooks-reference.html#useref">React useRef 官方文档</a></p>
+]]></content>
+      <tags>
+        <tag>React</tag>
+        <tag>Hooks</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>小程序长列表渲染初探</title>
+    <url>/2022/02/24/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E9%95%BF%E5%88%97%E8%A1%A8%E6%B8%B2%E6%9F%93%E5%88%9D%E6%8E%A2/</url>
+    <content><![CDATA[<p>在前端的业务开发中，列表的渲染是很常见的场景。不管在 Web 端还是小程序，当 DOM 节点越多，每一次重绘对性能的影响也越大。如果一个小程序页面渲染过多的 DOM 节点时，很容易造成页面卡顿、数据渲染较慢甚至白屏问题，当内存占用过多时，页面也会被回收。</p>
+<p>假设有一个场景需要渲染一个拥有上千商品的商品列表，且商品数据较为复杂，我们该如何保持其性能呢？</p>
+<span id="more"></span>
+
+<h1 id="小程序长列表渲染初探"><a href="#小程序长列表渲染初探" class="headerlink" title="小程序长列表渲染初探"></a>小程序长列表渲染初探</h1><p><img src="/banner.jpg"></p>
+<h2 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h2><p>在前端的业务开发中，列表的渲染是很常见的场景。不管在 Web 端还是小程序，当 DOM 节点越多，每一次重绘对性能的影响也越大。如果一个小程序页面渲染过多的 DOM 节点时，很容易造成页面卡顿、数据渲染较慢甚至白屏问题，当内存占用过多时，页面也会被回收。</p>
+<p>假设有一个场景需要渲染一个拥有上千商品的商品列表，且商品数据较为复杂，我们该如何保持其性能呢？</p>
+<p>Web 端处理此类问题常见的处理方式有两种：</p>
+<ul>
+<li>进行分页操作</li>
+<li>虚拟列表</li>
+</ul>
+<p>分页操作就是我们常见的点击上一页、下一页跳转方案，通过设置每一页的列表数量实现定量加载，替换原先的列表数据，实现列表的更新，保证一次的加载数量固定。</p>
+<p>在小程序侧，由于分页操作方案需要用户参与点击操作，在用户体验上并不友好，并且上下页跳转的按钮大小等交互问题也会很大程度影响用户的体验。更多的用户还是喜欢能够无限滚动的长列表，只需要向下滚动就能看到新的列表内容。特别是在移动端，相信大部分人在逛淘宝、刷微博的时候只喜欢向下滚动，而不是通过点击下一页查看新内容。</p>
+<p>本篇文章将会从一个普通长列表入手一步步改造实现结合懒加载和虚拟列表思想的长列表渲染以及如何在现有项目中引入此方案进行优化。</p>
+<h2 id="二、普通长列表渲染"><a href="#二、普通长列表渲染" class="headerlink" title="二、普通长列表渲染"></a>二、普通长列表渲染</h2><p>普通的长列表我们直接利用 <strong>wx:for</strong> 对列表进行遍历渲染，这里我们模拟构建了长度为 3000 的列表，每个列表项只含有 title 和 image 属性（真实业务场景下可能会更多更复杂）。</p>
+<p>list.wxml 文件:<br><img src="https://files.mdnice.com/user/13305/200a9fb7-a454-4384-9ef1-52c7a5ca9615.png"></p>
+<p>list.ts 文件:<br><img src="https://files.mdnice.com/user/13305/605218d0-7406-440d-adea-0cfcfad60062.png"></p>
+<p>效果展示：<br><img src="https://files.mdnice.com/user/13305/50134869-3e48-4b7a-b2f1-2fff6c122685.gif" width = "220" height = "375" alt="慢滑效果图" align=center /></p>
+<p>同时利用开发者工具中的 Audits 面板对页面进行体验评分，得到以下体验报告：<br><img src="https://files.mdnice.com/user/13305/2f067494-b915-4a65-a943-f7575ffb6266.png" width = "550" height = "385" alt="慢滑效果图" align=center /></p>
+<p>我们可以看出我们的列表渲染了太多 WXML 节点，且渲染界面存在耗时过长的情况，最长耗时达到 1495ms。</p>
+<p>另外如果将列表项增加至 4000 以上的话，页面会因为内存问题直接被回收不进行渲染。此处模拟的每个列表项还只是简单的一张图和名称，真实场景下，列表项可能更为复杂，性能也会更差。</p>
+<h2 id="三、应用虚拟列表思想"><a href="#三、应用虚拟列表思想" class="headerlink" title="三、应用虚拟列表思想"></a>三、应用虚拟列表思想</h2><h3 id="1-虚拟列表概念"><a href="#1-虚拟列表概念" class="headerlink" title="1. 虚拟列表概念"></a>1. 虚拟列表概念</h3><p>了解虚拟列表前，我想引入<strong>懒渲染</strong>这概念。懒渲染就是当组件要在视图展示才渲染的一种方案。常见的组件有 Modal 组件，当用户触发了展示事件才会展示，通常由一个字段属性比如 visible 属性去控制展示与否。小程序中的 <a href="https://developers.weixin.qq.com/miniprogram/dev/reference/wxml/conditional.html">wx:if</a> 就是<strong>惰性</strong>的，如果初始渲染条件为<code>false</code>，框架什么都不会做，在条件第一次变为<code>true</code>时才会开始局部渲染，这也是我们实现列表渲染优化的核心。</p>
+<p>什么是虚拟列表？</p>
+<p>虚拟列表并没有官方的解释，其实只是一个概念名词，不同人有不同解读。可以将其理解为一种对长列表渲染的优化方案，它不会一次性渲染全部的长列表，而是按需渲染，让用户无感知使用了长列表，且达到无限滚动的效果。虚拟列表更像是一种懒渲染的特殊场景。</p>
+<h3 id="2-虚拟列表原理"><a href="#2-虚拟列表原理" class="headerlink" title="2. 虚拟列表原理"></a>2. 虚拟列表原理</h3><p>虚拟列表是只对可视区域的元素进行渲染，而对离开可视区域的元素进行卸载，从而达到按需渲染的一种列表数据展示方案。</p>
+<p>从下图可见，虚拟列表一般由四部分组成：</p>
+<ol>
+<li>真实列表区：列表滚动区，含全部列表可滚动内容</li>
+<li>可视区：用户可见区域</li>
+<li>渲染区：需要渲染的区域</li>
+<li>缓冲区：为了优化列表，减少闪动而提前渲染的区域</li>
+</ol>
+<p><img src="https://files.mdnice.com/user/13305/dc3e10cb-9bf9-4d22-b411-75ed2fc3686a.png"></p>
+<p>可视区和缓冲区共同组成的渲染区都将被渲染，渲染区以外的真实列表区都将不被渲染，像 Item1 这类已被渲染过的节点也会被卸载。</p>
+<h3 id="3-节点卸载实现"><a href="#3-节点卸载实现" class="headerlink" title="3. 节点卸载实现"></a>3. 节点卸载实现</h3><p>普通长列表是利用<strong>wx:for</strong>对列表项直接进行加载渲染。<br><img src="https://files.mdnice.com/user/13305/5ffeb452-db3a-44c4-834f-5ddf0ed403c2.png"></p>
+<p>为了能够实现节点卸载，首先更改 wxml 的结构，在用 wx:for 进行列表渲染的同时添加<code>wx:if=&quot;&#123;&#123;item.isDisplay&#125;&#125;&quot;</code>来对不在显示区域的元素的进行卸载。为了保证滚动过程中滚动位置的准确需要在列表上方添加元素并设置高度等于卸载列表项的高度和，保持整体列表的高度不变，以达到卸载元素没有被移除的效果。</p>
+<p><img src="https://files.mdnice.com/user/13305/c90da4cc-f4c7-42ac-9ed1-96a5e479215a.png"></p>
+<p>然后设置列表元素的高度和列表项数，在页面的 onLoad 函数中计算得到显示区域的高度和显示区域中的最后一项的 index，在初次构建 listData 时将此 index 以后的列表项的 isDisplay 属性设置为 false 阻止其在页面渲染。</p>
+<p>计算容器内的列表项数：<br><img src="https://files.mdnice.com/user/13305/eb7d0aff-ef3f-4e2f-bb6a-663b8ca1eab6.png"></p>
+<p>添加 onPageScroll 监听页面滚动：</p>
+<ul>
+<li>列表向下滚动时保证当前显示区域内的最后一项处于显示，且判断显示区域的第一项是否更新，如果更新（说明原列表第一项从上方移除），则将其卸载</li>
+<li>向上滚动时保证当前显示区域内的第一项处于显示，且判断显示区域的最后一项是否更新，如果更新（说明原列表最后一项从下方移除），则将其卸载</li>
+<li>更新 firstIndex、lastIndex、aboveHideNum、belowHideNum、oldScrollTop 值</li>
+</ul>
+<p><img src="https://files.mdnice.com/user/13305/33f99eef-f0b6-4519-a222-eb2fa4d68998.png"></p>
+<p>list.ts 文件<br><img src="https://files.mdnice.com/user/13305/a1e5856d-b04f-47b0-b086-44879987c7c4.png"></p>
+<p>慢滑效果展示：</p>
+<img src="https://files.mdnice.com/user/13305/0deac704-227e-4706-92fb-f3c587c791c3.gif" width = "220" height = "375" alt="慢滑效果图" align=center />
+
+<p>快滑效果展示：</p>
+<img src="https://files.mdnice.com/user/13305/a744193e-78e9-4d53-9c18-e816c3b28cf8.gif" width = "220" height = "375" alt="慢滑效果图" align=center />
+
+<img src="https://files.mdnice.com/user/13305/497774a8-e235-4d58-8f75-1cd96d4bf922.png" width = "550" height = "450" alt="慢滑效果图" align=center />
+
+<p>由上体验报告可以看出，通过卸载显示区域以外的节点可以很大程度上优化我们的小程序性能。既避免了使用过大的 WXML 节点数目，又避免了渲染界面耗时过长的情况。与此同时我们又遇到了一个性能问题：<strong>setData 的调用过于频繁</strong>。</p>
+<p>从页面体验来看，在滚动过程中也会有短暂的白屏情况。此外如果滚动速度很快的时候，会存在有节点不能成功卸载导致列表展示出现问题。</p>
+<h3 id="4-性能优化"><a href="#4-性能优化" class="headerlink" title="4. 性能优化"></a>4. 性能优化</h3><p><strong>setData 优化</strong></p>
+<p>微信官方文档对 <a href="https://developers.weixin.qq.com/miniprogram/dev/framework/performance/tips/runtime_setData.html">setData 优化</a>有很详细的说明。</p>
+<p>setData 应只用来进行渲染相关的数据更新。用 setData 的方式更新渲染无关的字段，会触发额外的渲染流程，或者增加传输的数据量，影响渲染耗时。需要将页面或组件渲染无关的数据移入非 data 的字段下</p>
+<p>因为在滚动过程中会涉及到对 listData 中的一组数据的改变，在循环遍历时将会频繁调用 setData 很大程度影响性能。这时候应当将改变的数据统一收集然后一次性处理。</p>
+<p>For example:<br><img src="https://files.mdnice.com/user/13305/adcd8f2e-3031-4e06-b152-1a33824d5352.png"></p>
+<p><strong>节流</strong></p>
+<p>由于我们是在滚动事件中进行监听并执行 setData，所以随着滚动事件的发生，将会不断触发 setData 执行。因此，这里我们可以对 onPageScroll 引入节流。</p>
+<p>节流函数：<br><img src="https://files.mdnice.com/user/13305/6a83a998-a15e-4142-97ed-a70cb04ad88b.png"></p>
+<p><img src="https://files.mdnice.com/user/13305/e9a5456c-1135-4d1c-a6a4-21a50f795b7b.png"></p>
+<p>效果展示：<br><img src="https://files.mdnice.com/user/13305/056f62bb-875d-4bd7-9bf2-830be10dd5d6.gif" width = "220" height = "375" alt="慢滑效果图" align=center /></p>
+<img src="https://files.mdnice.com/user/13305/9b7a30fa-84a3-4e3c-aa3b-a23b40c0899f.png" width = "550" height = "390" alt="慢滑效果图" align=center />
+
+<p>从体验评分上来看，我们的方案在性能和体验方面满足了要求。然而当屏幕快速滚动时由于节流的缘故，没法保证 curFIndex 与 firstIndex 以及 curLIndex 与 lastIndex 之间的差值为 1，所以只对首末项进行操作容易使我们的列表出现遗漏的情况。</p>
+<p>Tips:节流不能把间隔设置太长，毕竟太长了也会导致卡顿。</p>
+<h3 id="5-列表遗漏问题处理"><a href="#5-列表遗漏问题处理" class="headerlink" title="5. 列表遗漏问题处理"></a>5. 列表遗漏问题处理</h3><p>由于是 curFIndex 与 firstIndex 以及 curLIndex 与 lastIndex 之间的差值不能保证不超过 1 的缘故，我们需要将此之间的值进行统一处理，以达到快速滚动时改变能覆盖到所有涉及列表项。修改 onPageScroll 中的滚动事件：<br><img src="https://files.mdnice.com/user/13305/23dc67d1-99d2-4c00-b794-c12044a031b6.png"></p>
+<p>一开始想当然用了两个简单的循环渲染，滚动慢的话没有问题，可一旦滚动过快导致一次更新中 curFIndex &gt; lastIndex 时，本该隐藏的列表项又被展示了，同理向上滑也是一样。因此，为了能让列表统一，计算获得容器内的列表项的项数，以此来对列表下方项数进行操作。同时也要保证显示视图中的最后一项始终保持展示。<br><img src="https://files.mdnice.com/user/13305/db7fb9e0-4d3b-455d-8ba6-47906437a3ee.png"></p>
+<p>效果展示：</p>
+<img src="https://files.mdnice.com/user/13305/754debe0-346c-4e84-adbe-0374408c9bb8.gif" width = "220" height = "375" alt="慢滑效果图" align=center />
+
+<p>至此，我们的列表已经可以完整的展示，但是还需要解决白屏闪动问题。</p>
+<h3 id="6-白屏闪动优化"><a href="#6-白屏闪动优化" class="headerlink" title="6. 白屏闪动优化"></a>6. 白屏闪动优化</h3><p>由于我们现在对列表的处理都是依照显示区域的第一项进行操作，当列表项数很大时快速上下滚动很容易产生短暂的白屏。要解决此问题引入的方案就是添加“缓冲区”。也就是在可视区域的上下部分额外添加渲染的节点，来防止白屏的出现。通过<strong>bufferNum</strong>字段控制缓冲区要展示的列表项数。<br><img src="https://files.mdnice.com/user/13305/20ae13d4-eea2-4ff3-a7f6-7c9092c200c6.png"></p>
+<p>对于 bufferNum 值的设置，这里采取微信 recycle-view 的方案，渲染当前屏幕前后两个屏幕的内容。</p>
+<p>效果展示：<br><img src="https://files.mdnice.com/user/13305/bb124ec7-6440-4d07-8e30-ad2ad79cf2c8.gif" width = "220" height = "375" alt="慢滑效果图" align=center /></p>
+<p>至此，一个虚拟列表的实现已经完成，可以支持我们继续增加列表的长度或者增加列表项的复杂度。</p>
+<h3 id="7-添加-showListConfig-配置"><a href="#7-添加-showListConfig-配置" class="headerlink" title="7. 添加 showListConfig 配置"></a>7. 添加 showListConfig 配置</h3><p>原先的实现是通过改变列表数据，为列表的每一项数据额外添加 isDisplay 字段去控制列表是否展示。这样会污染原数据，并且在添加新数据时会引起新旧两个列表的不一致。改进后：额外用 showListConfig 数组来控制列表项的展示与否，同时监听列表数据，如果有改变则对新增的列表项进行设置。</p>
+<p>Component: virtual-list.ts<br><img src="https://files.mdnice.com/user/13305/f664c912-0cec-440d-a8d8-aee3543464d0.png"></p>
+<p>virtual-list.wxml<br><img src="https://files.mdnice.com/user/13305/34bbeb74-fbb9-47a8-be7e-aa7056b47025.png"></p>
+<h3 id="8-懒加载"><a href="#8-懒加载" class="headerlink" title="8. 懒加载"></a>8. 懒加载</h3><p>我们的初始的 3000 条数据是在页面 onLoad 中模拟生成的，真实场景下我们的列表数据都是从接口获得的，我们没法保证一个接口在获取 3000 条甚至更多数据时还能有良好的性能，一旦接口过慢，也会影响我们的首屏展示时间。且处理过长 showListConfig 配置也会有时间消耗，因此引入懒加载的概念。</p>
+<p>什么是懒加载？</p>
+<p>懒加载是一种浏览海量信息的方式，基本功能是当用户划过已加载的内容后，更多的内容可以被加载。</p>
+<p>懒加载 &amp;&amp; 分页</p>
+<p>在 Web 端，我们可以设置一个列表的最多展示列表项，并通过翻页按钮重新获取数据并替换列表中的值。同样利用此思想，在小程序端，我们可以通过触底事件调取接口数据，且每次只调取部分数据加入到列表底端实现性能的优化。现阶段商品列表的展示就是采用这种方案避免首次渲染过慢的情况发生。</p>
+<p>两者都是每次调取接口获取一小部分列表数据，不同的是：懒加载不对已有数据进行覆盖更新，每次获取数据后添加至列表底部；分页中获取的数据会替换原来数据更新列表进行展示。</p>
+<p>懒加载的问题：同样需要卸载节点！！否则当数据增加后依然会导致节点数量过多。</p>
+<p>利用懒加载的思想对原先列表进行改造，模拟滚动到底部调取新数据加入到列表，且首次不再加载那么多列表项。</p>
+<p><img src="https://files.mdnice.com/user/13305/0a1fba44-fc52-4e93-abbf-ef8d39981f92.png"></p>
+<p>Tips：真实场景中也可以增加 loading 来表示数据的加载过程，这里不做展示。</p>
+<p>此时我们完成了懒加载和虚拟列表思想的结合。</p>
+<h3 id="9-结合-scroll-view-实现"><a href="#9-结合-scroll-view-实现" class="headerlink" title="9. 结合 scroll-view 实现"></a>9. 结合 scroll-view 实现</h3><p>上述实现是直接基于页面滚动事件对列表进行操作，在使用时并不是十分方便，且在真实场景中更多情况下列表的可视区域并不是整个页面。下面就实现了将虚拟列表封装在 scroll-view 中，并且将滚动监听移入 scroll-view 的 bindscroll 方法中。</p>
+<p>应用懒加载后已经支持列表划到底部增加新的数据，但是新数据暂时还是在组件内部写死，需要将事件透传出去在外部统一调取新数据，而不是在内部对列表数据进行操作。在组件内的 onScrollEnd 方法内调用 triggerEvent 方法<code>this.triggerEvent(&#39;scrollToEnd&#39;);</code>同时绑定 scrollToEnd 方法<code>bindscrollToEnd=&quot;onScrollEnd&quot;</code>支持用户在 onScrollEnd 中自定义对列表数据进行处理。</p>
+<p>virtual-list.wxml 文件<br><img src="https://files.mdnice.com/user/13305/18bc2e9f-6e1a-4f02-971f-e5298a4f8415.png"></p>
+<p>virtual-list.ts 文件<br><img src="https://files.mdnice.com/user/13305/f5ea142a-1d20-4702-9070-67778ecff288.png"></p>
+<h3 id="10-支持调用传入列表项样式"><a href="#10-支持调用传入列表项样式" class="headerlink" title="10. 支持调用传入列表项样式"></a>10. 支持调用传入列表项样式</h3><p>更改使用 slot 支持调用方传入列表项的样式。</p>
+<p>组件样式:<br><img src="https://files.mdnice.com/user/13305/9fda9c59-d772-40a6-80cb-cf6ebaacf46e.png"></p>
+<p>调用:<br><img src="https://files.mdnice.com/user/13305/280ade4b-11c5-4d86-9cfb-e9a2526c3f64.png"></p>
+<h3 id="11-前后对比"><a href="#11-前后对比" class="headerlink" title="11. 前后对比"></a>11. 前后对比</h3><p>如果想要知道 setData 引发界面更新的开销，可以使用更新性能统计信息接口<a href="https://developers.weixin.qq.com/miniprogram/dev/framework/custom-component/update-perf-stat.html">setUpdatePerformanceListener</a>记录滚动过程中渲染更新最大耗时。下面是我对普通长列表渲染和使用上述方案渲染长列表的 5 次首次渲染耗时记录对比：</p>
+<table>
+<thead>
+<tr>
+<th>更新前</th>
+<th>更新后</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1128</td>
+<td>76</td>
+</tr>
+<tr>
+<td>1075</td>
+<td>67</td>
+</tr>
+<tr>
+<td>1003</td>
+<td>63</td>
+</tr>
+<tr>
+<td>1101</td>
+<td>66</td>
+</tr>
+<tr>
+<td>1029</td>
+<td>73</td>
+</tr>
+</tbody></table>
+<p>由于普通长列表是一次性全部渲染所以耗时相对特别长，改用懒渲染加节点卸载后，首次渲染耗时能够大幅度降低，且能够避免 WXML 节点超过最大要求而引起的性能降低。</p>
+<h2 id="四、IntersectionObserver-方式实现"><a href="#四、IntersectionObserver-方式实现" class="headerlink" title="四、IntersectionObserver 方式实现"></a>四、IntersectionObserver 方式实现</h2><p>上述的两种方案都是在监听滚动事件的基础上完成对列表项的卸载。下面将尝试将监听封装在列表项内部用 IntersectionObserver Api 实现组件的卸载。</p>
+<p><a href="https://developers.weixin.qq.com/miniprogram/dev/api/wxml/IntersectionObserver.html">IntersectionObserver</a> 对象，用于推断某些节点是否可以被用户看见、有多大比例可以被用户看见。</p>
+<p>在组件节点中添加特有 id 辨识<code>id=&quot;list-item-&#123;&#123;rowIndex&#125;&#125;&quot;</code>同时添加 IntersectionObserver 对其进行监听。为了让其能够像上述两方案一样支持缓冲区列表项加载，在 relativeToViewport 参数中设置 top 和 bottom 的属性。</p>
+<p>virtual-observer.wxml:<br><img src="https://files.mdnice.com/user/13305/baea4224-208d-4a3c-abe9-e00d33d498a9.png"></p>
+<p>virtual-observer.ts:<br><img src="https://files.mdnice.com/user/13305/c37c146a-b0b4-47f2-8ce5-b96f2e5ff374.png"></p>
+<p>调用：<br><img src="https://files.mdnice.com/user/13305/56bbeb8c-3ad4-467a-8da9-9b2834acab73.png"></p>
+<p>效果展示：<br><img src="https://files.mdnice.com/user/13305/e4e2f1ac-1d2a-4368-8b12-c5d99365b7be.gif"></p>
+<img src="https://files.mdnice.com/user/13305/18069053-5785-4cbc-92e1-4c3294b99d36.png" width = "550" height = "325" alt="慢滑效果图" align=center />
+
+<p>此方案由于为了给每一个 list-item 组件都添加对应的 IntersectionObserver，所以每个 item 节点都需要存在，卸载的是内部的内容，所以如果列表很长的话节点数变多不可避免。其次尽管未显示的列表项我们不进行内部渲染，但由于根节点还是需要存在，所以可能会影响初次加载性能。</p>
+<p>考虑的优化方案：</p>
+<ol>
+<li>卸载完整 list-item 组件，而不是只卸载内部内容</li>
+<li>引入懒加载思想</li>
+</ol>
+<p><strong>方案一：卸载完整 list-item 组件</strong></p>
+<p>因为 IntersectionObserver Api 是对节点的监听，所以无法做到被监听的节点卸载，方案不可行。</p>
+<p><strong>方案二：懒加载</strong></p>
+<p>同之前方法一样，当页面触发了 onReachBottom 方法时，添加新的列表项与列表最后。</p>
+<p>修改初次加载列表项为 30 个，每次触底加载 10 个后：<br><img src="https://files.mdnice.com/user/13305/50ec7e7b-fd8a-40b8-b384-7ad148e64e4c.png" width = "550" height = "435" alt="慢滑效果图" align=center /></p>
+<p>效果展示：<br><img src="https://files.mdnice.com/user/13305/29f696af-d59a-4021-abda-e92f6ed8f06d.gif" width = "220" height = "375" alt="慢滑效果图" align=center /></p>
+<p>由于无法将监听节点卸载，当列表项数少时可以达到预期效果。但当列表项过多时，最大子节点数与子节点数会超过预期，影响性能。</p>
+<h2 id="五、实际应用"><a href="#五、实际应用" class="headerlink" title="五、实际应用"></a>五、实际应用</h2><p>现阶段的项目中的商品列表页中使用的是懒加载的方式，每次调取接口获取 10 项列表数据添加到商品列表底部，同时也并没有对页面进行节点卸载。利用小程序开发工具的 Audits 进行评分发现只加载了 30 个列表项性能就出了“使用了过大的 WXML 节点数目”问题。<br><img src="https://files.mdnice.com/user/13305/0e9183e4-6520-4d3e-a9cb-79b8bcf6e5b3.png" width = "550" height = "410" alt="慢滑效果图" align=center /></p>
+<p><strong>IntersectionObserver 监听</strong></p>
+<p>利用上述的思想，将商品的一行展示视为列表的一项，对其进行监听，当其离开视图可见区域则对其内部节点进行卸载。</p>
+<p>原来的.wxml 文件<br><img src="https://files.mdnice.com/user/13305/9604cd4a-4e78-4e76-ba78-eb27ca5b209c.png"></p>
+<p>修改后的.wxml 文件<br><img src="https://files.mdnice.com/user/13305/6f35de42-965f-45c1-9b25-c090c11932e0.png"></p>
+<p>调整后商品列表页性能：<br><img src="https://files.mdnice.com/user/13305/3d1798c4-42f7-4ff3-a784-ca881e2f4e5f.png" width = "550" height = "320" alt="慢滑效果图" align=center /></p>
+<p>然而随着商品加载越来越多，最大子节点数超过了标准：<br><img src="https://files.mdnice.com/user/13305/6ec69c6c-f91b-4094-83c4-46c069abf83f.png" width = "550" height = "325" alt="慢滑效果图" align=center /></p>
+<p>从上图可见，应用了此方案解决了最大节点数超出预期的问题，在列表项小于 60 个的时候能够很大程度上改进商品列表的整体体验评分，也进一步优化了性能；但如果列表项超过 60 个时，性能也会因为子节点数过多而降低。</p>
+<p><strong>滚动监听</strong></p>
+<p>将列表项用 scroll-view 组件包装，并进行滚动监听。唯一不同的是因为列表项是两行并排展示，所以列表的行数需要统一除以 2，包括配置数组 showListConfig 的长度也对应需要除以 2，得到 Audits 体验评分如下：<br><img src="https://files.mdnice.com/user/13305/45b48b8c-b41f-4249-8155-fc218e7e336d.png" width = "550" height = "265" alt="慢滑效果图" align=center /></p>
+<h2 id="六、总结"><a href="#六、总结" class="headerlink" title="六、总结"></a>六、总结</h2><h3 id="1-虚拟长列表-Vs-懒加载"><a href="#1-虚拟长列表-Vs-懒加载" class="headerlink" title="1. 虚拟长列表 Vs 懒加载"></a>1. 虚拟长列表 Vs 懒加载</h3><p>虚拟长列表：</p>
+<ul>
+<li>优点：可以尽可能减少渲染在页面上的节点数</li>
+<li>缺点：轻微闪动的情况还是会存在，增加了 buffer 缓冲区还是没法完全避免在非常快速滚动的情况下不闪动。</li>
+</ul>
+<p>懒加载：</p>
+<ul>
+<li>优点：能够防止因为用户快速滚动出现的闪动，通过添加触底的 loading 加载效果能进一步优化交互体验（我们项目商品列表的实现方式）</li>
+<li>缺点：随着用户不断的滚动，将会有越来越多的节点渲染到页面，如果滑到底部将会渲染整个列表</li>
+</ul>
+<p>如果项目严格要求节点数量且能够接受闪动，那么虚拟列表可以满足条件。如果不能接受闪动，而可以接受最终大量节点数量，那么可以优先选择懒加载。</p>
+<p>如果已经使用虚拟列表且希望提高首屏渲染速度，可以考虑虚拟长列表结合懒加载的方式。</p>
+<h3 id="2-Scroll-滚动监听-Vs-IntersectionObserver"><a href="#2-Scroll-滚动监听-Vs-IntersectionObserver" class="headerlink" title="2. Scroll 滚动监听 Vs IntersectionObserver"></a>2. Scroll 滚动监听 Vs IntersectionObserver</h3><p>两者都是监听的方式</p>
+<p>滚动监听事件中会有大量计算，就算添加了节流优化滚动事件还是会被大量调用，且需要记录 scrollTop、元素高度等滚动相关数据。</p>
+<p>利用 IntersectionObserver 可以避免大量计算，但是只能做到内部节点卸载，监听的根节点还是需要存在，依旧会引发子节点数过多问题。此方案用来卸载节点还是有不足，但是可以应用于一些固定的模块，比如监听列表<strong>加载更多组件</strong>的位置，如果进入视图则调取接口获取新数据等。</p>
+<h3 id="3-最后"><a href="#3-最后" class="headerlink" title="3. 最后"></a>3. 最后</h3><p>本文是对长列表的初步探索和实现，希望这篇文章对你能有所帮助。当然还有一定的局限比如列表项的高度需要固定、如何抽成组件复用等，这也是后续要改进的方向，也欢迎交流讨论。</p>
+<h2 id="七、参考资料"><a href="#七、参考资料" class="headerlink" title="七、参考资料"></a>七、参考资料</h2><p>在写这篇文章的过程中，笔者查看了很多开源项目，也参考了很多文章，相对给我启发较大的有以下：</p>
+<ul>
+<li><a href="https://github.com/clauderic/react-tiny-virtual-list">React Tiny Virtual List</a></li>
+<li><a href="https://github.com/wensiyuanseven/lite-virtual-list">lite-virtual-list</a></li>
+<li><a href="https://github.com/bvaughn/react-virtualized">React Virtualized</a></li>
+<li><a href="https://juejin.cn/post/6844903893441183751">长列表优化之虚拟列表</a></li>
+<li><a href="https://juejin.cn/post/6844904008667103240">长列表怎么优化</a></li>
+<li><a href="https://juejin.cn/post/6844903729460674567">在 React 项目中，如何优雅的优化长列表</a></li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
+    <title>打造你的开发利器</title>
+    <url>/2021/02/10/%E6%89%93%E9%80%A0%E4%BD%A0%E7%9A%84%E5%BC%80%E5%8F%91%E5%88%A9%E5%99%A8/</url>
+    <content><![CDATA[<blockquote>
+<p>前言：作为一只程序猿，一套趁手的开发工具就像一把利器能极大程度地提高开发效率。曾在会上见识过软件使用率极高的同事，能够在极短的时间内打开开发软件，调用各类功能命令，而双手却几乎没有离开过键盘，这也让我意识到效率的重要性。今天我们就来聊一聊如何打造你的开发利器。</p>
+</blockquote>
+<span id="more"></span>
+
+<h1 id="一、Mac-终端工具"><a href="#一、Mac-终端工具" class="headerlink" title="一、Mac 终端工具"></a>一、Mac 终端工具</h1><p>之前自己一直使用 MacOS 自带的终端 terminal，虽然使用的感觉一般但由于功能都能满足也就一直使用着，直到同事介绍了 mac 的终端利器 iTerm2 再加上 Oh My Zsh，我才知道什么才真叫“香”。</p>
+<h2 id="Iterm2-Oh-My-Zsh"><a href="#Iterm2-Oh-My-Zsh" class="headerlink" title="Iterm2 + Oh My Zsh"></a>Iterm2 + Oh My Zsh</h2><p>首先介绍一下这两个工具：</p>
+<ul>
+<li>据官网的说明，iTerm2 是 Terminal 的替代品、iTerm 的后继产品。旨在把终端带入现代并赋予你从不知道你会想要的特性。</li>
+<li>Oh My Zsh 是开源的社区驱动框架用于管理 zsh 配置，提供了大量的插件及主题供使用。</li>
+</ul>
+<h3 id="1-安装-iTerm2"><a href="#1-安装-iTerm2" class="headerlink" title="1. 安装 iTerm2"></a>1. 安装 iTerm2</h3><p>从官网直接下载，<a href="https://www.iterm2.com/">iTerm2 官网</a>。下载完成后，将应用拖入应用程序文件夹完成安装。</p>
+<p>使用命令查看系统现有的 shell：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat /etc/shells</span><br></pre></td></tr></table></figure>
+
+<p>Mac 默认为 dash，更改其为 zsh：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">chsh -s /bin/zsh</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-安装-Oh-my-zsh"><a href="#2-安装-Oh-my-zsh" class="headerlink" title="2. 安装 Oh my zsh"></a>2. 安装 Oh my zsh</h3><p>安装 Oh my zsh 有两种方式：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>命令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>curl</td>
+<td>sh -c “$(curl -fsSL <a href="https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)&quot;">https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)&quot;</a></td>
+</tr>
+<tr>
+<td>wget</td>
+<td>sh -c “$(wget <a href="https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh">https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh</a> -O -)”</td>
+</tr>
+<tr>
+<td>安装成功后的截图：</td>
+<td></td>
+</tr>
+<tr>
+<td><img src="https://files.mdnice.com/user/13305/9ce8777a-71a7-4df4-946b-8f7c461e66c4.png"></td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="3-主题及插件"><a href="#3-主题及插件" class="headerlink" title="3. 主题及插件"></a>3. 主题及插件</h3><h4 id="1-主题选择"><a href="#1-主题选择" class="headerlink" title="1. 主题选择"></a>1. 主题选择</h4><p>Oh my zsh 提供了海量的主题供使用，并且绝大多数主题现均提供了<a href="https://github.com/ohmyzsh/ohmyzsh/wiki/Themes">截图展示</a>，一旦有看中的主题，只需要编辑 <strong>~&#x2F;.zshrc</strong> 文件的 <em>ZSH_THEME</em> 值为选定的主题即可：</p>
+<p><code>ZSH_THEME=&quot;YOURTHEME&quot;</code></p>
+<p>特别指出的是，一些主题的使用需要下载<a href="https://github.com/powerline/fonts"><em>Powerline Font</em></a></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">clone</span></span></span><br><span class="line">git clone https://github.com/powerline/fonts.git --depth=1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">install</span></span><br><span class="line">cd fonts</span><br><span class="line">./install.sh</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">clean-up a bit</span></span><br><span class="line">cd ..</span><br><span class="line">rm -rf fonts</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-插件选择"><a href="#2-插件选择" class="headerlink" title="2. 插件选择"></a>2. 插件选择</h4><p>Oh my zsh 的另一大特点就是为使用者提供了大量的插件，以下将会介绍最为常用的高亮、补全推荐和 git-open 插件。</p>
+<ul>
+<li>高亮插件：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">下载安装</span></span><br><span class="line">git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-syntax-highlighting</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">编辑~/.zshrc文件</span></span><br><span class="line">vim ~/.zshrc</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">加入高亮插件</span></span><br><span class="line">plugins=(git zsh-syntax-highlighting)</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使修改生效</span></span><br><span class="line">source ~/.zshrc</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>自动推荐插件：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">下载安装</span></span><br><span class="line">git clone https://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">编辑~/.zshrc文件</span></span><br><span class="line">vim ~/.zshrc</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">加入高亮插件</span></span><br><span class="line">plugins=(git zsh-autosuggestions)</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使修改生效</span></span><br><span class="line">source ~/.zshrc</span><br></pre></td></tr></table></figure>
+
+<p>下载安装完插件后，不仅在 iterm2 终端命令能生效，在 VS Code 的终端中也可以生效。以后再也不用每次都重复输入长长的执行命令了，借助插件的自动推荐，快速完成命令。</p>
+<ul>
+<li>git-open 插件：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">下载安装</span></span><br><span class="line">git clone https://github.com/paulirish/git-open.git $ZSH_CUSTOM/plugins/git-open</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">编辑~/.zshrc文件</span></span><br><span class="line">vim ~/.zshrc</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">加入高亮插件</span></span><br><span class="line">plugins=(git git-open)</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使修改生效</span></span><br><span class="line">source ~/.zshrc</span><br></pre></td></tr></table></figure>
+
+<p>安装完 git-open 插件后，在终端进入 git 项目目录后使用 git-open 可以直接打开远程仓库浏览项目。</p>
+<p><img src="https://files.mdnice.com/user/13305/3193d015-5350-42a1-89f8-65b9b2beeff0.gif"></p>
+<h3 id="4-iTerm2-配置"><a href="#4-iTerm2-配置" class="headerlink" title="4. iTerm2 配置"></a>4. iTerm2 配置</h3><ol>
+<li>颜色配置： <em>iTerm2-&gt;Preferences-&gt;Profiles -&gt; Colors -&gt; Color Presets</em></li>
+<li>背景选择： <em>iTerm2-&gt;Preferences-&gt;Profiles -&gt; Window -&gt; Background Image</em></li>
+</ol>
+<p>最终我的效果图长这样：</p>
+<p><img src="https://files.mdnice.com/user/13305/0bd1a192-5a3b-41f2-b6ab-6cefeec8a50e.png"></p>
+<h3 id="5-快捷键"><a href="#5-快捷键" class="headerlink" title="5. 快捷键"></a>5. 快捷键</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>快捷键</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>左右分屏</td>
+<td>Command+D</td>
+</tr>
+<tr>
+<td>上下分屏</td>
+<td>Command+Shift+D</td>
+</tr>
+<tr>
+<td>全屏</td>
+<td>Command+Enter</td>
+</tr>
+<tr>
+<td>新建窗口标签</td>
+<td>Command+T</td>
+</tr>
+<tr>
+<td>打开配置</td>
+<td>Command+,</td>
+</tr>
+<tr>
+<td>搜索</td>
+<td>Command+F</td>
+</tr>
+<tr>
+<td>自动完成提示</td>
+<td>Command+;</td>
+</tr>
+<tr>
+<td>显示执行时间</td>
+<td>view-&gt;show timestamps</td>
+</tr>
+<tr>
+<td>按键回放</td>
+<td>Command+Option+B</td>
+</tr>
+</tbody></table>
+<h1 id="二、开发编辑器：Visual-Studio-Code"><a href="#二、开发编辑器：Visual-Studio-Code" class="headerlink" title="二、开发编辑器：Visual Studio Code"></a>二、开发编辑器：Visual Studio Code</h1><p>说起前端的编辑器，大家最常用的选择应该就是 VS Code。它是由微软开发的且跨平台的免费源代码编辑器，由于它不仅默认支持语法高亮、代码补全、内置命令行等功能且拥有强大的扩展程序库支持用户安装以拓展软件功能，在 Stack Overflow 组织的开发者调查中，VScode 被认为是最受开发者欢迎的开发环境。</p>
+<h2 id="VS-Code-快捷键及其他操作"><a href="#VS-Code-快捷键及其他操作" class="headerlink" title="VS Code 快捷键及其他操作"></a>VS Code 快捷键及其他操作</h2><h3 id="快捷键"><a href="#快捷键" class="headerlink" title="快捷键"></a>快捷键</h3><ol>
+<li>Command+Shift+P: 打开命令面板</li>
+<li>Command+F: 在当前文档中搜索选中文档</li>
+<li>Command+Shift+F: 在所有文件中搜索文本，显示在编辑器侧边栏</li>
+<li>Command+J: 打开&#x2F;关闭终端</li>
+<li>Command+Option+左&#x2F;右箭头: 切换编辑界面</li>
+<li>Command+W:关闭</li>
+<li>Command+Shift+T: 重新打开关闭的页面</li>
+<li>Option+Shift+Up&#x2F;Down: 往上&#x2F;下复制行</li>
+<li>Option+上&#x2F;下箭头: 向上&#x2F;下移动行</li>
+<li>Control+Shift+左&#x2F;右箭头: 选择上&#x2F;下一级代码块内容</li>
+<li>Command+Option+上&#x2F;下箭头: 向上&#x2F;下复制光标</li>
+<li>Command+Option+[ &#x2F; ]: 折叠&#x2F;展开代码</li>
+<li>Command+Shift+左&#x2F;右箭头: 选择光标左&#x2F;右侧内容</li>
+<li>Command+Shift+V: 预览.md 文件</li>
+<li>Command+\: 分开编辑器</li>
+<li>Command+K+W: 关闭所有</li>
+</ol>
+<h3 id="使用-code-命令快速打开-VSCode-项目"><a href="#使用-code-命令快速打开-VSCode-项目" class="headerlink" title="使用 code 命令快速打开 VSCode 项目"></a>使用 code 命令快速打开 VSCode 项目</h3><p>在 mac 终端我们可以通过使用 code 命令实现直接用 VSCode 打开要打开的项目文件。我们需要在 VSCode 中安装 code：_command+shift+P -&gt; 输入 shell command -&gt;选择 install ‘code’ command in PATH_。</p>
+<p>安装完成后，直接打开桌面上的 memory-game 项目：<code>code Desktop/memory-game</code>即可。</p>
+<h2 id="扩展插件推荐"><a href="#扩展插件推荐" class="headerlink" title="扩展插件推荐"></a>扩展插件推荐</h2><p>相信每一位前端程序员都有自己一套熟悉且常用 VScode 插件，下面我将收集到的插件分为：基本必备类、提效必备类、Git 相关类、观感样式类、注释相关类、markdown 相关类和其他插件。大家可以按需查看，希望能给你的武器库添加一些火力。</p>
+<h3 id="1-基础必备插件"><a href="#1-基础必备插件" class="headerlink" title="1. 基础必备插件"></a>1. 基础必备插件</h3><h4 id="gt-gt-Auto-Rename-Tag"><a href="#gt-gt-Auto-Rename-Tag" class="headerlink" title="&gt;&gt; Auto Rename Tag"></a>&gt;&gt; Auto Rename Tag</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-rename-tag">Auto Rename Tag</a> 插件能够自动同步同组的 HTML&#x2F;XML 标签。默认自动同步是对所有语言文件生效，可以通过<br><code>&#123;&quot;auto-rename-tag.activationOnLanguage&quot;: [&quot;html&quot;, &quot;xml&quot;, &quot;php&quot;, &quot;javascript&quot;]&#125;</code><br>进行修改。特别需要注意的是，如果要自定义生效语言，所选的语言必须是 VS Code 定义的(<em>.js</em> 和 <em>.es6</em>需要 <strong>javascript</strong>、*.jsx*需要 <strong>javascriptreact</strong>)</p>
+<p><img src="https://files.mdnice.com/user/13305/2dc76fde-2d53-4367-bb8c-638f1b6012c0.gif"></p>
+<h4 id="gt-gt-Auto-Close-Tag"><a href="#gt-gt-Auto-Close-Tag" class="headerlink" title="&gt;&gt; Auto Close Tag"></a>&gt;&gt; Auto Close Tag</h4><p>自动添加 HTML&#x2F;XML 闭合标签插件。</p>
+<h4 id="gt-gt-EditorConfig-for-VS-Code"><a href="#gt-gt-EditorConfig-for-VS-Code" class="headerlink" title="&gt;&gt; EditorConfig for VS Code"></a>&gt;&gt; EditorConfig for VS Code</h4><p>一个项目不可能永远是一个人开发维护，当多个使用不同编辑器、代码风格不同的人参与到一个项目中，难免会有规范问题，<a href="https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig">EditorConfig for VS Code</a> 插件就能解决这个问题。</p>
+<p><code>.editorConfig</code> 代码规范规则的优先级高于编辑器默认的代码格式化规则，如果没有配置 editorconfig 则执行的就是编辑器默认的代码格式化规则。<br>安装此插件后，在 VScode 的文件目录中右键即可通过 <code>Generate .editorconfig</code>创建 <em>.editorconfig</em> 文件。</p>
+<p>配置示例：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="comment">// http://editorconfig.org</span></span><br><span class="line">root = <span class="literal"><span class="keyword">true</span></span></span><br><span class="line"></span><br><span class="line"><span class="punctuation">[</span>*<span class="punctuation">]</span></span><br><span class="line">indent_style = space <span class="comment">// 缩进样式 = 空格</span></span><br><span class="line">indent_size = <span class="number">2</span> <span class="comment">// 缩进大小 = 2</span></span><br><span class="line">end_of_line = lf <span class="comment">// 换行符类型 = lf</span></span><br><span class="line">charset = utf<span class="number">-8</span> <span class="comment">// 字符集 = utf-8</span></span><br><span class="line">trim_trailing_whitespace = <span class="literal"><span class="keyword">true</span></span> <span class="comment">// 删除行尾空格 = 是</span></span><br><span class="line">insert_final_newline = <span class="literal"><span class="keyword">true</span></span> <span class="comment">// 插入最后一行=真</span></span><br><span class="line"></span><br><span class="line"><span class="punctuation">[</span>*.md<span class="punctuation">]</span></span><br><span class="line">trim_trailing_whitespace = <span class="literal"><span class="keyword">false</span></span></span><br><span class="line"></span><br><span class="line"><span class="punctuation">[</span>Makefile<span class="punctuation">]</span></span><br><span class="line">indent_style = tab</span><br></pre></td></tr></table></figure>
+
+<p>此插件只能简单的配置一些规范，还需要配合其他代码检查工具如<code>ESlint</code>去满足其他需求。</p>
+<h4 id="gt-gt-ESLint"><a href="#gt-gt-ESLint" class="headerlink" title="&gt;&gt; ESLint"></a>&gt;&gt; ESLint</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint">ESLint</a> 是一个用来识别 ECMAScript 且按照规则给出报告的代码检测工具，可以用来统一代码的风格和避免一些低级错误。两种配置方式：</p>
+<ol>
+<li>在注释中配置</li>
+<li>利用配置文件：<code>npx eslint --int</code>创建<code>.eslintrc.&#123;js,yml,json&#125;</code>文件</li>
+</ol>
+<p><img src="https://files.mdnice.com/user/13305/237ac249-9faa-49e8-8a93-9ecb8ab607d6.png"></p>
+<p><strong>配置文件属性：</strong></p>
+<ul>
+<li>extends：解析基本配置文件</li>
+<li>env：指定环境</li>
+<li>rules：项目中要使用的规则</li>
+<li>parser：指定解析器</li>
+<li>overrides：修改特定文件属性</li>
+<li>processor：指定处理器</li>
+<li>plugins：指定第三方插件，省略<code>eslint-plugin-</code>前缀</li>
+<li>settings：支持配置文件共享设置</li>
+</ul>
+<p><a href="https://cn.eslint.org/docs/user-guide/configuring">更多配置参考</a></p>
+<h4 id="gt-gt-Prettier-Code-formatter"><a href="#gt-gt-Prettier-Code-formatter" class="headerlink" title="&gt;&gt; Prettier - Code formatter"></a>&gt;&gt; Prettier - Code formatter</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode">Prettier</a> 是由 Facebook 公司开发的‘武断性’代码格式化工具，它移除了代码的原始风格，并确保了所有代码输出保持一致的风格。在 VS Code 中通常和 ESLint 插件结合使用，安装完插件后在 setting.json 文件中添加配置：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;editor.defaultFormatter&quot;</span><span class="punctuation">:</span> <span class="string">&quot;esbenp.prettier-vscode&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;[javascript]&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;editor.formatOnSave&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;editor.defaultFormatter&quot;</span><span class="punctuation">:</span> <span class="string">&quot;esbenp.prettier-vscode&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;[typescript]&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;editor.defaultFormatter&quot;</span><span class="punctuation">:</span> <span class="string">&quot;esbenp.prettier-vscode&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;[typescriptreact]&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;editor.defaultFormatter&quot;</span><span class="punctuation">:</span> <span class="string">&quot;esbenp.prettier-vscode&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;editor.formatOnSave&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>VSCode 读取配置列表(按优先级)：</p>
+<ul>
+<li>Prettier configuration file</li>
+<li>.editorconfig</li>
+<li>VSCode Default Settings</li>
+</ul>
+<p><strong>NOTE</strong>: 如果有任何本地的配置文件(i.e. .prettierrc)那么 VS Code settings 就不会被使用。</p>
+<h4 id="gt-gt-Chinese-Language-Pack-for-VSCode"><a href="#gt-gt-Chinese-Language-Pack-for-VSCode" class="headerlink" title="&gt;&gt; Chinese Language Pack for VSCode"></a>&gt;&gt; Chinese Language Pack for VSCode</h4><p>此插件为中文语言包能够为 VSCode 提供本地化界面。通过使用“配置显示语言”命令设置 VS Code 语言，可以替代默认的 UI 语言。<code>命令面板</code> -&gt; <code>配置显示语言</code> -&gt; <code>切换已安装的语言</code></p>
+<h4 id="gt-gt-minapp"><a href="#gt-gt-minapp" class="headerlink" title="&gt;&gt; minapp"></a>&gt;&gt; minapp</h4><p>微信小程序标签、属性的智能补全工具（同时支持原生小程序、mpvue 和 wepy 框架，wxml 格式化，并提供 snippets）主要应用于 wxml 文件。</p>
+<h4 id="gt-gt-wechat-snippet"><a href="#gt-gt-wechat-snippet" class="headerlink" title="&gt;&gt; wechat-snippet"></a>&gt;&gt; wechat-snippet</h4><p>wechat-snippet 可以在开发小程序时通过属性关键词提示代码片段模版。</p>
+<ul>
+<li>json 片段：在{}中输入 page，pages，window，tabbar 等属性关键字即可提示代码片段模板</li>
+<li>js 片段：输入 wx-page，wx-app，wx-request 等 wx-开头的关键字即可提示代码片段模板</li>
+<li>wxml 片段：直接输入组件名称，即可提示代码片段模板。 如输入 view，可自动生成 view 标签及其属性</li>
+</ul>
+<h4 id="gt-gt-JavaScript-ES6-code-snippets"><a href="#gt-gt-JavaScript-ES6-code-snippets" class="headerlink" title="&gt;&gt; JavaScript (ES6) code snippets"></a>&gt;&gt; JavaScript (ES6) code snippets</h4><p>此扩展包含用于 VS Code 编辑器（同时支持 JavaScript 和 TypeScript）的 ES6 语法中的 JavaScript 代码片段。触发器与对应代码片段：<a href="https://marketplace.visualstudio.com/items?itemName=xabikos.JavaScriptSnippets">点击查看</a>。</p>
+<h3 id="2-提效必备插件"><a href="#2-提效必备插件" class="headerlink" title="2. 提效必备插件"></a>2. 提效必备插件</h3><h4 id="gt-gt-CSS-Peek"><a href="#gt-gt-CSS-Peek" class="headerlink" title="&gt;&gt; CSS Peek"></a>&gt;&gt; CSS Peek</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=pranaygp.vscode-css-peek">CSS Peek</a>插件支持快速跳转到样式的定义，查找 css 选择器的位置。</p>
+<h4 id="gt-gt-Path-Intellisense"><a href="#gt-gt-Path-Intellisense" class="headerlink" title="&gt;&gt; Path Intellisense"></a>&gt;&gt; Path Intellisense</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=christian-kohler.path-intellisense">Path Intellisense</a> 是一款自动补全文件名的 VSCode 插件。此插件会使用 <strong>ts(js).config.compilerOptions.baseUrl</strong> 作为映射，所以他会引用我们项目中 tsconfig.json 的设置。当我们自行要进行路径配置时，在 setting.json 文件中添加配置 mappings：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="attr">&quot;path-intellisense.mappings&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;@&quot;</span><span class="punctuation">:</span> <span class="string">&quot;$&#123;workspaceRoot&#125;/src/&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;@/pages&quot;</span><span class="punctuation">:</span> <span class="string">&quot;$&#123;workspaceRoot&#125;/src/pages&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;@/component&quot;</span><span class="punctuation">:</span> <span class="string">&quot;$&#123;workspaceRoot&#125;/src/component&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;@/service&quot;</span><span class="punctuation">:</span> <span class="string">&quot;$&#123;workspaceRoot&#125;/src/service&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;@/utils&quot;</span><span class="punctuation">:</span> <span class="string">&quot;$&#123;workspaceRoot&#125;/src/utils&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>注意：尽管我们现在已经成功为我们的引用路径提供补全，但是光有路径引导还是不够的，我们需要文件的提示联想和跳转，所以需要在项目中配置 jsconfig.json 或者 tsconfig.json 文件。</p>
+<h4 id="gt-gt-Path-Autocomplete"><a href="#gt-gt-Path-Autocomplete" class="headerlink" title="&gt;&gt; Path Autocomplete"></a>&gt;&gt; Path Autocomplete</h4><p>跟 Path Intellisense 插件功能相似的路径补全插件，配置路径属性<code>path-autocomplete.pathMappings</code>以实现路径的引导。同样需要另外配置 jsconfig.json 或 tsconfig.json 实现文件跳转。</p>
+<h4 id="gt-gt-Open-in-Browser"><a href="#gt-gt-Open-in-Browser" class="headerlink" title="&gt;&gt; Open in Browser"></a>&gt;&gt; Open in Browser</h4><p>安装此插件可以允许开发者跳转到浏览器显示当前的代码文件。</p>
+<h4 id="gt-gt-Live-Server"><a href="#gt-gt-Live-Server" class="headerlink" title="&gt;&gt; Live Server"></a>&gt;&gt; Live Server</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer">Live Server</a> 插件是一款能够给加载静态或者动态页面并及时更新的本地开发服务器。安装完成后，编辑器右下角将会出现 Go Live 字样，点击即可在服务器上加载页面。更多配置<a href="https://github.com/ritwickdey/vscode-live-server/blob/master/docs/settings.md">点击查看</a></p>
+<p>然而此插件现只能支持<code>.html</code>文件或者<code>.htm</code>文件，所以在使用上还是有一定的局限性，特别是当我们运用了前端框架开发项目之后。</p>
+<h4 id="gt-gt-Code-Runner"><a href="#gt-gt-Code-Runner" class="headerlink" title="&gt;&gt; Code Runner"></a>&gt;&gt; Code Runner</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner">Code Runner</a> 插件能够支持编辑器运行多种语言代码片段或者代码文件。用前端的 js 文件为例，js 文件的运行要基于 node 环境，通常我们会在终端使用 node 命令来执行我们的 js 文件。有了此插件我们可以一键运行代码。</p>
+<p>打开所要运行的文件，有多种方式快捷运行代码：</p>
+<ol>
+<li>快捷键：Control+Option+N</li>
+<li>Command+Shift+P，调出命令面板，输入选择 Run Code</li>
+<li>在编辑区，右键选择 Run Code</li>
+<li>点击编辑器右上角的运行小三角按钮</li>
+<li>在左侧的文件管理器，右键选择 Run Code</li>
+</ol>
+<p>停止代码运行：</p>
+<ol>
+<li>快捷键：Control+Option+M</li>
+<li>Command+Shift+P，调出命令框，输入选择 Stop Run Code</li>
+<li>在 Output 框中，右键选择 Stop Code Run</li>
+</ol>
+<p>此外，我们可以在<code>setting.json</code>文件中设置<code>&quot;code-runner.runInTerminal&quot;: true</code>将我们的代码运行于终端，<em>防止乱码</em>以及<em>支持输入</em>。</p>
+<p>添加<code>code-runner.executorMap</code>设置自定义代码运行逻辑。下面是对 html 文件配置的一个例子，默认的 Code Runner 是不支持 html 的快速运行的。我们可以通过设置 html 文件用 Google Chrome 运行实现快速的在浏览器中浏览我们的 html 文件。</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="attr">&quot;code-runner.executorMap&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;html&quot;</span><span class="punctuation">:</span> <span class="string">&quot;open -a \&quot;Google Chrome\&quot;&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="gt-gt-Todo-Tree"><a href="#gt-gt-Todo-Tree" class="headerlink" title="&gt;&gt; Todo Tree"></a>&gt;&gt; Todo Tree</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=Gruntfuggly.todo-tree">Todo Tree</a> 插件用于快速在项目中查找定位<code>标记</code>如：<code>TODO</code>和<code>FIXME</code>，并将其以树形结构展示在侧边菜单栏。使用者根据个人喜好可以配置高亮的标签名、高亮方式等。通过菜单栏进行快速跳转能够为开发者节省很多浪费在代码定位、跳转的时间，特别是操作代码行量很大的项目文件的时候。</p>
+<p>配置推荐：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="comment">// todo-tree settings</span></span><br><span class="line">  <span class="attr">&quot;todo-tree.general.tags&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;TODO&quot;</span><span class="punctuation">,</span> <span class="string">&quot;FIX&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;todo-tree.regex.regexCaseSensitive&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;todo-tree.highlights.customHighlight&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;TODO&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;background&quot;</span><span class="punctuation">:</span> <span class="string">&quot;DarkViolet&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;rulerColour&quot;</span><span class="punctuation">:</span> <span class="string">&quot;DarkViolet&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;iconColour&quot;</span><span class="punctuation">:</span> <span class="string">&quot;DarkViolet&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;FIX&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;background&quot;</span><span class="punctuation">:</span> <span class="string">&quot;FireBrick&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;rulerColour&quot;</span><span class="punctuation">:</span> <span class="string">&quot;FireBrick&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;iconColour&quot;</span><span class="punctuation">:</span> <span class="string">&quot;FireBrick&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>效果展示：</p>
+<p><img src="https://files.mdnice.com/user/13305/314e98fd-19ec-46c3-ab13-ea5cfcee6ea1.png"></p>
+<h4 id="gt-gt-Better-Comments"><a href="#gt-gt-Better-Comments" class="headerlink" title="&gt;&gt; Better Comments"></a>&gt;&gt; Better Comments</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments">Better Comments</a> 插件能够帮助开发者建立更多交互友好的代码注释，包括警告、TODOs、高亮以及其他所有自行设立的标注。此插件结合 Todo Tree 可以完美的实现标签、todo、注释高亮方面的功能。<br>配置推荐：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="attr">&quot;better-comments.tags&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;tag&quot;</span><span class="punctuation">:</span> <span class="string">&quot;!&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;color&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#FF2D00&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;strikethrough&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;underline&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;backgroundColor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;transparent&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bold&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;italic&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;tag&quot;</span><span class="punctuation">:</span> <span class="string">&quot;?&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;color&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#3498DB&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;strikethrough&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;underline&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;backgroundColor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;transparent&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bold&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;italic&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;tag&quot;</span><span class="punctuation">:</span> <span class="string">&quot;//&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;color&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#474747&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;strikethrough&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;underline&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;backgroundColor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;transparent&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bold&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;italic&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;tag&quot;</span><span class="punctuation">:</span> <span class="string">&quot;todo&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;color&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#FF8C00&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;strikethrough&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;underline&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;backgroundColor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;transparent&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bold&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;italic&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;tag&quot;</span><span class="punctuation">:</span> <span class="string">&quot;*&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;color&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#98C379&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;strikethrough&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;underline&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;backgroundColor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;transparent&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bold&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;italic&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;tag&quot;</span><span class="punctuation">:</span> <span class="string">&quot;fix&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;color&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#DC143C&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;strikethrough&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;underline&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;backgroundColor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;transparent&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bold&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;italic&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<img src="https://files.mdnice.com/user/13305/2b9b8a75-d457-45c4-be60-05da4973846f.png" width="50%" height="50%" />
+
+<h4 id="gt-gt-REST-Client"><a href="#gt-gt-REST-Client" class="headerlink" title="&gt;&gt; REST Client"></a>&gt;&gt; REST Client</h4><p>在测试 REST API 的时候大家可能会选择 cURL 命令或者 Postman 工具，而在 VScode 中，REST Client 插件可以很好的完成我们的测试任务，它同时支持了 cURL 和 RFC2616 两种标准来调用 REST API。</p>
+<ul>
+<li>cURL：直接在命令行中输入符合 cURL 标准的 POST 请求:<br><code>curl -X POST &quot;http://dummy.restapiexample.com/api/v1/create&quot; -d &quot;Hello World&quot;</code></li>
+<li>RFC 2616 标准 POST 请求：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">POST http://dummy.restapiexample.com/api/v1/create HTTP/1.1</span><br><span class="line">content-type: application/json</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    &quot;name&quot;:&quot;Jun&quot;,</span><br><span class="line">    &quot;salary&quot;:&quot;1000000&quot;,</span><br><span class="line">    &quot;age&quot;:&quot;26&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在项目中添加 <strong>.http</strong> 或者是 <strong>.rest</strong> 结尾的文件，输入 http 请求，右键选择 Send Request 执行 API 查看结果。</p>
+<p>插件其他功能：</p>
+<ol>
+<li>可以通过 Generate Code Snippet 命令快速将当前 http 请求生成你要的编程语言代码及方法。</li>
+<li>支持变量，官方给出的例子：</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@hostname = api.example.com</span><br><span class="line">@port = 8080</span><br><span class="line">@host = &#123;&#123;hostname&#125;&#125;:&#123;&#123;port&#125;&#125;</span><br><span class="line">@contentType = application/json</span><br><span class="line">@createdAt = &#123;&#123;$datetime iso8601&#125;&#125;</span><br><span class="line">@modifiedBy = &#123;&#123;$processEnv USERNAME&#125;&#125;</span><br><span class="line"></span><br><span class="line">###</span><br><span class="line"></span><br><span class="line">@name = hello</span><br><span class="line"></span><br><span class="line">GET https://&#123;&#123;host&#125;&#125;/authors/&#123;&#123;name&#125;&#125; HTTP/1.1</span><br><span class="line"></span><br><span class="line">###</span><br><span class="line"></span><br><span class="line">PATCH https://&#123;&#123;host&#125;&#125;/authors/&#123;&#123;name&#125;&#125; HTTP/1.1</span><br><span class="line">Content-Type: &#123;&#123;contentType&#125;&#125;</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    &quot;content&quot;: &quot;foo bar&quot;,</span><br><span class="line">    &quot;created_at&quot;: &quot;&#123;&#123;createdAt&#125;&#125;&quot;,</span><br><span class="line">    &quot;modified_by&quot;: &quot;&#123;&#123;modifiedBy&#125;&#125;&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="gt-gt-Turbo-Console-Log"><a href="#gt-gt-Turbo-Console-Log" class="headerlink" title="&gt;&gt; Turbo Console Log"></a>&gt;&gt; Turbo Console Log</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=ChakrounAnas.turbo-console-log">Turbo Console Log</a> 插件能够自动生成有意义的 log 消息，选中要输出的字段之后，利用快捷键<code>control+option+L</code>生成对应 log 语句。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; selectedItem &#125; = <span class="variable language_">this</span>.<span class="property">state</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(</span><br><span class="line">  <span class="string">&#x27;🚀 ~ file: playPage.js ~ line 47 ~ PlayPage ~ selectedItem&#x27;</span>,</span><br><span class="line">  selectedItem</span><br><span class="line">);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ file: playPage.js ~ line 47 ~ selectedItem&#x27;</span>, selectedItem);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ selectedItem&#x27;</span>, selectedItem);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Option+Shift+U：取消所有扩展 log 的注释</strong></li>
+<li><strong>Option+Shift+C：注释所有扩展 log</strong></li>
+<li><strong>Option+Shift+D：删除所有扩展 log</strong></li>
+</ul>
+<p>插件 properties：</p>
+<ol>
+<li>turboConsoleLog.logMessagePrefix(string)：log 信息的前缀，默认为 🚀</li>
+<li>turboConsoleLog.addSemicolonInTheEnd(boolean)：log 语句后是否加分号</li>
+<li>turboConsoleLog.insertEnclosingClass(boolean)：log 语句是否添加包含选中字段的类名</li>
+<li>turboConsoleLog.insertEnclosingFunction(boolean)：log 语句是否添加包含选中字段的方法名</li>
+<li>turboConsoleLog.includeFileNameAndLineNum(boolean)：是否包括文件名和 log 语句所在行</li>
+<li>turboConsoleLog.quote(enum)：引号形式</li>
+<li>turboConsoleLog.wrapLogMessage(boolean)：是否要将 log 输出包装(要选择 false，选择 true 的话会有问题)</li>
+</ol>
+<h4 id="gt-gt-Error-Lens"><a href="#gt-gt-Error-Lens" class="headerlink" title="&gt;&gt; Error Lens"></a>&gt;&gt; Error Lens</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens">Error Lens</a> 插件是一款能够很大程度上提高开发效率的插件，他将会把代码的报错和告警信息及时显示在代码行，所以当代码有问题时，我们不需要再将光标移至该问题处就能查看问题。</p>
+<p><img src="https://files.mdnice.com/user/13305/ba2abaaf-e9ba-4d43-9413-73653d18c76e.png"></p>
+<h4 id="gt-gt-ImgCook"><a href="#gt-gt-ImgCook" class="headerlink" title="&gt;&gt; ImgCook"></a>&gt;&gt; ImgCook</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=imgcook.imgcook">ImgCook</a> 插件是一款将设计转换为代码的智能工具，包括视图代码、数据绑定代码、组件代码以及来自不同类型设计文档的部分业务逻辑代码。</p>
+<p>使用方法：</p>
+<ol>
+<li>安装完 imgcook 插件后，在资源管理器任意文件夹右键选择<code>Open With imgcook studio</code>打开 imgcook studio 界面。(需要预先在官网注册账号，并查询获得 AccessId)</li>
+<li>从<a href="https://www.imgcook.com/">官网</a>下载插件，现在支持 Sketch、Figma 和 Photoshop(VSCode 插件直接从 VSCode 插件商城下载)。</li>
+<li>在选中框中点击导出，此时自动复制了设计图数据(必须要拥有编辑权限)<br><img src="https://files.mdnice.com/user/13305/29a9e4c3-efb8-41b1-b0ab-fefce55d177a.png"></li>
+<li>回到 imgcook studio 页面(也可以是 imgcook 网站)，粘贴数据后，便可在页面容器中看到样式图，在组件树一栏看见我们的组件结构</li>
+<li>保存修改后的样式(此时会加入到 imgcook 项目中)</li>
+<li>导出代码到项目，运行查看结果。<br><img src="https://files.mdnice.com/user/13305/b3d60f1b-6323-43d1-9076-c4c3d5769fbe.png"></li>
+</ol>
+<h4 id="gt-gt-Code-Spell-Checker"><a href="#gt-gt-Code-Spell-Checker" class="headerlink" title="&gt;&gt; Code Spell Checker"></a>&gt;&gt; Code Spell Checker</h4><p>一款基本的拼写检查工具同时支持驼峰式命名。此拼写检查器的目标是帮助捕获常见的拼写错误。当出现的单词没有收录在字典里时，将会产生波浪线下划线。可以利用快捷键 <code>Command+.</code> 看到推荐的修复方式：相似单词推荐或者添加新单词入字典库。</p>
+<img src="https://files.mdnice.com/user/13305/4f91a2db-db83-4012-bf29-ee28cfec2700.png" width="50%" height="50%" />
+
+<h3 id="3-Git-相关插件"><a href="#3-Git-相关插件" class="headerlink" title="3. Git 相关插件"></a>3. Git 相关插件</h3><h4 id="gt-gt-Git-Graph"><a href="#gt-gt-Git-Graph" class="headerlink" title="&gt;&gt; Git Graph"></a>&gt;&gt; Git Graph</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph">Git Graph</a> 插件能够将 git 历史操作用图表的形式展现出来，并在图表上提供了简单的 git 操作。点击左下角状态栏中的 Git Graph 按钮，进入 Git Graph 图表界面。</p>
+<ul>
+<li>图表展示了分支的走向图、分支的 commit 描述、时间、作者和 commit 编号。</li>
+<li>在上方的工具栏中，我们可以选择查看的分支、是否显示远程的分支、搜索等功能。</li>
+<li>点击一条信息，我们可以查看当前 commit 改动的文件列表，以及 git 的更多详细信息。</li>
+</ul>
+<h4 id="gt-gt-GitLens"><a href="#gt-gt-GitLens" class="headerlink" title="&gt;&gt; GitLens"></a>&gt;&gt; GitLens</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens">GitLens</a> 能够很大程度上帮助开发者理解代码。开发者可以通过代码行中快速看出是谁、什么时候、为什么以及如何对当前代码进行修改。<br>特性：</p>
+<ul>
+<li>提供修改版本间的切换</li>
+<li>提供代码块作者信息</li>
+<li>提供代码行变化情况</li>
+</ul>
+<p><img src="https://files.mdnice.com/user/13305/b5fec513-6c5e-4f3d-b844-d515c2309c93.png"></p>
+<h4 id="gt-gt-Git-History"><a href="#gt-gt-Git-History" class="headerlink" title="&gt;&gt; Git History"></a>&gt;&gt; Git History</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=donjayamanne.githistory">Git History</a> 是另一款帮助开发者进行 git 操作的插件。安装此插件后，开发者可以右键自己想要查看的文件查看文件历史(包括分支历史、文件历史、行历史和作者历史)，也可以进行文件对比、cherry-picking 操作、创建 tag 标签、创建分支，进行 reset 和 revert 操作等等。</p>
+<img src="https://files.mdnice.com/user/13305/eb0b00c1-88e9-4503-933d-81d9e5a1d314.png" width="30%" height="30%" />
+
+<p>优势：</p>
+<ol>
+<li>支持当前选中版本代码与本地代码、与上一版本代码对比</li>
+<li>查询作者提交记录</li>
+<li>分支操作：在选中分支上可以快速进行各类 git 操作(新建分支、reset 操作、revert 操作等)</li>
+</ol>
+<h3 id="4-观感样式类插件"><a href="#4-观感样式类插件" class="headerlink" title="4. 观感样式类插件"></a>4. 观感样式类插件</h3><h4 id="gt-gt-颜色主题插件"><a href="#gt-gt-颜色主题插件" class="headerlink" title="&gt;&gt; 颜色主题插件"></a>&gt;&gt; 颜色主题插件</h4><p>相比 VScode 自带的 Dark 主题，插件扩展中提供的主题在视觉感官上更加舒服。安装颜色主题插件后输入<code>shift+command+p</code>调出命令面板，输入<code>Color Theme</code>后选择主题为安装的主题即可切换颜色主题。</p>
+<p>颜色主题类插件：Atom One Dark Theme，One Dark Pro，Dracula，Tokyo Night，Sublime Material Theme 等。</p>
+<h4 id="gt-gt-文件图标插件"><a href="#gt-gt-文件图标插件" class="headerlink" title="&gt;&gt; 文件图标插件"></a>&gt;&gt; 文件图标插件</h4><p>VSCode 默认是没有文件的图标，文件列表只显示各文件的名称以及用<code>&gt;</code>表示可扩展的文件夹，这让我们选择目标文件更不易。通过安装文件图标插件能够很大程度上减少视觉疲劳、使得项目目录更直观可视。安装文件图标插件后输入<code>shift+command+p</code>调出命令面板，输入<code>File Icon Theme</code>后选择主题为安装的文件图标主题即可生效。</p>
+<p>文件图标类插件：vscode-icons、Material Icon Theme 等。</p>
+<h4 id="gt-gt-Bracket-Pair-Colorizer-2"><a href="#gt-gt-Bracket-Pair-Colorizer-2" class="headerlink" title="&gt;&gt; Bracket Pair Colorizer 2"></a>&gt;&gt; Bracket Pair Colorizer 2</h4><p>开发过程中，我们难免会遇到使用很多{},[],()符号甚至还会有嵌套又嵌套的情况。这时 <a href="https://marketplace.visualstudio.com/items?itemName=CoenraadS.bracket-pair-colorizer-2">Bracket Pair Colorizer 2</a> 就能够派上用场了。此组件能够给配对的符号添加颜色并且在点击左括号的同时，能够通过颜色展示出右括号，让代码块展示的更加清晰明了。<br>颜色设置：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="attr">&quot;bracket-pair-colorizer-2.colors&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;Gold&quot;</span><span class="punctuation">,</span><span class="string">&quot;Orchid&quot;</span><span class="punctuation">,</span><span class="string">&quot;LightSkyBlue&quot;</span><span class="punctuation">,</span><span class="string">&quot;AntiqueWhite&quot;</span><span class="punctuation">,</span><span class="string">&quot;Chocolate&quot;</span><span class="punctuation">,</span><span class="string">&quot;Chartreuse&quot;</span><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<p><code>bracket-pair-colorizer-2.colorMode</code>属性用来设置括号使用颜色池的类型</p>
+<img src="https://files.mdnice.com/user/13305/b27e4db9-dfff-4067-99bb-91f6ea2f48ed.png" />
+<img src="https://files.mdnice.com/user/13305/a98342d5-5050-475e-ab2d-dd68a3f4c633.png" />
+
+<p><code>bracket-pair-colorizer-2.forceUniqueOpeningColor</code>属性可以用来设置相邻括号的颜色的使用规则</p>
+<img src="https://files.mdnice.com/user/13305/9ef88ba2-2963-4cd5-b4ba-59df1de32139.png" />
+<img src="https://files.mdnice.com/user/13305/5ae8eb41-0182-490e-b9ab-80e2f91b3b1c.png" />
+
+<p>最后效果图：</p>
+<p><img src="https://files.mdnice.com/user/13305/bfdcba4d-adfc-4d32-afa5-ec17387d81a0.png"></p>
+<h4 id="gt-gt-Indent-Rainbow"><a href="#gt-gt-Indent-Rainbow" class="headerlink" title="&gt;&gt; Indent-Rainbow"></a>&gt;&gt; Indent-Rainbow</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=oderwat.indent-rainbow">Indent Rainbow</a> 插件可以通过利用颜色来对代码的缩进进行区分。</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 以下二者使用其一</span></span><br><span class="line"><span class="attr">&quot;indentRainbow.includedLanguages&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">]</span><span class="comment">// 应用的文件类型，&quot;javascript&quot;、&quot;tpyescript&quot;</span></span><br><span class="line"><span class="attr">&quot;indentRainbow.excludedLanguages&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;plaintext&quot;</span><span class="punctuation">]</span><span class="comment">// 不应用的文件类型</span></span><br><span class="line"><span class="comment">// 自定义颜色(需要重启生效)</span></span><br><span class="line"><span class="attr">&quot;indentRainbow.colors&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;rgba(255,255,64,0.07)&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;rgba(127,255,127,0.07)&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;rgba(255,127,255,0.07)&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;rgba(79,236,236,0.07)&quot;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<p>样式图：</p>
+<p><img src="https://files.mdnice.com/user/13305/0e8b2810-1e0b-4a5d-b4d9-8120aae9fe9b.png"></p>
+<h4 id="gt-gt-Color-the-tag-name"><a href="#gt-gt-Color-the-tag-name" class="headerlink" title="&gt;&gt; Color the tag name"></a>&gt;&gt; Color the tag name</h4><p>此插件能够为 html 的标签添加颜色，同时在 react 的组件中也能生效。</p>
+<p>效果图：</p>
+<img src="https://files.mdnice.com/user/13305/d6bfea6b-0616-4798-bc83-621d55c6d1a1.png" width="70%" height="70%"/>
+
+<h4 id="gt-gt-Color-Highlight"><a href="#gt-gt-Color-Highlight" class="headerlink" title="&gt;&gt; Color Highlight"></a>&gt;&gt; Color Highlight</h4><p>此插件能够在编辑器中突出网页的颜色</p>
+<h3 id="5-注释相关插件"><a href="#5-注释相关插件" class="headerlink" title="5. 注释相关插件"></a>5. 注释相关插件</h3><h4 id="gt-gt-Vscode-Fileheader"><a href="#gt-gt-Vscode-Fileheader" class="headerlink" title="&gt;&gt; Vscode-Fileheader"></a>&gt;&gt; Vscode-Fileheader</h4><p>此插件能够提供顶部注释模板，可定义作者、时间等信息，并会自动更新最后修改时间。利用快捷键 Control+Option+I 快速生成顶部注释。配置 setting 不生效，坑！！！</p>
+<h4 id="gt-gt-Doxygen-Documentation-Generator"><a href="#gt-gt-Doxygen-Documentation-Generator" class="headerlink" title="&gt;&gt; Doxygen Documentation Generator"></a>&gt;&gt; Doxygen Documentation Generator</h4><p>自动生成代码注释插件，现在安装无效，无法生成配置属性。</p>
+<h4 id="gt-gt-koroFileHeader"><a href="#gt-gt-koroFileHeader" class="headerlink" title="&gt;&gt; koroFileHeader"></a>&gt;&gt; koroFileHeader</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=OBKoro1.korofileheader">koroFileHeader</a> 插件支持在 vscode 中生成文件头部注释和函数注释。</p>
+<ol>
+<li>文件头部添加注释：利用快捷键 Command+Control+I，在文件头部快速添加注释，记录文件信息，并能在保存时自动更新最后编辑时间和编辑者</li>
+<li>光标处添加函数注释：利用快捷键 Command+Control+T 在光标处自动生成一个注释模版，自动解析函数参数。</li>
+</ol>
+<p>配置字段：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 头部注释</span></span><br><span class="line"><span class="attr">&quot;fileheader.customMade&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="comment">// 头部注释默认字段</span></span><br><span class="line">    <span class="attr">&quot;Author&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Jun Yang&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;Date&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Do not edit&quot;</span><span class="punctuation">,</span> <span class="comment">// 设置后默认设置文件生成时间</span></span><br><span class="line">    <span class="attr">&quot;LastEditTime&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Do not edit&quot;</span><span class="punctuation">,</span> <span class="comment">// 设置后，保存文件更改默认更新最后编辑时间</span></span><br><span class="line">    <span class="attr">&quot;LastEditors&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Jun Yang&quot;</span><span class="punctuation">,</span> <span class="comment">// 设置后，保存文件更改默认更新最后编辑人</span></span><br><span class="line">    <span class="attr">&quot;Description&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;FilePath&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Do not edit&quot;</span><span class="punctuation">,</span> <span class="comment">// 设置后，默认生成文件相对于项目的路径</span></span><br><span class="line">    <span class="attr">&quot;custom_string_obkoro1&quot;</span><span class="punctuation">:</span> <span class="string">&quot;可以输入预定的版权声明、个性签名、空行等&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line"><span class="comment">// 函数注释</span></span><br><span class="line"><span class="attr">&quot;fileheader.cursorMode&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">  <span class="comment">// 默认字段</span></span><br><span class="line">  <span class="attr">&quot;description&quot;</span><span class="punctuation">:</span><span class="string">&quot;&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;param&quot;</span><span class="punctuation">:</span><span class="string">&quot;&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;return&quot;</span><span class="punctuation">:</span><span class="string">&quot;&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="gt-gt-Document-This"><a href="#gt-gt-Document-This" class="headerlink" title="&gt;&gt; Document This"></a>&gt;&gt; Document This</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=oouo-diogo-perdigao.docthis">Document This</a> 插件能够为我们自动快速在插入符号所在或内部的任何内容生成文档。<br>使用方法：</p>
+<ol>
+<li>选中目标后利用快捷键：Control+Option+D+D</li>
+<li>在目标上方输入<code>/**</code>后选择 Document This，再回车</li>
+</ol>
+<p>配置推荐：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="attr">&quot;docthis.includeDescriptionTag&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line"><span class="attr">&quot;docthis.includeAuthorTag&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line"><span class="attr">&quot;docthis.authorName&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Jun&quot;</span><span class="punctuation">,</span></span><br><span class="line"><span class="attr">&quot;docthis.includeMemberOfOnClassMembers&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line"><span class="attr">&quot;docthis.includeMemberOfOnInterfaceMembers&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line"><span class="attr">&quot;docthis.includeDateTag&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br></pre></td></tr></table></figure>
+
+<p>效果图：</p>
+<img src="https://files.mdnice.com/user/13305/94ce88f3-b0f8-4177-aa4c-e1ccb07d9626.png" width="70%" height="70%"/>
+
+<h3 id="6-Markdown-相关插件"><a href="#6-Markdown-相关插件" class="headerlink" title="6. Markdown 相关插件"></a>6. Markdown 相关插件</h3><h4 id="gt-gt-Markdown-Preview-Enhanced"><a href="#gt-gt-Markdown-Preview-Enhanced" class="headerlink" title="&gt;&gt; Markdown Preview Enhanced"></a>&gt;&gt; Markdown Preview Enhanced</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=shd101wyy.markdown-preview-enhanced">Markdown Preview Enhanced</a> 扩展为我们在编写 md 文件时提供了许多有用的功能，例如自动滚动同步、数学排版、PDF 导出、代码块、演示文稿编写器等。</p>
+<h4 id="gt-gt-Markdown-All-in-One"><a href="#gt-gt-Markdown-All-in-One" class="headerlink" title="&gt;&gt; Markdown All in One"></a>&gt;&gt; Markdown All in One</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one">Markdown All in One</a> 插件提供了编辑 Markdown 文件的所有功能需要：快捷键、表格样式、列表操作、自动预览等。此插件配合上<a href="https://mdnice.com/">墨滴</a>，就可以满足编写.md 文件的绝大部分需求。</p>
+<p>Mac 快捷键：</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Command + B</td>
+<td>粗体</td>
+</tr>
+<tr>
+<td>Command + I</td>
+<td>斜体</td>
+</tr>
+<tr>
+<td>Control + Shift + ]</td>
+<td>增加一级标题</td>
+</tr>
+<tr>
+<td>Control + Shift + [</td>
+<td>减小一级标题</td>
+</tr>
+<tr>
+<td>Option + Shift + F</td>
+<td>格式化(包括表格)</td>
+</tr>
+<tr>
+<td>Command + Shift + V</td>
+<td>预览样式</td>
+</tr>
+</tbody></table>
+<p>常用命令：</p>
+<ol>
+<li>Markdown：Create Table of Contents</li>
+<li>Markdown：Update Table of Contents</li>
+<li>Markdown：Toggle code span</li>
+<li>Markdown：Print current document to HTML</li>
+</ol>
+<h3 id="7-其他插件"><a href="#7-其他插件" class="headerlink" title="7. 其他插件"></a>7. 其他插件</h3><h4 id="gt-gt-HTML-to-CSS-autocompletion"><a href="#gt-gt-HTML-to-CSS-autocompletion" class="headerlink" title="&gt;&gt; HTML to CSS autocompletion"></a>&gt;&gt; HTML to CSS autocompletion</h4><p>HTML to CSS autocompletion 插件能够实现 HTML 到 CSS 的选择器智能完成。支持的流：HTML&#x2F;PHP -&gt; CSS, SCSS, Less, Sass。</p>
+<p><code>html-to-css-autocompletion.autocompletionFilesScope</code>定义匹配的范围：</p>
+<ul>
+<li>默认为 multi-root：根文件夹中找到的所有选择器对定义的样式表都是可见的。</li>
+<li>workspace：在特定工作区文件夹&#x2F;项目中找到的所有选择器将对该工作区文件夹中的样式表可见。</li>
+<li>linked files：选择器将只为关联的样式表提供。</li>
+</ul>
+<p>为了减少其他文件带来的干扰，可以将值设为 linked files。</p>
+<p>虽然<code>html-to-css-autocompletion.getSelectorsFromFileTypes</code>属性是来判断定义要搜索类和 ID 的文件类型，默认为 html 和 php，但是添加 js 或者 ts 文件类型，依旧无法生效。</p>
+<h4 id="gt-gt-HTML-CSS-Support"><a href="#gt-gt-HTML-CSS-Support" class="headerlink" title="&gt;&gt; HTML CSS Support"></a>&gt;&gt; HTML CSS Support</h4><p>HTML CSS Support 插件支持 CSS 到 HTML 的选择智能完成。</p>
+<h4 id="gt-gt-Filesize"><a href="#gt-gt-Filesize" class="headerlink" title="&gt;&gt; Filesize"></a>&gt;&gt; Filesize</h4><p>安装了此插件之后，能够在状态栏显示当前文件的大小，点击可以查看更多信息包括文件类型、创建时间和修改时间。</p>
+<p><img src="https://files.mdnice.com/user/13305/c641f3fb-a7d0-4dbe-b303-6f3d2cdeeee1.png"></p>
+<h4 id="gt-gt-Image-preview"><a href="#gt-gt-Image-preview" class="headerlink" title="&gt;&gt; Image preview"></a>&gt;&gt; Image preview</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=kisstkondoros.vscode-gutter-preview">Image preview</a> 插件能够在代码行左侧显示导入的图片：</p>
+<p><img src="https://files.mdnice.com/user/13305/c1b1597e-6bf2-4e41-b13d-fbc5730289cb.png"></p>
+<h4 id="gt-gt-vscode-faker"><a href="#gt-gt-vscode-faker" class="headerlink" title="&gt;&gt; vscode-faker"></a>&gt;&gt; vscode-faker</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=deerawan.vscode-faker">vscode-faker</a> 插件能够支持生成假数据，使用快捷键 Command+Shift+P 引出命令板后，输入 faker 选择要 mock 的数据类型，此插件就能随机生成相对应的数据，再也不用担心如何编写假数据了！！</p>
+<h4 id="gt-gt-Partial-Diff"><a href="#gt-gt-Partial-Diff" class="headerlink" title="&gt;&gt; Partial Diff"></a>&gt;&gt; Partial Diff</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=ryu1kn.partial-diff">Partial Diff</a> 插件能够支持文件内、跨文件、与写字板间的代码对比。</p>
+<p><img src="https://files.mdnice.com/user/13305/8d2d4025-8119-44f9-a91b-051112bde420.png"></p>
+<h4 id="gt-gt-Paste-JSON-as-Code"><a href="#gt-gt-Paste-JSON-as-Code" class="headerlink" title="&gt;&gt; Paste JSON as Code"></a>&gt;&gt; Paste JSON as Code</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=quicktype.quicktype">Paste JSON as Code</a>插件支持根据示例 json 数据判断数据类型，输出强类型模式以供所需的编程语言处理该数据。</p>
+<p>使用方法：复制 json 目标数据，在其他文件中用 Command+Shift+P 快捷键打开命令板输入选择 Paste JSON as Code，输入顶层类型名，即可自动生成代码。</p>
+<p><img src="https://files.mdnice.com/user/13305/e1c40403-5e6d-4519-a73a-8973c860616d.gif"></p>
+<h4 id="gt-gt-Rainbow-Fart"><a href="#gt-gt-Rainbow-Fart" class="headerlink" title="&gt;&gt; Rainbow Fart"></a>&gt;&gt; Rainbow Fart</h4><p><a href="https://marketplace.visualstudio.com/items?itemName=saekiraku.rainbow-fart">VSCode Rainbow Fart</a> 是一款可以根据代码关键词播放贴近代码意义的真人语音扩展插件—彩虹屁插件。</p>
+<p>使用方法：</p>
+<ol>
+<li>在 VSCode 中打开命令面板(Command+Shift+P),输入&gt;Enable Rainbow Fart 并回车。</li>
+<li>在右下角弹出的消息通知中点击 Open 按钮</li>
+<li>在授权页面上点击<em>授权</em>，选择语音包(页面不能关闭)</li>
+<li>最后就可以去敲代码感受彩虹屁啦。</li>
+</ol>
+<p>授权设置页面：</p>
+<p><img src="https://files.mdnice.com/user/13305/7a05fb56-d43c-46e7-965d-690ac1cdfb35.jpg"></p>
+<p>更多语音包链接：<a href="https://github.com/topics/rainbow-fart">https://github.com/topics/rainbow-fart</a></p>
+<h4 id="gt-gt-Live-Share"><a href="#gt-gt-Live-Share" class="headerlink" title="&gt;&gt; Live Share"></a>&gt;&gt; Live Share</h4><p>2018 年微软正式发布 <a href="https://marketplace.visualstudio.com/items?itemName=MS-vsliveshare.vsliveshare">Live Share</a> 插件，此插件使得开发者能够在 IDE 中进行实时的协同开发和调试。</p>
+<p>核心功能：</p>
+<ul>
+<li>实时共享代码编辑</li>
+<li>跟随团队其他成员的光标</li>
+<li>协作调试代码</li>
+<li>共享本地服务器</li>
+<li>共享终端</li>
+</ul>
+<p>还有很多和 Live Share 集成的插件：</p>
+<ol>
+<li>通过 <em>Live Share Audio</em> 插件，可以进行实时的团队语音。</li>
+<li>通过 <em>Live Share Chat</em> 插件，可以在 VS Code 中直接进行聊天，同时还支持 Slack 和 Discord。</li>
+<li>通过 _Live Share Whiteboard_，实时共享白板。</li>
+</ol>
+<p><img src="https://files.mdnice.com/user/13305/86f6c81b-4b09-4679-b862-31ac6ded0491.png"></p>
+<h4 id="gt-gt-RDHelper"><a href="#gt-gt-RDHelper" class="headerlink" title="&gt;&gt; RDHelper"></a>&gt;&gt; RDHelper</h4><p>RDHelper 是一款为了提高开发人员的效率的基于 IDE 工具的添翼·研发助手（RDHelper）插件，支持 JetBrains 全家桶和 VS Code，希望开发人员在自己熟悉的 IDE 工具上就能完成大部分的流程工作，包括代码评审、需求管理、bug 管理、代码扫描等。</p>
+<p>具体安装配置和使用，<a href="https://km.woa.com/group/40552/articles/show/393480?kmref=search&from_page=1&no=2">点击查看</a>。</p>
+<h1 id="三、其他工具"><a href="#三、其他工具" class="headerlink" title="三、其他工具"></a>三、其他工具</h1><ol>
+<li><a href="https://www.alfredapp.com/">Alfred4</a> Alfred4 可以代替 spotlight 通过热键、关键字、文本扩展等提高工作效率，并支持自定义操作来控制 Mac，从而提高工作效率。提供强大的 workflow 功能(<em>不免费</em>)。</li>
+<li><a href="https://www.mdnice.com/">墨滴</a>：自定义样式的在线 Markdown 编辑器。</li>
+<li><a href="https://www.keka.io/zh-cn/">Keka</a> 压缩或解压缩应用，开源免费，压缩比高，不仅支持众多压缩格式(rar)，而且解压不乱码！</li>
+<li><a href="https://www.xmind.cn/">XMind</a> 思维导图应用, 适合业务及思路梳理。</li>
+<li><a href="https://www.cockos.com/licecap/">Licecap</a> 极简的 gif 录制应用，使用免费，支持 FPS 帧率调整且无录制时间限制，真的很好用！！！</li>
+<li><a href="https://www.soogif.com/">SooGif</a> 集视频截取 GIF，动态图压缩，裁剪，加水印，加特效等等于一身的动图制作工具。</li>
+<li><a href="https://www.json.cn/">https://www.json.cn/</a>：json 在线解析网站。</li>
+<li><a href="https://www.typora.io/">Typora</a> 免费 Markdown 写作软件，特点：将源码编辑和预览功能整合在一起</li>
+<li><a href="https://code.fun/">CodeFun</a> UI 设计稿智能生成源代码工具，现只支持 Sketch 和 Photoshop 上传设计稿。</li>
+<li><a href="https://typescript-play.js.org/">Typescript Playground</a>在线编译 ts 文件</li>
+</ol>
+<blockquote>
+<p>写在最后：虽然工具只能起辅助作用，但是打造一套自己熟悉且实用的开发工具能够让我们的工作事半功倍。希望读过这文章的你们都能有所收获。PS. 如果有其他工具推荐的话，欢迎留言评论交流～</p>
+</blockquote>
+]]></content>
+  </entry>
+</search>
