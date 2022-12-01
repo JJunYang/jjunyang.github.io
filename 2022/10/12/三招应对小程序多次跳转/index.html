@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#333" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#333" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#333">
+  <meta name="baidu-site-verification" content="code-b5GLitMUyE">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.13.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="背景近日收到产品的反馈，说小程序商品列表页中的商品卡片连续快速点击跳转商品详情页的话有时会出现两次跳转。小程序跳转为什么会跳转两次呢，如果这问题存在，小程序其他涉及跳转的地方是否都会有这问题呢？带着疑问，笔者开始了对项目此部分的探究。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="三招应对小程序多次跳转">
+<meta property="og:url" content="http://example.com/2022/10/12/%E4%B8%89%E6%8B%9B%E5%BA%94%E5%AF%B9%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%A4%9A%E6%AC%A1%E8%B7%B3%E8%BD%AC/index.html">
+<meta property="og:site_name" content="蓝扬阳的博客">
+<meta property="og:description" content="背景近日收到产品的反馈，说小程序商品列表页中的商品卡片连续快速点击跳转商品详情页的话有时会出现两次跳转。小程序跳转为什么会跳转两次呢，如果这问题存在，小程序其他涉及跳转的地方是否都会有这问题呢？带着疑问，笔者开始了对项目此部分的探究。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/10/12/%E4%B8%89%E6%8B%9B%E5%BA%94%E5%AF%B9%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%A4%9A%E6%AC%A1%E8%B7%B3%E8%BD%AC/view1.gif">
+<meta property="og:image" content="http://example.com/2022/10/12/%E4%B8%89%E6%8B%9B%E5%BA%94%E5%AF%B9%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%A4%9A%E6%AC%A1%E8%B7%B3%E8%BD%AC/view2.png">
+<meta property="article:published_time" content="2022-10-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-12-01T12:44:42.973Z">
+<meta property="article:author" content="Jun Yang">
+<meta property="article:tag" content="小程序">
+<meta property="article:tag" content="路由跳转">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2022/10/12/%E4%B8%89%E6%8B%9B%E5%BA%94%E5%AF%B9%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%A4%9A%E6%AC%A1%E8%B7%B3%E8%BD%AC/view1.gif">
+
+
+<link rel="canonical" href="http://example.com/2022/10/12/%E4%B8%89%E6%8B%9B%E5%BA%94%E5%AF%B9%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%A4%9A%E6%AC%A1%E8%B7%B3%E8%BD%AC/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2022/10/12/%E4%B8%89%E6%8B%9B%E5%BA%94%E5%AF%B9%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%A4%9A%E6%AC%A1%E8%B7%B3%E8%BD%AC/","path":"2022/10/12/三招应对小程序多次跳转/","title":"三招应对小程序多次跳转"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>三招应对小程序多次跳转 | 蓝扬阳的博客</title>
+  
+
+  <script src="/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?4941ea79f83fdafda461e6340ad1544b"></script>
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝扬阳的博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">代码生活</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8E%A2%E7%A9%B6"><span class="nav-text">问题探究</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF%E5%A4%8D%E7%8E%B0"><span class="nav-text">场景复现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%9B%A0%E6%80%BB%E7%BB%93"><span class="nav-text">原因总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E4%B8%80%EF%BC%9A%E4%B8%9A%E5%8A%A1%E4%BE%A7%E8%B0%83%E7%94%A8%E6%97%B6%E5%A2%9E%E5%8A%A0%E9%98%B2%E6%8A%96-debounce"><span class="nav-text">方案一：业务侧调用时增加防抖 debounce</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E4%BA%8C%EF%BC%9A%E6%B7%BB%E5%8A%A0%E8%B7%B3%E8%BD%AC%E9%94%81-Lock"><span class="nav-text">方案二：添加跳转锁 Lock</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E4%B8%89%EF%BC%9A%E5%88%86%E5%8C%85%E5%BC%82%E6%AD%A5%E5%8C%96"><span class="nav-text">方案三：分包异步化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jun Yang"
+      src="/uploads/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Jun Yang</p>
+  <div class="site-description" itemprop="description">欢迎来到Jun的前端游乐园</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jjunyang" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jjunyang" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jjy_yang@163.com" title="E-Mail → mailto:jjy_yang@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/10/12/%E4%B8%89%E6%8B%9B%E5%BA%94%E5%AF%B9%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%A4%9A%E6%AC%A1%E8%B7%B3%E8%BD%AC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+      <meta itemprop="name" content="Jun Yang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝扬阳的博客">
+      <meta itemprop="description" content="欢迎来到Jun的前端游乐园">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="三招应对小程序多次跳转 | 蓝扬阳的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          三招应对小程序多次跳转
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-10-12 00:00:00" itemprop="dateCreated datePublished" datetime="2022-10-12T00:00:00+08:00">2022-10-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%B0%8F%E7%A8%8B%E5%BA%8F/" itemprop="url" rel="index"><span itemprop="name">小程序</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>近日收到产品的反馈，说小程序商品列表页中的商品卡片连续快速点击跳转商品详情页的话有时会出现两次跳转。小程序跳转为什么会跳转两次呢，如果这问题存在，小程序其他涉及跳转的地方是否都会有这问题呢？带着疑问，笔者开始了对项目此部分的探究。</p>
+<span id="more"></span>
+
+<h1 id="问题探究"><a href="#问题探究" class="headerlink" title="问题探究"></a>问题探究</h1><h2 id="场景复现"><a href="#场景复现" class="headerlink" title="场景复现"></a>场景复现</h2><p>首先展示下多次跳转的场景，确实路由跳转了两次，这时执行回退，第一次会回退到相同的商品详情页需要再次回退才能回到商品列表页。</p>
+<p><img src="view1.gif"></p>
+<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><p>首先对这部分的前端 <strong>wxml</strong> 结构进行分析：</p>
+<p>商品列表页为小程序 <strong>tab</strong> 页面，页面中引入了<code>goods-category-list</code>自定义组件，这组件依赖于<code>category-goods-list</code>自定义组件，这组件引入了<code>biz-goods-list</code>项目公共自定义组件，此组件中包含了<code>goods-item</code>组件用于专门展示每一个商品卡的样式。</p>
+<p>看到这你是不是会吐槽为什么一个商品列表如此复杂，直接用<code>wx:for</code>配合<code>goods-item</code>组件不就可以实现了嘛。由于历史原因，项目中有很多商品列表的场景且样式各样，估计为了统一维护就把所有场景都整合入一个公共组件造成了现在这模样。当然公共组件抽取复用可以避免很多造轮子重复工作，但是如果每一个场景都要重新写的话那就不能称之为公共组件，不能为了抽取组件而抽取。当然这不在本文的探讨范围内，就不深究啦～</p>
+<p>再看看小程序跳转逻辑：</p>
+<p>在用户点击商品卡片的时候触发<code>goods-item</code>组件根节点的<code>bind:tap</code>事件，绑定的事件会进行埋点数据获取并上报，然后利用项目封装的 <strong>Navigator</strong> 进行小程序跳转。</p>
+<p>从代码层面看路由的跳转没有问题，封装的 <strong>Navigator</strong> 在项目其他地方也都用的没问题，不会出现多次跳转的情况。因此排除是项目中封装的 <strong>Navigator</strong> 引起的问题。</p>
+<p>从体验上看，每次能复现两次跳转的情况中，点击商品卡片跳转至商品详情页到页面展示耗时很长，期间会有空白页面的情况，且两次跳转也只会出现在第一次进入商品详情页，用真机高性能机模拟的时候又很难复现。如果改用跳转至那些内容相对简单的页面，跳转速度很快且页面渲染也快，这时就几乎复现不了多次跳转的场景。</p>
+<h2 id="原因总结"><a href="#原因总结" class="headerlink" title="原因总结"></a>原因总结</h2><p>为了查看各个时间点，我在路由跳转的 <strong>complete</strong> 回调中以及在页面的 <strong>onLoad</strong>，<strong>onShow</strong> 和 <strong>onReady</strong> 三个生命周期中分别输出当前的时间点做对比，结果如下：</p>
+<p><img src="view2.png"></p>
+<p>由上可以看出在页面 <strong>onReady</strong> 的之前还会执行新的路由跳转引起新一轮的生命周期，并在最后页面执行了两次 <strong>onReady</strong> 生命周期，因此引起了路由的二次跳转。</p>
+<p>在小程序中，虽然每个页面都有一个渲染页面的 WebView 线程，但是运行脚本的逻辑层线程是共享的，因此虽然页面调整会切换页面层级，但我们的业务代码执行上下文依旧在同一个线程中。所以跳转过程中原本执行的逻辑会继续执行。考虑到微信侧应该在跳转做了节流处理避免了点击几次跳转几次的情况，所以连续点击触发跳转只有那些未能被节流拦截的请求将会引起再次跳转。</p>
+<p>至于为什么跳转快的场景不会多次跳转，是因为在跳转过程中，新页面能更快的 ready，使得我们可能触发多次点击跳转的时机变短。简单来说就是本来在旧页面被切换移除到新页面准备好的 0.5s 内用户都能点击触发路由跳转，现在只有 0.1s 的时间。</p>
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><h2 id="方案一：业务侧调用时增加防抖-debounce"><a href="#方案一：业务侧调用时增加防抖-debounce" class="headerlink" title="方案一：业务侧调用时增加防抖 debounce"></a>方案一：业务侧调用时增加防抖 debounce</h2><p>此方案是处理此类问题最容易想到的方案，通过对点击商品卡片事件添加防抖，来减少用户因为连续多次点击触发小程序路由跳转的可能性。此方案在很多其他类似的场景很常用，在此场景中这方法可以很大程度减少问题的复现，但是在小程序开发者工具上或者是性能差的机型上还是无法全部避免，且设置的时间间隔多少也没有标准。当然我们可以设置防抖间隔很大达到每次尽量触发一次路由跳转的目的，毕竟这里我们的目的是跳转至目标页面不应该有点击两次的情况，但是如此暴力的方式还是不太友好，且设置了防抖会导致原本点击事件中的埋点上报以及其他操作记录不准确。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">onGoodsItemTap = debounce(function (this: GoodsItem, e) &#123;</span><br><span class="line">  // 商品信息判断 &amp;&amp; 获取埋点数据 &amp;&amp; 小程序跳转参数params获取</span><br><span class="line">  doSomething()</span><br><span class="line">  // 路由跳转</span><br><span class="line">  routeJump();</span><br><span class="line">&#125;, 1000);</span><br></pre></td></tr></table></figure>
+
+<h2 id="方案二：添加跳转锁-Lock"><a href="#方案二：添加跳转锁-Lock" class="headerlink" title="方案二：添加跳转锁 Lock"></a>方案二：添加跳转锁 Lock</h2><p>和方案一限制触发时机不同，方案二通过添加锁 Lock 对跳转能力进行限制，保证无论业务方触发调用几次路由跳转，每次都只执行一次。</p>
+<p>为了对小程序跳转进行统一管理，可以在项目中统一封装 <strong>MyNavigator</strong> 类，内含小程序所有的跳转包括 <strong>switchTab</strong>、<strong>reLaunch</strong>、<strong>redirectTo</strong>、<strong>navigateTo</strong>、<strong>navigateBack</strong> 等。在小程序进行跳转的过程中阻止其他跳转行为，只有在新页面 onShow 完成后才允许小程序进行其他跳转。</p>
+<p>改造 <strong>MyNavigator</strong> 类作为实例引用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyNavigator</span> &#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="attr">instance</span>: <span class="literal">undefined</span> | <span class="title class_">MyNavigator</span>;</span><br><span class="line">  <span class="keyword">static</span> <span class="title function_">getInstance</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="variable language_">this</span>.<span class="property">instance</span>) &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">instance</span> = <span class="keyword">new</span> <span class="title class_">MyNavigator</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">instance</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 增加小程序跳转锁，只有isLock 为false的时候才可以跳转，在执行路由跳转时设置为true，在新页面onShow的时候重置其为false</span></span><br><span class="line">  isLock = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// otherFunction start</span></span><br><span class="line">  ...</span><br><span class="line">  <span class="comment">// otherFunction end</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">MyNavigator</span>.<span class="title function_">getInstance</span>();</span><br></pre></td></tr></table></figure>
+
+<p>既然有关锁操作必然就需要有开锁操作。一开始考虑是在路由完成跳转的 <strong>complete</strong> 回调中开锁，但是从现象中可以看见，回调 <strong>complete</strong> 的时机和页面 <strong>onReady</strong> 之间可能存在较大时间差，这期间还是可能引发路由跳转，所以需要将开锁操作时机延后。在页面的装饰器中对 <strong>onShow</strong> 方法增加<code>navigator.isLock = false;</code>实现在每一个页面 onShow 的时候都能开锁支持小程序后续跳转。</p>
+<p>tips：上述在页面 <strong>onShow</strong> 生命周期开锁能够支持小程序内部跳转，但是如果跳转的目标是其他小程序的话锁就无法及时打开，所以需要在 <code>wx.navigateToMiniProgram</code> 方法的 <strong>complete</strong> 回调方法中将锁打开。</p>
+<p>此方案能够保证项目每次在跳转目标页面展示之前无法进行其他跳转，所以不会存在多次跳转的情况，跳转加锁方案在加锁这步没有问题，但是如果开锁失败就会引发不可预估的问题，比如下面两种场景。</p>
+<p>如果项目原本没有统一的装饰器的话，就需要在每一个页面的 <strong>onShow</strong> 生命周期中加开锁的步骤，这显然是不合理的。如果项目中有页面没有使用装饰器的话但又有页面跳转至此页面，那么也会导致项目失去跳转能力，从而导致不可预估的后果。此外由于开锁操作加在装饰器中，如果装饰器中的其他逻辑报错导致逻辑执行到不了开锁操作这一步，那么跳转功能也将失效。</p>
+<p>如果跳转因为其他不可控因素导致失败，而一直没法进入新页面触发 <strong>onShow</strong> 生命周期执行开锁操作，那么小程序就将停留在页面且失去了所有跳转能力。（虽然这种情况理论上不存在，但是谁能保证微信基础跳转功能不会出个问题啥的～）</p>
+<h2 id="方案三：分包异步化"><a href="#方案三：分包异步化" class="headerlink" title="方案三：分包异步化"></a>方案三：分包异步化</h2><p><a target="_blank" rel="noopener" href="https://developers.weixin.qq.com/miniprogram/dev/framework/subpackages/async.html">跨分包自定义组件引用</a>：一个分包使用其他分包的自定义组件时，由于其他分包还未下载或注入，其他分包的组件处于不可用的状态。通过为其他分包的自定义组件设置占位组件，我们可以先渲染占位组件作为替代，在分包下载完成后再进行替换。</p>
+<p>从上面的问题原因分析中可以知道，因为小程序执行跳转到新页面展示耗时长，在这期间用户可以一直点击原页面的跳转按钮，因为无法被第一次节流从而引发二次跳转。所以可以从这方面优化入手，提高页面跳转性能。</p>
+<p>商品详情页因为内容多且杂，项目将其抽取为独立分包，页面中引入了很多子组件，各个子组件又依赖很多其他组件，因为复杂的依赖关系，所以在主包中跳转进入此独立分包页面加载渲染耗时相对长且目标页渲染时间久。</p>
+<p>考虑到一些组件加载完成需要依赖其他组件的加载，我们可以结合分包异步的特性进行调整。因此将目标页的内容和涉及到的组件移入对应分包，页面加载时如果分包未下载或注入就用占位组件替代，从而大幅减少页面首次渲染时间，即可用时间。此方案不仅能解决多次跳转问题并且还提升了用户体验，更为可取。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本文提供了三种小程序多次跳转的解决思路：</p>
+<ul>
+<li>第一种是在业务侧添加点击触发的防抖，通过控制跳转请求发起避免多次跳转的情况。</li>
+<li>第二种是为跳转行为添加锁，通过开关锁实现新页面展示之前无法进行其他小程序跳转避免多次跳转。</li>
+<li>第三种是通过分包异步化提高跳转性能避免多次跳转。</li>
+</ul>
+<p>不仅限于小程序路由跳转，这三种思路也可应用于其他涉及多次触发的场景。希望本文对实践中遇到类似问题的你能有启发！</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%B0%8F%E7%A8%8B%E5%BA%8F/" rel="tag"><i class="fa fa-tag"></i> 小程序</a>
+              <a href="/tags/%E8%B7%AF%E7%94%B1%E8%B7%B3%E8%BD%AC/" rel="tag"><i class="fa fa-tag"></i> 路由跳转</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/09/27/%E5%AE%9E%E6%88%98%E4%B8%AD%E4%BA%86%E8%A7%A3useRef/" rel="prev" title="实战中了解useRef">
+                  <i class="fa fa-chevron-left"></i> 实战中了解useRef
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa-sharp fa-solid fa-star"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jun Yang</span>
+</div>
+<div class="busuanzi-count">
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/jjunyang" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
