@@ -30,7 +30,7 @@
 <meta property="og:description" content="在 React 数据流中，props 是父子组件交互的唯一方式，要修改一个子组件只能通过改变 props 重新渲染。而 refs 提供了另一种方式，允许我们操作 DOM 元素和组件实例，及 Refs 提供了一种获取在渲染过程中生成的 DOM 节点和 React 元素的新方式。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-09-26T16:00:00.000Z">
-<meta property="article:modified_time" content="2022-12-01T02:28:21.026Z">
+<meta property="article:modified_time" content="2022-12-01T12:26:58.125Z">
 <meta property="article:author" content="Jun Yang">
 <meta property="article:tag" content="React">
 <meta property="article:tag" content="Hooks">
@@ -249,7 +249,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.7k</span>
+      <span>1.6k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -270,8 +270,7 @@
         <p>在 React 数据流中，props 是父子组件交互的唯一方式，要修改一个子组件只能通过改变 props 重新渲染。而 refs 提供了另一种方式，允许我们操作 DOM 元素和组件实例，及 Refs 提供了一种获取在渲染过程中生成的 DOM 节点和 React 元素的新方式。</p>
 <span id="more"></span>
 
-<h1 id="DOM-和-Refs"><a href="#DOM-和-Refs" class="headerlink" title="DOM 和 Refs"></a>DOM 和 Refs</h1><p>在 React 数据流中，props 是父子组件交互的唯一方式，要修改一个子组件只能通过改变 props 重新渲染。而 refs 提供了另一种方式，允许我们操作 DOM 元素和组件实例，及 Refs 提供了一种获取在渲染过程中生成的 DOM 节点和 React 元素的新方式。</p>
-<p>React 中有两种创建 ref 的方式<code>createRef()</code>和<code>useRef()</code>，本文只针对后者进行介绍。</p>
+<h1 id="DOM-和-Refs"><a href="#DOM-和-Refs" class="headerlink" title="DOM 和 Refs"></a>DOM 和 Refs</h1><p>React 中有两种创建 ref 的方式<code>createRef()</code>和<code>useRef()</code>，本文只针对后者进行介绍。</p>
 <p><code>const ref = useRef(initValue)</code></p>
 <p>上面这一行就是 useRef 的用法啦，别看他简单，里面可有不少玄机～</p>
 <p>按照 React 官方文档的介绍，useRef 返回了一个可变对象，其.current 属性被入参 initValue 初始化，返回的值将保存在组件的完整生命周期内。</p>
