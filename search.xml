@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>JS 中的声明提升</title>
-    <url>/2022/11/03/JS%E4%B8%AD%E7%9A%84%E5%A3%B0%E6%98%8E%E6%8F%90%E5%8D%87/</url>
+    <url>/2021/11/03/JS%E4%B8%AD%E7%9A%84%E5%A3%B0%E6%98%8E%E6%8F%90%E5%8D%87/</url>
     <content><![CDATA[<p>通常情况下变量都需要先声明后使用，但是在 js 中如果我们先使用变量再用 var 声明将不会抛异常，但是由于未赋值，该变量将会以 undefined 存在。</p>
 <p>Javascript 中，函数及变量的声明都将提升到作用域的顶部。</p>
 <span id="more"></span>
@@ -30,6 +30,310 @@
       </categories>
       <tags>
         <tag>Javascript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>NPM包依赖管理</title>
+    <url>/2022/10/13/NPM%E5%8C%85%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</url>
+    <content><![CDATA[<p>npm 是 Node.js 的包管理工具，在实际使用过程中，我们经常会用 npm install 命令安装依赖包。</p>
+<p>npm 官方对包也做了定义，<a href="https://docs.npmjs.com/about-packages-and-modules">戳此进</a>：</p>
+<span id="more"></span>
+
+<ul>
+<li>a. 一个含有 package.json 文件描述的程序的文件夹</li>
+<li>b. 一个含有(a)的 gzip 压缩文件</li>
+<li>c. 一个指向(b)url 地址</li>
+<li>d. 格式为<code>&lt;name&gt;@&lt;version&gt;</code>的指向官方源的字符串，符合定义(c)，如果 <a href="mailto:&#x67;&#x75;&#108;&#x70;&#64;&#52;&#x2e;&#x30;&#46;&#x31;">&#x67;&#x75;&#108;&#x70;&#64;&#52;&#x2e;&#x30;&#46;&#x31;</a></li>
+<li>e. 格式为<code>&lt;name&gt;@&lt;tag&gt;</code>的指向 d 的字符串，如果 gulp@latest</li>
+<li>f. 格式为<code>&lt;name&gt;</code>的代表最新版本包的字符串，如 gulp</li>
+<li>g. 一个符合条件(a)的远程 git url</li>
+</ul>
+<p>在项目中安装依赖包时，默认会将依赖包的信息加入到 package.json 的 dependencies 模块去。其实除了常见的 dependencies 以外，package.json 文件还有其他几项依赖类型，罗列如下：</p>
+<ul>
+<li>dependencies 生产环境依赖</li>
+<li>devDependencies 开发环境依赖</li>
+<li>optionalDependencies 可选依赖</li>
+<li>peerDependencies 前置依赖</li>
+<li>bundleDependencies 需要打包的依赖</li>
+</ul>
+<p>我们可以通过 npm install 的参数来指定依赖包需要添加到哪个依赖块，通用可选参数: <code>[-P|--save-prod|-D|--save-dev|-O|--save-optional] [-E|--save-exact] [-B|--save-bundle] [--no-save] [--dry-run]</code></p>
+<ul>
+<li>-P ｜ –save-prod：添加至 dependencies</li>
+<li>-D ｜ –save-dev：添加至 devDependencies</li>
+<li>-O | –save-optional：添加至 optionalDependencies</li>
+<li>-E | –save-exact：安装确切的包版本，而不带默认的版本匹配符号，如^或者～</li>
+<li>-B | –save-bundle：添加至 bundleDependencies 和 dependencies 中</li>
+<li>–no-save：不添加至 dependencies 中</li>
+<li>–dry-run：报告安装的状态而不是真正执行安装</li>
+</ul>
+<h1 id="依赖介绍"><a href="#依赖介绍" class="headerlink" title="依赖介绍"></a>依赖介绍</h1><h2 id="dependencies"><a href="#dependencies" class="headerlink" title="dependencies"></a>dependencies</h2><p>dependencies 中包括了所有项目中使用到的包，其他用户要使用此包就需要安装 dependencies 中所有的包。</p>
+<h2 id="devDependencies"><a href="#devDependencies" class="headerlink" title="devDependencies"></a>devDependencies</h2><p>还有一类插件是在开发环境中使用的，比如我们可能会用 jest 来测试，用 eslint 进行代码样式规范，用 mock.js 来 mock 数据等等。其他用户可以正常使用我们的包但不需要安装此类依赖包，那么我们就可以将这类包列入 devDependencies 中。</p>
+<h2 id="peerDependencies"><a href="#peerDependencies" class="headerlink" title="peerDependencies"></a>peerDependencies</h2><p>通常情况下，npm 能够很好的管理我们的依赖包。假设我们的项目依赖<a href="mailto:&#80;&#x61;&#99;&#x6b;&#x61;&#x67;&#x65;&#x41;&#x40;&#50;&#x2e;&#49;&#x2e;&#x30;">&#80;&#x61;&#99;&#x6b;&#x61;&#x67;&#x65;&#x41;&#x40;&#50;&#x2e;&#49;&#x2e;&#x30;</a>，但是引用了依赖<a href="mailto:&#80;&#x61;&#x63;&#x6b;&#97;&#x67;&#x65;&#65;&#64;&#49;&#x2e;&#x39;&#46;&#48;">&#80;&#x61;&#x63;&#x6b;&#97;&#x67;&#x65;&#65;&#64;&#49;&#x2e;&#x39;&#46;&#48;</a>的包 PackageB，npm install 生成的依赖树如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├── PackageA@2.1.0</span><br><span class="line">└─┬ PackageB@1.0.0</span><br><span class="line">  └── PackageA@1.9.0</span><br></pre></td></tr></table></figure>
+
+<p>通常情况下这不会有问题，PackageB 内会有他可以用的版本为 1.9.0 的 PackageA，同时并不会和项目的<a href="mailto:&#80;&#97;&#x63;&#107;&#x61;&#103;&#101;&#65;&#64;&#x32;&#46;&#49;&#x2e;&#48;">&#80;&#97;&#x63;&#107;&#x61;&#103;&#101;&#65;&#64;&#x32;&#46;&#49;&#x2e;&#48;</a>的冲突。</p>
+<p>然而在插件的使用时我们有可能会遇到以下情况,，举个例子：项目中需要依赖包 gulp 版本为最新的@latest(4.0.2)，而 gulp 插件 gulp-plugin-example 依赖的 gulp 版本为@3.2.0，此时我们会安装多个包 gulp。package.json 文件可能如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;dependencies&quot;:&#123;</span><br><span class="line">    &quot;gulp&quot;:&quot;4.0.2&quot;</span><br><span class="line">    &quot;gulp-plugin-example&quot;:&quot;0.1.1&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但这时候如果执行 npm install 可能会导致我们不期望的依赖树</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├── gulp@4.0.2</span><br><span class="line">└─┬ gulp-plugin-example@0.1.1</span><br><span class="line">  └── gulp@3.2.0</span><br></pre></td></tr></table></figure>
+
+<p>此时插件使用的和宿主环境的 gulp 版本不一致，由于 gulp-plugin-example 只是插件，我们并不想因此安装多次 gulp，且希望宿主环境去安装满足插件 peerDependencies 所指定依赖的包，然后在插件 import 或者 require 依赖包时，永远引用的是宿主环境统一安装的 npm 包，最终解决插件与所依赖包不一致的问题。</p>
+<p>通常我们会用 peerDependencies 去表达：如果你要使用此插件，需要确保宿主环境的依赖关系版本为@xx.xx。拥有 peerDependencies 意味着你的包需要的依赖关系和其他安装此包的用户的现有依赖关系是需要保持一致的。所以在编写插件时，需要确定主依赖包的版本，并添加至插件 package.json 中的 peerDependencies 中。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line"> &quot;name&quot;: &quot;gulp-plugin-example&quot;,</span><br><span class="line"> &quot;peerDependencies&quot;: &#123;</span><br><span class="line">   &quot;gulp&quot;:&quot;^4.0.0&quot;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果这时候执行 npm install gulp-plugin-example，gulp 包也会随之安装。如果之后尝试去安装另一个 gulp 插件且依赖只依赖 gulp 3.x 版本的话，将会报错，这也成功解决了插件引用不同依赖包版本的问题！</p>
+<p>更新：npm 版本 1，2 和 7 会自动安装 peerDependencies 的依赖包如果其未在上层依赖树中明确。npm 版本 3 至 6，我们则会收到告警告知 peerDependencies 还未安装。</p>
+<p>peerDependencies 依赖包的版本要求与常规的 dependencies 不同，需要更加广。使用过程中不应该把 peer dependencies 的锁定在固定的版本。如果两个插件依赖的版本不一样，而使用者又懒得花时间去检查实际上符合条件的共用最低版本，这就会很糟心。</p>
+<p>最佳情况是根据<a href="https://semver.org/">semver</a>规则决定 peerDependencies 的版本要求，合理使用^以及～去匹配版本。如果依赖 1.5.4 版本的特性，也可以使用范围去匹配，如：”&gt;&#x3D; 1.5.4 &lt; 2”</p>
+<h2 id="optionalDependencies"><a href="#optionalDependencies" class="headerlink" title="optionalDependencies"></a>optionalDependencies</h2><p>如果一个依赖关系可以被使用，但是又希望 npm 在找不到他或者安装失败的情况下继续进行，那么其可以被放入 optionalDependencies 内。通常这对那些不是所有运行环境或机器都需要的依赖关系很有用。</p>
+<p>tips：optionalDependencies 会覆盖 dependencies 中的同名依赖包，所以不要把包同时写进这两个字段中。</p>
+<h2 id="bundleDependencies"><a href="#bundleDependencies" class="headerlink" title="bundleDependencies"></a>bundleDependencies</h2><p>bundleDependencies 是一个存放在主包发布时也需要同时打包的包名的数组。</p>
+<p>假设我们的有如下的包，执行 npm pack</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;name&quot;: &quot;test&quot;,</span><br><span class="line">  &quot;version&quot;: &quot;1.0.0&quot;,</span><br><span class="line">  &quot;dependencies&quot;: &#123;</span><br><span class="line">    &quot;moment&quot;: &quot;^2.29.3&quot;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;bundleDependencies&quot;: [</span><br><span class="line">    &quot;moment&quot;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么我们将会得到的 test-1.0.0.tgz 文件，执行 npm install test-1.0.0.tgz 后也会得到如下结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├─ node_modules</span><br><span class="line">    ├── test</span><br><span class="line">    │    └── moment</span><br><span class="line">    └── xxx</span><br></pre></td></tr></table></figure>
+
+<h1 id="package-lock-json-文件"><a href="#package-lock-json-文件" class="headerlink" title="package-lock.json 文件"></a>package-lock.json 文件</h1><p>package-lock.json 文件是 npm 修改了 node_modules 依赖树或者 package.json 文件自动生成的产物。它描述了生成的准确依赖树，以便后续安装或者其他人安装都能生成相同的树。</p>
+<p>假想现有的 package.json 文件的依赖是 “react” ：“^18.0.0”，因为有标识符^，所以如果 react 在 18 大版本下更新至 18.0.1，那么 npm install 的时候将会自动安装最新版本 18.0.1。这样可能就会让你本地的版本和其他人不一致，从而引起一些可能发生的相关问题。</p>
+<p>package-lock.json 的出现就很好的解决此问题，他的目的就是锁定具体版本号，使每一个使用者安装的版本都保持一致。</p>
+<p>npm install 时，node 会从 package.json 中读取到所有 dependencies 的信息与现有的 node_modules 模块进行对比，如果不存在的话就安装，并将依赖项确定的版本更新到 package-lock.json 文件中，不会更新其他依赖项版本；如果存在就检查更新，从 package-lock 文件中获取对应锁定的版本进行更新。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://nodejs.org/en/blog/npm/peer-dependencies/">nodejs-Peer Dependencies</a></li>
+<li><a href="https://segmentfault.com/a/1190000009927946">读懂 package.json – 依赖管理</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>NPM</category>
+      </categories>
+      <tags>
+        <tag>依赖</tag>
+        <tag>NPM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>iframe内嵌父子页面路由同步</title>
+    <url>/2022/09/16/iframe%E5%86%85%E5%B5%8C%E7%88%B6%E5%AD%90%E9%A1%B5%E9%9D%A2%E8%B7%AF%E7%94%B1%E5%90%8C%E6%AD%A5/</url>
+    <content><![CDATA[<p><strong>背景：</strong>在前端的项目中，可能会遇到需要在一个项目中内嵌另一个完整项目。今天我们就来讨论讨论利用 iframe 内嵌项目的路由处理。</p>
+<p>首先内嵌项目和被内嵌项目都有各自的路由，并均配有路由跳转。假定我们现有两个 umi 项目 A 和 B 并且均已部署发布，url 分别为<code>https://www.myProjectA.com</code>和<code>https://www.myProjectB.com</code>，需要将项目 A 内嵌至项目 B 的<code>https://www.myProjectB.com/iframe</code>页面中。</p>
+<span id="more"></span>
+
+<p>在项目 B 的 config 文件夹中的 config.ts 文件中添加路由</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">export default <span class="punctuation">&#123;</span></span><br><span class="line">  <span class="comment">/** ---其他配置--- */</span></span><br><span class="line">  ...otherConfig</span><br><span class="line">  routes<span class="punctuation">:</span><span class="punctuation">[</span></span><br><span class="line">    <span class="comment">/** ---其他路由地址--- */</span></span><br><span class="line">    ...otherRoutes</span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      path<span class="punctuation">:</span> &#x27;/iframe&#x27;<span class="punctuation">,</span></span><br><span class="line">      component<span class="punctuation">:</span> &#x27;src/pages/iframe&#x27;<span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>在 src&#x2F;pages&#x2F;iframe&#x2F;index.tsx 文件中加入 iframe:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import React from &#x27;react&#x27;;</span><br><span class="line"></span><br><span class="line">const Iframe: React.FC = React.memo(() =&gt; &#123;</span><br><span class="line">  return (</span><br><span class="line">    &lt;iframe</span><br><span class="line">      src=&quot;https://www.myProjectA.com&quot;</span><br><span class="line">      name=&quot;iframe&quot;</span><br><span class="line">      allowFullScreen</span><br><span class="line">      id=&quot;iframe&quot;</span><br><span class="line">      style=&#123;&#123; width: &#x27;100%&#x27;, height: &#x27;100%&#x27; &#125;&#125;</span><br><span class="line">    &gt;&lt;/iframe&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">export default Iframe;</span><br></pre></td></tr></table></figure>
+
+<p>此时只要 projectA 的地址能够被 projectB 内嵌，那么内嵌就成功啦～不妨试试直接内嵌掘金官网<code>https://juejin.cn</code>吧。</p>
+<p>我们可以在项目 B 中访问操作内嵌的项目 A，和直接访问项目 A 几乎没有区别，但是细心的人就会发现，不管项目 A 地址怎么变，项目 B 始终只是 iframe 内嵌页的路由，即<code>https://www.myProjectB.com/iframe</code>。这样就会带来一个问题：我们无法直接在项目 B 中通过路由访问项目 A 的某一个页面，这也是本文探讨的核心问题。</p>
+<h1 id="子路由变化通知父页面"><a href="#子路由变化通知父页面" class="headerlink" title="子路由变化通知父页面"></a>子路由变化通知父页面</h1><p>首先我们知道项目 B 中的项目 A 要想跳转是其路由发生的改变，要想项目 B 也感知并体现，那么第一步就是要将子路由的改变通知父页面并进行路由改变。iframe 的页面间通信通过 postMessage 方法可以实现。</p>
+<p>思路：劫持子页面路由变化，通过 postMessage 通知父页面。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">const &#123; replaceState &#125; = window.history;</span><br><span class="line">// 劫持路由</span><br><span class="line">function hijackHistoryRoute() &#123;</span><br><span class="line">  Object.assign(window.history, &#123;</span><br><span class="line">    pushState(data: any, unused: string, url?: string | URL) &#123;</span><br><span class="line">      // 使用 replaceState</span><br><span class="line">      replaceState.call(this, data || &#123; key: Date.now() &#125;, unused, url);</span><br><span class="line">      top?.postMessage(&#123; type: &#x27;routePush&#x27;, payLoad: url &#125;, &#x27;*&#x27;);</span><br><span class="line">    &#125;,</span><br><span class="line">    replaceState(data: any, unused: string, url?: string | URL) &#123;</span><br><span class="line">      replaceState.call(this, data || &#123; key: Date.now() &#125;, unused, url);</span><br><span class="line">      top?.postMessage(&#123; type: &#x27;routeReplace&#x27;, payLoad: url &#125;, &#x27;*&#x27;);</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  // 如果是iframe内嵌页，为实现路由跳转，添加路由劫持</span><br><span class="line">  if (window.name === &#x27;iframe&#x27;) &#123;</span><br><span class="line">    hijackHistoryRoute();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;, []);</span><br></pre></td></tr></table></figure>
+
+<p>上述实现了子项目共用一个路由，同时增加了路由劫持并通知父页面，笔者将这部分功能加在了全局的一个 context 中，具体引入因项目而不同。此时在父页面操作回退发现，原本可以正常回退现在回退将会退出 iframe 页面，这是因为子项目中只有一个路由，所以相当于父页面当前页也只有一个路由。</p>
+<h1 id="父页面监听子页面路由变化改变路由"><a href="#父页面监听子页面路由变化改变路由" class="headerlink" title="父页面监听子页面路由变化改变路由"></a>父页面监听子页面路由变化改变路由</h1><p>在第一步中已经实现了子页面路由改变通知父页面，现在需要在父页面将路由的变化体现出来。</p>
+<p>思路：将子页面的路由地址作为父页面路由的一个参数，及父页面的路由改造为<code>https://www.myProjectB.com/iframe？url=&#123;子路由&#125;</code>。</p>
+<p>父页面增加监听并处理路由：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">export enum PostMessageType &#123;</span><br><span class="line">  ROUTE_PUSH = &#x27;routePush&#x27;,</span><br><span class="line">  ROUTE_REPLACE = &#x27;routeReplace&#x27;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">import &#123; history &#125; from &#x27;umi&#x27;;</span><br><span class="line"></span><br><span class="line">// 路由处理</span><br><span class="line">const handleRouteChange = (toRoute: string, postMessageType: string) =&gt; &#123;</span><br><span class="line">  const &#123; pathname, search &#125; = window.location;</span><br><span class="line">  const current = decodeURIComponent(search.slice(5));</span><br><span class="line">  if (current === toRoute) return;</span><br><span class="line">  const route = `$&#123;pathname&#125;?url=$&#123;encodeURIComponent(toRoute)&#125;`;</span><br><span class="line">  if (postMessageType === PostMessageType.ROUTE_PUSH) &#123;</span><br><span class="line">    history.push(route);</span><br><span class="line">  &#125; else if (postMessageType === PostMessageType.ROUTE_REPLACE) &#123;</span><br><span class="line">    history.replace(route);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  // 监听postMessage方法</span><br><span class="line">  window.addEventListener(</span><br><span class="line">    &#x27;message&#x27;,</span><br><span class="line">    (e) =&gt; &#123;</span><br><span class="line">      const postMessageType = e.data.type;</span><br><span class="line">      if (</span><br><span class="line">        postMessageType === PostMessageType.ROUTE_PUSH ||</span><br><span class="line">        postMessageType === PostMessageType.ROUTE_REPLACE</span><br><span class="line">      ) &#123;</span><br><span class="line">        handleRouteChange(e.data.payLoad, postMessageType);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    false,</span><br><span class="line">  );</span><br><span class="line">&#125;, []);</span><br></pre></td></tr></table></figure>
+
+<p>路由处理可以直接是子页面的完整路由，也可以是特定路径，为了支持 umi 的 replace 跳转，我这里会将路由处理为跳转目标页的路径。</p>
+<p>现在在内嵌页中点击其他路由，路由已经可以完成变化了，但是回退或者刷新页面，我们还是不能进入正确的指定页面。</p>
+<h1 id="父页面路由变化通知子页面"><a href="#父页面路由变化通知子页面" class="headerlink" title="父页面路由变化通知子页面"></a>父页面路由变化通知子页面</h1><p>子页面路由变化能够同步父页面，现在我们要完成父页面路由变化同步子页面。</p>
+<p>思路：监听父页面路由变化，通过 postMessage 告知子页面</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// 对象转为 query string方法</span><br><span class="line">export function objToQueryStr(obj: Record&lt;string, any&gt;) &#123;</span><br><span class="line">  if (!obj) return &#x27;&#x27;;</span><br><span class="line">  const str: string[] = [];</span><br><span class="line">  Object.keys(obj).forEach((key) =&gt; &#123;</span><br><span class="line">    str.push(`$&#123;encodeURIComponent(key)&#125;=$&#123;encodeURIComponent(obj[key])&#125;`);</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  return str.join(&#x27;&amp;&#x27;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">import &#123; history, useLocation &#125; from &#x27;umi&#x27;;</span><br><span class="line"></span><br><span class="line">const &#123; query &#125; = useLocation() as any;</span><br><span class="line"></span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  const iframe = document.getElementById(&#x27;iframe&#x27;) as any;</span><br><span class="line">  const iw = iframe?.contentWindow;</span><br><span class="line">  if (!iw) return;</span><br><span class="line">  iw?.postMessage(&#123; type: &#x27;routeChange&#x27;, payLoad: objToQueryStr(query).slice(4) &#125;, &#x27;*&#x27;);</span><br><span class="line">&#125;, [query]);</span><br></pre></td></tr></table></figure>
+
+<p>子项目监听 postMessage 并跳转路由：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">const current = `$&#123;window.location.pathname&#125;$&#123;window.location.search&#125;`;</span><br><span class="line">// 监听postMessage路由改变操作</span><br><span class="line">const handleListenMessage = useCallback(</span><br><span class="line">  debounce(</span><br><span class="line">    (e) =&gt; &#123;</span><br><span class="line">      const postMessageType = e.data.type;</span><br><span class="line">      if (postMessageType === &#x27;routeChange&#x27;) &#123;</span><br><span class="line">        if (!e.data.payLoad) return;</span><br><span class="line">        const route = decodeURIComponent(e.data.payLoad);</span><br><span class="line">        if (current === route) return;</span><br><span class="line">        history.replace(route);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    200,</span><br><span class="line">    &#123; trailing: true, leading: false &#125;,</span><br><span class="line">  ),</span><br><span class="line">  [current],</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">// 如果是内嵌页，添加页面事件监听</span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  if (window.name === &#x27;iframe&#x27;) &#123;</span><br><span class="line">    window.addEventListener(&#x27;message&#x27;, handleListenMessage);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  return () =&gt; &#123;</span><br><span class="line">    if (window.name === &#x27;iframe&#x27;) &#123;</span><br><span class="line">      window.removeEventListener(&#x27;message&#x27;, handleListenMessage);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;, [current]);</span><br></pre></td></tr></table></figure>
+
+<p>完成子页面监听父页面路由变化并跳转，就实现了父子页面的路由同步，点击内嵌页其他路由，或者点击后退前进按钮路由都能正常跳转。要想刷新页面能进入正确的页面只需支持 iframe 的 src 中带参数即可，子页面识别此地址进行跳转即可。</p>
+<p>父页面</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">const [toUrl, setToUrl] = useState(&#x27;/&#x27;);</span><br><span class="line"></span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  if (query.url) &#123;</span><br><span class="line">    setToUrl(query.url);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;,[]);</span><br><span class="line"></span><br><span class="line">return (</span><br><span class="line">  &lt;iframe</span><br><span class="line">    src=`https://www.myProjectA.com?to=&#123;toUrl&#125;`</span><br><span class="line">    name=&quot;iframe&quot;</span><br><span class="line">    allowFullScreen</span><br><span class="line">    id=&quot;iframe&quot;</span><br><span class="line">    style=&#123;&#123; width: &#x27;100%&#x27;, height: &#x27;100%&#x27; &#125;&#125;</span><br><span class="line">  &gt;&lt;/iframe&gt;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>子页面</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import useLocationQuery from &#x27;@/hooks/useLocationQuery&#x27;;</span><br><span class="line"></span><br><span class="line">const &#123; to = &#x27;/&#x27;, token = &#x27;&#x27;, tenantId &#125; = useLocationQuery();</span><br><span class="line"></span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  history.replace(to);</span><br><span class="line">&#125;, []);</span><br></pre></td></tr></table></figure>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本文探讨实现了在 iframe 内嵌场景中如何实现父子页面的路由同步，也是踩了很多坑实现的，希望对你有帮助～</p>
+]]></content>
+      <categories>
+        <category>iframe</category>
+      </categories>
+      <tags>
+        <tag>路由</tag>
+        <tag>iframe</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>whistle使用实践</title>
+    <url>/2022/05/06/whistle%E4%BD%BF%E7%94%A8%E5%AE%9E%E8%B7%B5/</url>
+    <content><![CDATA[<h1 id="关于-whistle"><a href="#关于-whistle" class="headerlink" title="关于 whistle"></a>关于 whistle</h1><p>whistle 基于 Node 实现的跨平台 web 调试代理工具，主要用于查看、修改 HTTP、HTTPS、Websocket 请求、相应，也可以作为 HTTP 代理服务器使用。一切操作可以通过配置实现，支持域名、路径、正则表达式、通配符等多种匹配方式。</p>
+<span id="more"></span>
+
+<h1 id="whistle-实践"><a href="#whistle-实践" class="headerlink" title="whistle 实践"></a>whistle 实践</h1><h2 id="安装启动"><a href="#安装启动" class="headerlink" title="安装启动"></a>安装启动</h2><ol>
+<li>安装 Node</li>
+</ol>
+<p>whistle 支持 v0.10.0 以上版本的 Node，为获取更好的性能，推荐安装最新版本的 Node。</p>
+<p>mac 电脑建议使用 nvm 进行 node 的版本管理～</p>
+<ol start="2">
+<li>安装 whistle</li>
+</ol>
+<p>Node 安装完成后，执行以下命令安装 whistle：</p>
+<p><code>$ npm install -g whistle</code></p>
+<p>安装完成后运行<code>$ w2 help</code></p>
+<p>如果出现以下结果说明安装成功：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">➜  ~ w2 help</span><br><span class="line"></span><br><span class="line">  Usage: w2 &lt;command&gt; [options]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  Commands:</span><br><span class="line"></span><br><span class="line">    status          Show the running status</span><br><span class="line">    add [filepath]  Add rules from local js file (.whistle.js by default)</span><br><span class="line">    install         Install a whistle plugin</span><br><span class="line">    uninstall       Uninstall a whistle plugin</span><br><span class="line">    exec            Exec whistle plugin command</span><br><span class="line">    run             Start a front service</span><br><span class="line">    start           Start a background service</span><br><span class="line">    stop            Stop current background service</span><br><span class="line">    restart         Restart current background service</span><br><span class="line">    help            Display help information</span><br><span class="line"></span><br><span class="line">  Options:</span><br><span class="line"></span><br><span class="line">    -h, --help                                      output usage information</span><br><span class="line">    -D, --baseDir [baseDir]                         set the configured storage root path</span><br><span class="line">    -z, --certDir [directory]                       set custom certificate store directory</span><br><span class="line">    -l, --localUIHost [hostname]                    set the domain for the web ui (local.whistlejs.com by default)</span><br><span class="line">    -L, --pluginHost [hostname]                     set the domain for the web ui of plugin  (as: &quot;script=a.b.com&amp;vase=x.y.com&quot;)</span><br><span class="line">    -n, --username [username]                       set the username to access the web ui</span><br><span class="line">    -w, --password [password]                       set the password to access the web ui</span><br><span class="line">    -N, --guestName [username]                      set the the guest name to access the web ui (can only view the data)</span><br><span class="line">    -W, --guestPassword [password]                  set the guest password to access the web ui (can only view the data)</span><br><span class="line">    -s, --sockets [number]                          set the max number of cached connections on each domain (256 by default)</span><br><span class="line">    -S, --storage [newStorageDir]                   set the configured storage directory</span><br><span class="line">    -C, --copy [storageDir]                         copy the configuration of the specified directory to a new directory</span><br><span class="line">    -c, --dnsCache [time]                           set the cache time of DNS (60000ms by default)</span><br><span class="line">    -H, --host [boundHost]                          set the bound host (INADDR_ANY by default)</span><br><span class="line">    -p, --port [proxyPort]                          set the proxy port (8899 by default)</span><br><span class="line">    -P, --uiport [uiport]                           set the webui port</span><br><span class="line">    -m, --middlewares [script path or module name]  set the express middlewares loaded at startup (as: xx,yy/zz.js)</span><br><span class="line">    -M, --mode [mode]                               set the starting mode (as: pureProxy|debug|multiEnv|capture|disableH2|network|rules|plugins|prod)</span><br><span class="line">    -t, --timeout [ms]                              set the request timeout (360000ms by default)</span><br><span class="line">    -e, --extra [extraData]                         set the extra parameters for plugin</span><br><span class="line">    -f, --secureFilter [secureFilter]               set the path of secure filter</span><br><span class="line">    -r, --shadowRules [shadowRules]                 set the shadow (default) rules</span><br><span class="line">    -R, --reqCacheSize [reqCacheSize]               set the cache size of request data (600 by default)</span><br><span class="line">    -F, --frameCacheSize [frameCacheSize]           set the cache size of webSocket and socket&#x27;s frames (512 by default)</span><br><span class="line">    -A, --addon [pluginPaths]                       add custom plugin paths</span><br><span class="line">    --config [workers]                              start the cluster server and set worker number (os.cpus().length by default)</span><br><span class="line">    --cluster [config]                              load the startup config from a local file</span><br><span class="line">    --dnsServer [dnsServer]                         set custom dns servers</span><br><span class="line">    --socksPort [socksPort]                         set the socksv5 server port</span><br><span class="line">    --httpPort [httpPort]                           set the http server port</span><br><span class="line">    --httpsPort [httpsPort]                         set the https server port</span><br><span class="line">    --no-global-plugins                             do not load any globally installed plugins</span><br><span class="line">    --no-prev-options                               do not reuse the previous options when restarting</span><br><span class="line">    --inspect [[host:]port]                         activate inspector on host:port (127.0.0.1:9229 by default)</span><br><span class="line">    --inspectBrk [[host:]port]                      activate inspector on host:port and break at start of user script (127.0.0.1:9229 by default)</span><br><span class="line">    -V, --version                                   output the version number</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>启动 whistle</li>
+</ol>
+<p>最新版本支持 whistle 三种等价命令：<strong>whistle</strong>、<strong>w2</strong>、<strong>wproxy</strong></p>
+<p>执行以下命令行启动 whistle：</p>
+<p><code>$ w2 start</code></p>
+<p>执行以下命令行停止 whistle：</p>
+<p><code>$ w2 stop</code></p>
+<ol start="4">
+<li>配置代理</li>
+</ol>
+<p>代理配置有全局代理和浏览器代理（推荐）两种方式。</p>
+<p>推荐使用浏览器代理，安装 Chrome 代理插件：<a href="https://chrome.google.com/webstore/detail/proxy-switchyomega/padekgcemlokbadohgkifijomclgjgif">SwitchyOmega</a></p>
+<p>可以通过以下两种方式来访问配置页面：</p>
+<ul>
+<li>方式 1：域名访问 <a href="http://local.whistlejs.com/">http://local.whistlejs.com/</a></li>
+<li>方式 2：通过 ip+端口来访问，形式如 <a href="http://whistleServerIP:whistlePort/">http://whistleServerIP:whistlePort/</a> e.g. <a href="http://127.0.0.1:8899/">http://127.0.0.1:8899</a></li>
+</ul>
+<ol start="5">
+<li>安装根证书</li>
+</ol>
+<p>安装证书请参考文档: <a href="http://wproxy.org/whistle/webui/https.html">http://wproxy.org/whistle/webui/https.html</a></p>
+<p>更多请移步：<a href="https://wproxy.org/whistle/install.html">whistle 官方文档 - 安装启动</a></p>
+<h2 id="whistle-配置"><a href="#whistle-配置" class="headerlink" title="whistle 配置"></a>whistle 配置</h2><p>whistle 所有的操作都可以通过类似如下配置方式实现：</p>
+<p><code>pattern operatorURI</code></p>
+<ul>
+<li><ol>
+<li>whistle 的匹配模式(pattern)大体可以分成 域名、路径、正则、精确匹配、通配符匹配</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>operatorURI 为对应的操作，由操作协议+操作值组成(operatorURI &#x3D; opProtocol:&#x2F;&#x2F;opValue)：opProtocol(操作协议)， 对应某类操作。</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>pattern 和 operatorURI 在多数情况下位置可以调换，且支持组合模式，具体参见：配置方式</li>
+</ol>
+</li>
+<li><ol start="4">
+<li>当 operatorURI 不为 url 的时候，pattern 和 operatorURI 的位置可以交换。</li>
+</ol>
+</li>
+</ul>
+<h3 id="请求替换"><a href="#请求替换" class="headerlink" title="请求替换"></a>请求替换</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">## 访问百度时返回github页面</span><br><span class="line">https://www.baidu.com https://www.github.com</span><br></pre></td></tr></table></figure>
+
+<h3 id="改变请求状态"><a href="#改变请求状态" class="headerlink" title="改变请求状态"></a>改变请求状态</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">## 访问url时返回404</span><br><span class="line">www.example.com statusCode://404</span><br></pre></td></tr></table></figure>
+
+<h3 id="插入标签"><a href="#插入标签" class="headerlink" title="插入标签"></a>插入标签</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">www.example.com log://&#123;test_log.js&#125;</span><br><span class="line"></span><br><span class="line">www.example.com js:///Users/myname/test/test.js</span><br></pre></td></tr></table></figure>
+
+<h3 id="替换请求内容"><a href="#替换请求内容" class="headerlink" title="替换请求内容"></a>替换请求内容</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">www.example.com resBody:///Users/myname/Desktop/mock.json</span><br></pre></td></tr></table></figure>
+
+<h3 id="host-修改"><a href="#host-修改" class="headerlink" title="host 修改"></a>host 修改</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://admin.local.ym.qq.com http://localhost:8000</span><br></pre></td></tr></table></figure>
+
+<h3 id="跨域"><a href="#跨域" class="headerlink" title="跨域"></a>跨域</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># `*` 表示设置 access-control-allow-origin: *</span><br><span class="line">www.example.com resCors://*</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>工具</category>
+      </categories>
+      <tags>
+        <tag>whistle</tag>
+        <tag>调试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>一起认识npm</title>
+    <url>/2022/08/05/%E4%B8%80%E8%B5%B7%E8%AE%A4%E8%AF%86npm/</url>
+    <content><![CDATA[<h1 id="关于-npm"><a href="#关于-npm" class="headerlink" title="关于 npm"></a>关于 npm</h1><p>NPM（node package manager）是 Node.js 官方提供的包管理工具，用于 node 包的管理（包括安装、卸载、管理依赖等）。发展到现在 npm 已经成为世界上最大规模的包管理系统，为广大开发者构建了一个友好的开源平台，用户能够向 NPM 服务器上传自己编写的第三方包或者命令行程序，也可以下载别人编写的至本地使用。</p>
+<p>会使用 npm 最基本的 npm init、npm install 等命令几乎就可以将包管理实施在项目里，然后 npm 远不止这些。</p>
+<p>本文是笔者出于兴趣挖掘的一些 npm 常用的原理、特性以及个人实践。</p>
+<span id="more"></span>
+
+<h1 id="安装使用"><a href="#安装使用" class="headerlink" title="安装使用"></a>安装使用</h1><p>npm 不需要单独安装，在安装 Node 时会连带一起安装。但是 Node 附带的 npm 版本也可能不满足需要，有时可能会涉及到需要调整 npm 的版本，或者升级到最新版本。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 下载最新版本npm</span><br><span class="line">$ sudo npm install npm@latest -g</span><br></pre></td></tr></table></figure>
+
+<p>这里还是推荐使用 nvm 进行 Node 版本管理，切换 Node 的同时也可以切换 npm 的版本。</p>
+<p>如果能成功查看 npm 的版本则表示安装成功了</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo npm -v</span><br><span class="line">## 或者</span><br><span class="line">$ sudo npm --version</span><br></pre></td></tr></table></figure>
+
+<h1 id="npm-版本号"><a href="#npm-版本号" class="headerlink" title="npm 版本号"></a>npm 版本号</h1><p>npm 的版本遵循 semver 规范。版本号格式为 major.minor.patch，且 major，minor，patch 均必须为非 0 开头的非负数。</p>
+<ul>
+<li>有效版本：1.0.4、0.5.9</li>
+<li>无效版本：0.2.04、1.a.a</li>
+</ul>
+<ol>
+<li>major（主版本号）：当 API 发生改变，并且产生 breaking change 无法与之前版本兼容</li>
+<li>minor（次版本号）：当功能变更，但是向后兼容</li>
+<li>patch（补丁版本）：bug 修复，但是向后兼容</li>
+</ol>
+<h2 id="版本匹配"><a href="#版本匹配" class="headerlink" title="版本匹配"></a>版本匹配</h2><ul>
+<li>～ 会匹配最近的小版本，比如：～ 1.2.1 会匹配所有 1.2.x 的版本，但是不包括 1.3.0</li>
+<li>^ 会匹配最新的大版本，比如：^1.2.1 会匹配所有 1.x.x 的版本，不包括 2.0.0</li>
+<li>无前缀，比如 1.2.3，只会匹配特定 1.2.3 版本</li>
+<li>- 保持最新的版本，容易因为版本兼容引起问题</li>
+</ul>
+<p>推荐使用～为主，可以保证项目不出大问题的情况下又能让包中的小 bug 修复。使用^和* 需要谨慎防止因为包的改动过大造成项目代码错误。</p>
+<h1 id="npm-常用命令"><a href="#npm-常用命令" class="headerlink" title="npm 常用命令"></a>npm 常用命令</h1><h2 id="npm-init"><a href="#npm-init" class="headerlink" title="npm init"></a>npm init</h2><p>npm init 命令用于创建一个新的或者已存在的 npm 包，随之在目录下生成或者更新一个名为 package.json 的文件。</p>
+<p>使用此命令时，会向用户提出一系列默认问题并根据此生成 package.json 文件的最初版</p>
+<p><img src="init.png"></p>
+<p>如果不希望回答而直接生成 package.json 文件，可以一路回车完成创建，毕竟 package.json 文件后续还是可以更改。</p>
+<p>或者添加 init 的配置 -f（代表 force）、-y（代表 yes）跳过提问阶段，直接生成新的 package.json 文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ npm init -y</span><br></pre></td></tr></table></figure>
+
+<h2 id="npm-config"><a href="#npm-config" class="headerlink" title="npm config"></a>npm config</h2><p>npm config set 用于设置环境变量</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ npm config set init-author-name &#x27;My Name&#x27;</span><br><span class="line">$ npm config set init-license &#x27;MIT&#x27;</span><br><span class="line"># 换镜像源registry</span><br><span class="line">$ npm config set registry &#x27;http://registry.npm.taobao.org/&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>npm config set 相当于增加了 init 的默认值，以后执行 npm init 的时候 package.json 中的对应字段就会直接生效。</p>
+<h2 id="npm-install"><a href="#npm-install" class="headerlink" title="npm install"></a>npm install</h2><p><code>npm install</code>，缩写 <code>npm i</code> ：可以根据 package.json 的配置安装插件。如果一个包有 package-lock、npm-shrinkwrap 或者 yarn.lock 文件，则依赖包的下载将会被这些文件驱动，并遵循以下优先级：</p>
+<ul>
+<li>npm-shrinkwrap.json</li>
+<li>package-lock.json</li>
+<li>yarn.lock</li>
+</ul>
+<p>命令行 <code>npm install [&lt;@scope&gt;/]&lt;name&gt;</code> 则会下载安装一个依赖包以及其依赖的所有其他依赖包。</p>
+<p>具体命令详情：<br><img src="install1.png"></p>
+<p>运行上述命令，在 npm init 创建的默认 package.json 文件中的 dependencies 字段中会添加入对应的插件包：</p>
+<p><img src="install2.png"></p>
+<p>通用可选参数: [-P|–save-prod|-D|–save-dev|-O|–save-optional] [-E|–save-exact] [-B|–save-bundle] [–no-save] [–dry-run]</p>
+<p>具体参数说明：</p>
+<p><img src="install3.png"></p>
+<h2 id="npm-uninstall"><a href="#npm-uninstall" class="headerlink" title="npm uninstall"></a>npm uninstall</h2><p>npm uninstall 用来卸载已经安装的包，参数与 install 的类似，可以通过在命令行后面加-g | -S | -D | -O | –no-save 等进行限制。</p>
+<p>如果有 npm-shrinkwrap.json 文件的话，也会被同时更新。</p>
+<h2 id="npm-search"><a href="#npm-search" class="headerlink" title="npm search"></a>npm search</h2><p><code>npm search &lt;name&gt;</code>用于搜索 npm 仓库对应的包名，如果搜索不成功有可能是 regisrty 改变导致的，注意查看.npmrc 内的 registry。</p>
+<h2 id="npm-info"><a href="#npm-info" class="headerlink" title="npm info"></a>npm info</h2><p>npm info 可以查看每个模块的具体信息，比如查看已经安装的 moment 包信息：</p>
+<p><img src="info.png"></p>
+<h2 id="npm-update"><a href="#npm-update" class="headerlink" title="npm update"></a>npm update</h2><p>通常使用 npm update 命令去更新一个包，同样如果加了参数-g 表示更新全局的包版本，否则则是更新项目中的版本</p>
+<h2 id="npm-list"><a href="#npm-list" class="headerlink" title="npm list"></a>npm list</h2><p>npm list 用于查看已安装的模块。-g 参数表示查询全局安装的包，–depth 0 可以限制查询深度。</p>
+<h2 id="npm-run"><a href="#npm-run" class="headerlink" title="npm run"></a>npm run</h2><p>通常我们用 npm run 执行脚本命令。package.json 文件中的 scripts 字段存放着可以供 npm 直接调用的脚本命令。</p>
+<p>执行 npm run 不带任何参数，那么会列出 package.json 内所有可以执行的脚本命令。start 和 test 属于特殊命令可以省略 run 直接执行。</p>
+<p><strong>原理：</strong><br>npm 在执行 install 时，会根据第三方依赖中的 package.json 文件中的 bin 配置，在项目 node_modules 下面的.bin 目录中生成一个可执行文件。</p>
+<p>npm 运行 scripts 脚本时会自动给脚本路径加上 node_modules&#x2F;.bin 前缀，这意味着每次运行 script 脚本时，实际上运行的是 node_modules&#x2F;.bin 下对应的软链接文件，此软连接在 npm i 时就已经完成配置，相当于一种映射。</p>
+<p>以 umi 包为例：<br>在执行 npm i umi 命令之后，node_modules 目录中会生成 umi 文件夹，且.bin 目录中也会生成 umi 文件。</p>
+<p><img src="umi.png"></p>
+<p>从 umi 包的 package.json 中可知，npm 将 bin&#x2F;umi.js 作为 bin 声明了。所以 npm i 的时候，npm 读取此配置并将此文件软链接到.&#x2F;node_modules&#x2F;.bin 目录中。</p>
+<p>另外 npm run 会将 node_modules&#x2F;.bin 加入到 PATH 中以支持脚本的运行。所以在编写 scripts 命令时如果需要运行安装的可执行文件时不需要添加前缀 node_modules&#x2F;.bin，如 gulp 的使用：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&quot;scripts&quot;:&#123;</span><br><span class="line">  &quot;clear&quot;: &quot;gulp clear:dist&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>npm run 中含有 pre-和 post-两个钩子函数，分别表示在此脚本之前和之后执行对应命令。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&quot;scripts&quot;: &#123;</span><br><span class="line">  &quot;pretest&quot;:&quot;echo \&quot;before\&quot;&quot;,</span><br><span class="line">  &quot;posttest&quot;:&quot;echo \&quot;after\&quot;&quot;,</span><br><span class="line">  &quot;test&quot;: &quot;echo \&quot;Error: no test specified\&quot;&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在终端执行 npm test 或 npm run test 时，脚本运行顺序为 pretest&gt;posttest&gt;test。</p>
+<h2 id="npm-publish"><a href="#npm-publish" class="headerlink" title="npm publish"></a>npm publish</h2><p>npm publish 用于将包发布至 npm 仓库。如果没有账号，则需要在<a href="https://www.npmjs.com/">https://www.npmjs.com</a>注册用户。注册完用户在终端输入执行 npm login 进行登陆，登陆成功后执行 npm publish 将包发布。</p>
+<h1 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h1><ul>
+<li><a href="https://neveryu.github.io/2017/04/10/npm/">npm 全面介绍</a></li>
+<li>CLI Commands</li>
+</ul>
+]]></content>
+      <categories>
+        <category>NPM</category>
+      </categories>
+      <tags>
+        <tag>NPM</tag>
       </tags>
   </entry>
   <entry>
@@ -260,6 +564,96 @@
       <tags>
         <tag>React</tag>
         <tag>Hooks</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>深入理解npm install原理</title>
+    <url>/2022/05/19/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3npm-install%E5%8E%9F%E7%90%86/</url>
+    <content><![CDATA[<p>相信作为一个程序员对 npm 的基本使用命令应该了如指掌，但是你真的了解 npm install 执行的机制么？为什么 npm install 的时候会多出一个 package-lock.json 文件？为什么有时候执行 npm install 的时候会同步更新 package-lock.json 文件，有时候又不会更新？package-lock.json 文件什么时候需要更新，什么时候不需要更新？</p>
+<p>带着上述问题，笔者对 npm install 的原理和机制进行了一波研究，也作为自己对 npm 知识的学习总结。</p>
+<span id="more"></span>
+
+<p>npm install 会安装我们项目中所有的依赖包至 node_modules 文件夹中，假设现在有一种情况存在两个包 A 和 B 分别依赖 C 包的 v1 和 v2 版本，那么最终将会产生怎么样的依赖树呢？</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;name&quot;: &quot;myProject&quot;,</span><br><span class="line">  &quot;version&quot;: &quot;1.0.0&quot;,</span><br><span class="line">  &quot;dependencies&quot;: &#123;</span><br><span class="line">    &quot;packageA&quot;: &quot;1.0.0&quot;,</span><br><span class="line">    &quot;packageB&quot;: &quot;1.0.0&quot;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>同样的 package.json 文件，早期 npm 版本产生的依赖树只会含有 packageA 和 packageB。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├─ node_modules</span><br><span class="line">    ├── packageA@1.0.0</span><br><span class="line">    │    └── packageC@1.0.0</span><br><span class="line">    └── packageB@2.0.0</span><br><span class="line">         └── packageC@1.0.0</span><br></pre></td></tr></table></figure>
+
+<p>用 npm3 以上版本之后，我们的依赖树中也会含有 packageC，node_modules 目录结构也将变为如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├─ node_modules</span><br><span class="line">    ├── packageA@1.0.0</span><br><span class="line">    └── packageB@2.0.0</span><br><span class="line">    └── packageC@1.0.0</span><br></pre></td></tr></table></figure>
+
+<h1 id="安装机制差异"><a href="#安装机制差异" class="headerlink" title="安装机制差异"></a>安装机制差异</h1><h2 id="npm2-安装机制"><a href="#npm2-安装机制" class="headerlink" title="npm2 安装机制"></a>npm2 安装机制</h2><p>还是上述假设的场景，依赖包 A 依赖 v1.0 版本的包 C，包 B 依赖 v2.0 版本的包 C，此时我们创建项目 My Project 依赖包 A 和 B 如下：</p>
+<p><img src="intro1.png"></p>
+<p>我们知道 npm install 会安装所有项目的依赖包以及所有依赖包自身的依赖，那么 My Project 这个项目所依赖的包 C 版本是 v1.0 还是 v2.0？</p>
+<p>在 npm2 中，npm 不会去考虑 C 包的具体使用版本，每个版本都会被加入到依赖树中，存放在其被引用的模块下。从而生成如下依赖树：</p>
+<p><img src="intro2.png"></p>
+<p>使用 npm ls 查看全部依赖和关系会得到：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├─ node_modules</span><br><span class="line">    ├── packageA@1.0.0</span><br><span class="line">    │    └── packageC@1.0.0</span><br><span class="line">    └── packageB@1.0.0</span><br><span class="line">         └── packageC@2.0.0</span><br></pre></td></tr></table></figure>
+
+<p>使用 npm ls –depth&#x3D;0 查看主要依赖：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├── packageA@1.0.0</span><br><span class="line">└── packageB@1.0.0</span><br></pre></td></tr></table></figure>
+
+<p>尽管嵌套的位置允许同一模块的两个不同版本共存，但大多模块加载器无法将同一模块的两个版本加载到内存中。Node.js 的强大就是它是针对此情况诞生的，能够实现多版本共存且不冲突。</p>
+<h2 id="npm3-机制"><a href="#npm3-机制" class="headerlink" title="npm3 机制"></a>npm3 机制</h2><p>npm3 的处理依赖方式不同于 npm2。npm2 更像是以嵌套的方式安装依赖，npm3 则尝试将依赖树打平，将一些依赖的依赖作为主要依赖安装目录中。</p>
+<p>核心区别：</p>
+<ol>
+<li>目录结构中的位置不再决定该依赖是项目一级依赖还是项目某个依赖的依赖</li>
+<li>依赖树的生成会受安装的顺序所影响</li>
+</ol>
+<p>假设项目依赖于 A 模块，且 A 模块依赖于 B 模块，则 A、B 两模块都会作为顶级模块引入，此时生成的依赖树为：</p>
+<p><img src="intro3.png"></p>
+<p>此时项目新增了模块 C，且依赖于模块 B 的 2.0 版本，由于模块 B 的 1.0 版本已经存在于顶级模块，所以 B2.0 模块的还是以嵌套的方式安装在 C 模块下，具体如下：</p>
+<p><img src="intro4.png"></p>
+<p>tips：尽管同样处在一级目录，不代表模块 A 和模块 B 之间没有依赖关系</p>
+<p>假设现在依次又要新增模块 D（依赖 B1.0 版本）和模块 E（依赖 B2.0 版本），由于模块 B1.0 已经存在于顶级，所以不需要再复制此依赖，然而依赖 B2.0 需要重新在 E 模块中再复制一份：</p>
+<p><img src="intro5.png"></p>
+<p>接下来考虑依次发送以下两个依赖变更的场景</p>
+<ol>
+<li>模块 A 更新且依赖由 B1.0-&gt;B2.0</li>
+<li>模块 D 更新且依赖由 B1.0-&gt;B2.0</li>
+</ol>
+<p>发生场景 1: 当我们执行 npm install <a href="mailto:&#65;&#x40;&#50;&#x2e;&#x30;">&#65;&#x40;&#50;&#x2e;&#x30;</a> –save 后，npm3 会执行以下操作：</p>
+<ul>
+<li>移除模块 A1.0</li>
+<li>安装模块 A2.0</li>
+<li>保留 B1.0，因为模块 D 依旧依赖模块 A1.0</li>
+<li>模块 A2.0 下安装依赖 B2.0，因为 B1.0 已经存在顶层依赖结构</li>
+</ul>
+<p><img src="intro6.png"></p>
+<p>发生场景 2:npm3 会执行以下操作：</p>
+<ul>
+<li>移除模块 D1.0</li>
+<li>安装模块 D2.0</li>
+<li>移除模块 B1.0，因为没有模块再依赖此模块</li>
+<li>安装模块 B2.0 至顶级，因为此时不存在其他 B 模块依赖</li>
+</ul>
+<p><img src="intro7.png"></p>
+<p>运行<strong>npm dedupe</strong>可以去除多余的重复，得到全新的依赖树：</p>
+<p><img src="intro8.png"></p>
+<p>npm3 的弊端：不确定性<br>如果你和你的开发团队使用了 package.json 同时又用了 npm install 添加了依赖包，这就会有可能出现本地的 node_modules 目录和其他团队成员的不一致。</p>
+<p>为什么会出现这种情况呢？</p>
+<p>这和上述提到的，npm 依赖树的生成会受依赖包的顺序所影响。</p>
+<p>回到上面的例子：在本地模块 A 由 1.0 版本更新至 2.0 后生成如下依赖树：<br><img src="intro9.png"><br>对应的 package.json 文件如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  ...,</span><br><span class="line">  &quot;dependencies&quot;:&#123;</span><br><span class="line">    &quot;a&quot;:&quot;^2.0&quot;,</span><br><span class="line">    &quot;c&quot;:&quot;^1.0&quot;,</span><br><span class="line">    &quot;d&quot;:&quot;^1.0&quot;,</span><br><span class="line">    &quot;e&quot;:&quot;^1.0&quot;,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但如果项目其他成员拿到此文件运行<strong>npm install</strong>后生成的依赖树会如下：</p>
+<p><img src="intro10.png"></p>
+<p>牢记安装顺序会影响依赖树的生成！</p>
+<p>由于 npm install 会按字母排序进行依赖包的安装，此时模块 A2.0 会第一个安装，同时在顶级安装模块 B2.0，和之前最后安装更新不同，从而引起了依赖树的不同。</p>
+<p>不用担心，另外尽管依赖树不同，但是只要全部安装了依赖包就算构建的依赖树不同也不会有问题。</p>
+<p>那该如何保持依赖树一致呢？很简单，只要删除 node_modules 文件夹，重新执行 npm install 即可。因为安装的顺序是由 package.json 文件定义的，所以每次执行 npm install 的时候必然都是相同的顺序，即按字母排序。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://npm.github.io/how-npm-works-docs/index.html">How npm Works</a></li>
+<li><a href="https://juejin.cn/post/7089734818748956679">npm install 到 npm run xxx 深度解读</a></li>
+<li><a href="https://cloud.tencent.com/developer/article/1555982">npm install 原理分析</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>NPM</category>
+      </categories>
+      <tags>
+        <tag>NPM</tag>
+        <tag>npm install</tag>
       </tags>
   </entry>
   <entry>
@@ -955,5 +1349,12 @@
 <p>写在最后：虽然工具只能起辅助作用，但是打造一套自己熟悉且实用的开发工具能够让我们的工作事半功倍。希望读过这文章的你们都能有所收获。PS. 如果有其他工具推荐的话，欢迎留言评论交流～</p>
 </blockquote>
 ]]></content>
+      <categories>
+        <category>工具</category>
+      </categories>
+      <tags>
+        <tag>VScode</tag>
+        <tag>插件</tag>
+      </tags>
   </entry>
 </search>

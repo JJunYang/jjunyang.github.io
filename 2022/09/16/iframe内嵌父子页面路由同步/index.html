@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#333" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#333" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#333">
+  <meta name="baidu-site-verification" content="code-b5GLitMUyE">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.13.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="背景：在前端的项目中，可能会遇到需要在一个项目中内嵌另一个完整项目。今天我们就来讨论讨论利用 iframe 内嵌项目的路由处理。 首先内嵌项目和被内嵌项目都有各自的路由，并均配有路由跳转。假定我们现有两个 umi 项目 A 和 B 并且均已部署发布，url 分别为https:&#x2F;&#x2F;www.myProjectA.com和https:&#x2F;&#x2F;www.myProjectB.com，需要将项目 A 内嵌至项目">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iframe内嵌父子页面路由同步">
+<meta property="og:url" content="http://example.com/2022/09/16/iframe%E5%86%85%E5%B5%8C%E7%88%B6%E5%AD%90%E9%A1%B5%E9%9D%A2%E8%B7%AF%E7%94%B1%E5%90%8C%E6%AD%A5/index.html">
+<meta property="og:site_name" content="蓝扬阳的博客">
+<meta property="og:description" content="背景：在前端的项目中，可能会遇到需要在一个项目中内嵌另一个完整项目。今天我们就来讨论讨论利用 iframe 内嵌项目的路由处理。 首先内嵌项目和被内嵌项目都有各自的路由，并均配有路由跳转。假定我们现有两个 umi 项目 A 和 B 并且均已部署发布，url 分别为https:&#x2F;&#x2F;www.myProjectA.com和https:&#x2F;&#x2F;www.myProjectB.com，需要将项目 A 内嵌至项目">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-09-15T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-12-02T02:23:27.873Z">
+<meta property="article:author" content="Jun Yang">
+<meta property="article:tag" content="路由">
+<meta property="article:tag" content="iframe">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2022/09/16/iframe%E5%86%85%E5%B5%8C%E7%88%B6%E5%AD%90%E9%A1%B5%E9%9D%A2%E8%B7%AF%E7%94%B1%E5%90%8C%E6%AD%A5/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2022/09/16/iframe%E5%86%85%E5%B5%8C%E7%88%B6%E5%AD%90%E9%A1%B5%E9%9D%A2%E8%B7%AF%E7%94%B1%E5%90%8C%E6%AD%A5/","path":"2022/09/16/iframe内嵌父子页面路由同步/","title":"iframe内嵌父子页面路由同步"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>iframe内嵌父子页面路由同步 | 蓝扬阳的博客</title>
+  
+
+  <script src="/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?4941ea79f83fdafda461e6340ad1544b"></script>
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝扬阳的博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">代码生活</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%90%E8%B7%AF%E7%94%B1%E5%8F%98%E5%8C%96%E9%80%9A%E7%9F%A5%E7%88%B6%E9%A1%B5%E9%9D%A2"><span class="nav-text">子路由变化通知父页面</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%88%B6%E9%A1%B5%E9%9D%A2%E7%9B%91%E5%90%AC%E5%AD%90%E9%A1%B5%E9%9D%A2%E8%B7%AF%E7%94%B1%E5%8F%98%E5%8C%96%E6%94%B9%E5%8F%98%E8%B7%AF%E7%94%B1"><span class="nav-text">父页面监听子页面路由变化改变路由</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%88%B6%E9%A1%B5%E9%9D%A2%E8%B7%AF%E7%94%B1%E5%8F%98%E5%8C%96%E9%80%9A%E7%9F%A5%E5%AD%90%E9%A1%B5%E9%9D%A2"><span class="nav-text">父页面路由变化通知子页面</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jun Yang"
+      src="/uploads/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Jun Yang</p>
+  <div class="site-description" itemprop="description">欢迎来到Jun的前端游乐园</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jjunyang" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jjunyang" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jjy_yang@163.com" title="E-Mail → mailto:jjy_yang@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/09/16/iframe%E5%86%85%E5%B5%8C%E7%88%B6%E5%AD%90%E9%A1%B5%E9%9D%A2%E8%B7%AF%E7%94%B1%E5%90%8C%E6%AD%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+      <meta itemprop="name" content="Jun Yang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝扬阳的博客">
+      <meta itemprop="description" content="欢迎来到Jun的前端游乐园">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="iframe内嵌父子页面路由同步 | 蓝扬阳的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          iframe内嵌父子页面路由同步
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-09-16 00:00:00" itemprop="dateCreated datePublished" datetime="2022-09-16T00:00:00+08:00">2022-09-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/iframe/" itemprop="url" rel="index"><span itemprop="name">iframe</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><strong>背景：</strong>在前端的项目中，可能会遇到需要在一个项目中内嵌另一个完整项目。今天我们就来讨论讨论利用 iframe 内嵌项目的路由处理。</p>
+<p>首先内嵌项目和被内嵌项目都有各自的路由，并均配有路由跳转。假定我们现有两个 umi 项目 A 和 B 并且均已部署发布，url 分别为<code>https://www.myProjectA.com</code>和<code>https://www.myProjectB.com</code>，需要将项目 A 内嵌至项目 B 的<code>https://www.myProjectB.com/iframe</code>页面中。</p>
+<span id="more"></span>
+
+<p>在项目 B 的 config 文件夹中的 config.ts 文件中添加路由</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">export default <span class="punctuation">&#123;</span></span><br><span class="line">  <span class="comment">/** ---其他配置--- */</span></span><br><span class="line">  ...otherConfig</span><br><span class="line">  routes<span class="punctuation">:</span><span class="punctuation">[</span></span><br><span class="line">    <span class="comment">/** ---其他路由地址--- */</span></span><br><span class="line">    ...otherRoutes</span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      path<span class="punctuation">:</span> &#x27;/iframe&#x27;<span class="punctuation">,</span></span><br><span class="line">      component<span class="punctuation">:</span> &#x27;src/pages/iframe&#x27;<span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>在 src&#x2F;pages&#x2F;iframe&#x2F;index.tsx 文件中加入 iframe:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">import React from &#x27;react&#x27;;</span><br><span class="line"></span><br><span class="line">const Iframe: React.FC = React.memo(() =&gt; &#123;</span><br><span class="line">  return (</span><br><span class="line">    &lt;iframe</span><br><span class="line">      src=&quot;https://www.myProjectA.com&quot;</span><br><span class="line">      name=&quot;iframe&quot;</span><br><span class="line">      allowFullScreen</span><br><span class="line">      id=&quot;iframe&quot;</span><br><span class="line">      style=&#123;&#123; width: &#x27;100%&#x27;, height: &#x27;100%&#x27; &#125;&#125;</span><br><span class="line">    &gt;&lt;/iframe&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">export default Iframe;</span><br></pre></td></tr></table></figure>
+
+<p>此时只要 projectA 的地址能够被 projectB 内嵌，那么内嵌就成功啦～不妨试试直接内嵌掘金官网<code>https://juejin.cn</code>吧。</p>
+<p>我们可以在项目 B 中访问操作内嵌的项目 A，和直接访问项目 A 几乎没有区别，但是细心的人就会发现，不管项目 A 地址怎么变，项目 B 始终只是 iframe 内嵌页的路由，即<code>https://www.myProjectB.com/iframe</code>。这样就会带来一个问题：我们无法直接在项目 B 中通过路由访问项目 A 的某一个页面，这也是本文探讨的核心问题。</p>
+<h1 id="子路由变化通知父页面"><a href="#子路由变化通知父页面" class="headerlink" title="子路由变化通知父页面"></a>子路由变化通知父页面</h1><p>首先我们知道项目 B 中的项目 A 要想跳转是其路由发生的改变，要想项目 B 也感知并体现，那么第一步就是要将子路由的改变通知父页面并进行路由改变。iframe 的页面间通信通过 postMessage 方法可以实现。</p>
+<p>思路：劫持子页面路由变化，通过 postMessage 通知父页面。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">const &#123; replaceState &#125; = window.history;</span><br><span class="line">// 劫持路由</span><br><span class="line">function hijackHistoryRoute() &#123;</span><br><span class="line">  Object.assign(window.history, &#123;</span><br><span class="line">    pushState(data: any, unused: string, url?: string | URL) &#123;</span><br><span class="line">      // 使用 replaceState</span><br><span class="line">      replaceState.call(this, data || &#123; key: Date.now() &#125;, unused, url);</span><br><span class="line">      top?.postMessage(&#123; type: &#x27;routePush&#x27;, payLoad: url &#125;, &#x27;*&#x27;);</span><br><span class="line">    &#125;,</span><br><span class="line">    replaceState(data: any, unused: string, url?: string | URL) &#123;</span><br><span class="line">      replaceState.call(this, data || &#123; key: Date.now() &#125;, unused, url);</span><br><span class="line">      top?.postMessage(&#123; type: &#x27;routeReplace&#x27;, payLoad: url &#125;, &#x27;*&#x27;);</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  // 如果是iframe内嵌页，为实现路由跳转，添加路由劫持</span><br><span class="line">  if (window.name === &#x27;iframe&#x27;) &#123;</span><br><span class="line">    hijackHistoryRoute();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;, []);</span><br></pre></td></tr></table></figure>
+
+<p>上述实现了子项目共用一个路由，同时增加了路由劫持并通知父页面，笔者将这部分功能加在了全局的一个 context 中，具体引入因项目而不同。此时在父页面操作回退发现，原本可以正常回退现在回退将会退出 iframe 页面，这是因为子项目中只有一个路由，所以相当于父页面当前页也只有一个路由。</p>
+<h1 id="父页面监听子页面路由变化改变路由"><a href="#父页面监听子页面路由变化改变路由" class="headerlink" title="父页面监听子页面路由变化改变路由"></a>父页面监听子页面路由变化改变路由</h1><p>在第一步中已经实现了子页面路由改变通知父页面，现在需要在父页面将路由的变化体现出来。</p>
+<p>思路：将子页面的路由地址作为父页面路由的一个参数，及父页面的路由改造为<code>https://www.myProjectB.com/iframe？url=&#123;子路由&#125;</code>。</p>
+<p>父页面增加监听并处理路由：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">export enum PostMessageType &#123;</span><br><span class="line">  ROUTE_PUSH = &#x27;routePush&#x27;,</span><br><span class="line">  ROUTE_REPLACE = &#x27;routeReplace&#x27;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">import &#123; history &#125; from &#x27;umi&#x27;;</span><br><span class="line"></span><br><span class="line">// 路由处理</span><br><span class="line">const handleRouteChange = (toRoute: string, postMessageType: string) =&gt; &#123;</span><br><span class="line">  const &#123; pathname, search &#125; = window.location;</span><br><span class="line">  const current = decodeURIComponent(search.slice(5));</span><br><span class="line">  if (current === toRoute) return;</span><br><span class="line">  const route = `$&#123;pathname&#125;?url=$&#123;encodeURIComponent(toRoute)&#125;`;</span><br><span class="line">  if (postMessageType === PostMessageType.ROUTE_PUSH) &#123;</span><br><span class="line">    history.push(route);</span><br><span class="line">  &#125; else if (postMessageType === PostMessageType.ROUTE_REPLACE) &#123;</span><br><span class="line">    history.replace(route);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  // 监听postMessage方法</span><br><span class="line">  window.addEventListener(</span><br><span class="line">    &#x27;message&#x27;,</span><br><span class="line">    (e) =&gt; &#123;</span><br><span class="line">      const postMessageType = e.data.type;</span><br><span class="line">      if (</span><br><span class="line">        postMessageType === PostMessageType.ROUTE_PUSH ||</span><br><span class="line">        postMessageType === PostMessageType.ROUTE_REPLACE</span><br><span class="line">      ) &#123;</span><br><span class="line">        handleRouteChange(e.data.payLoad, postMessageType);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    false,</span><br><span class="line">  );</span><br><span class="line">&#125;, []);</span><br></pre></td></tr></table></figure>
+
+<p>路由处理可以直接是子页面的完整路由，也可以是特定路径，为了支持 umi 的 replace 跳转，我这里会将路由处理为跳转目标页的路径。</p>
+<p>现在在内嵌页中点击其他路由，路由已经可以完成变化了，但是回退或者刷新页面，我们还是不能进入正确的指定页面。</p>
+<h1 id="父页面路由变化通知子页面"><a href="#父页面路由变化通知子页面" class="headerlink" title="父页面路由变化通知子页面"></a>父页面路由变化通知子页面</h1><p>子页面路由变化能够同步父页面，现在我们要完成父页面路由变化同步子页面。</p>
+<p>思路：监听父页面路由变化，通过 postMessage 告知子页面</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">// 对象转为 query string方法</span><br><span class="line">export function objToQueryStr(obj: Record&lt;string, any&gt;) &#123;</span><br><span class="line">  if (!obj) return &#x27;&#x27;;</span><br><span class="line">  const str: string[] = [];</span><br><span class="line">  Object.keys(obj).forEach((key) =&gt; &#123;</span><br><span class="line">    str.push(`$&#123;encodeURIComponent(key)&#125;=$&#123;encodeURIComponent(obj[key])&#125;`);</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  return str.join(&#x27;&amp;&#x27;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">import &#123; history, useLocation &#125; from &#x27;umi&#x27;;</span><br><span class="line"></span><br><span class="line">const &#123; query &#125; = useLocation() as any;</span><br><span class="line"></span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  const iframe = document.getElementById(&#x27;iframe&#x27;) as any;</span><br><span class="line">  const iw = iframe?.contentWindow;</span><br><span class="line">  if (!iw) return;</span><br><span class="line">  iw?.postMessage(&#123; type: &#x27;routeChange&#x27;, payLoad: objToQueryStr(query).slice(4) &#125;, &#x27;*&#x27;);</span><br><span class="line">&#125;, [query]);</span><br></pre></td></tr></table></figure>
+
+<p>子项目监听 postMessage 并跳转路由：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">const current = `$&#123;window.location.pathname&#125;$&#123;window.location.search&#125;`;</span><br><span class="line">// 监听postMessage路由改变操作</span><br><span class="line">const handleListenMessage = useCallback(</span><br><span class="line">  debounce(</span><br><span class="line">    (e) =&gt; &#123;</span><br><span class="line">      const postMessageType = e.data.type;</span><br><span class="line">      if (postMessageType === &#x27;routeChange&#x27;) &#123;</span><br><span class="line">        if (!e.data.payLoad) return;</span><br><span class="line">        const route = decodeURIComponent(e.data.payLoad);</span><br><span class="line">        if (current === route) return;</span><br><span class="line">        history.replace(route);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    200,</span><br><span class="line">    &#123; trailing: true, leading: false &#125;,</span><br><span class="line">  ),</span><br><span class="line">  [current],</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">// 如果是内嵌页，添加页面事件监听</span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  if (window.name === &#x27;iframe&#x27;) &#123;</span><br><span class="line">    window.addEventListener(&#x27;message&#x27;, handleListenMessage);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  return () =&gt; &#123;</span><br><span class="line">    if (window.name === &#x27;iframe&#x27;) &#123;</span><br><span class="line">      window.removeEventListener(&#x27;message&#x27;, handleListenMessage);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;, [current]);</span><br></pre></td></tr></table></figure>
+
+<p>完成子页面监听父页面路由变化并跳转，就实现了父子页面的路由同步，点击内嵌页其他路由，或者点击后退前进按钮路由都能正常跳转。要想刷新页面能进入正确的页面只需支持 iframe 的 src 中带参数即可，子页面识别此地址进行跳转即可。</p>
+<p>父页面</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">const [toUrl, setToUrl] = useState(&#x27;/&#x27;);</span><br><span class="line"></span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  if (query.url) &#123;</span><br><span class="line">    setToUrl(query.url);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;,[]);</span><br><span class="line"></span><br><span class="line">return (</span><br><span class="line">  &lt;iframe</span><br><span class="line">    src=`https://www.myProjectA.com?to=&#123;toUrl&#125;`</span><br><span class="line">    name=&quot;iframe&quot;</span><br><span class="line">    allowFullScreen</span><br><span class="line">    id=&quot;iframe&quot;</span><br><span class="line">    style=&#123;&#123; width: &#x27;100%&#x27;, height: &#x27;100%&#x27; &#125;&#125;</span><br><span class="line">  &gt;&lt;/iframe&gt;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>子页面</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import useLocationQuery from &#x27;@/hooks/useLocationQuery&#x27;;</span><br><span class="line"></span><br><span class="line">const &#123; to = &#x27;/&#x27;, token = &#x27;&#x27;, tenantId &#125; = useLocationQuery();</span><br><span class="line"></span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  history.replace(to);</span><br><span class="line">&#125;, []);</span><br></pre></td></tr></table></figure>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本文探讨实现了在 iframe 内嵌场景中如何实现父子页面的路由同步，也是踩了很多坑实现的，希望对你有帮助～</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%B7%AF%E7%94%B1/" rel="tag"><i class="fa fa-tag"></i> 路由</a>
+              <a href="/tags/iframe/" rel="tag"><i class="fa fa-tag"></i> iframe</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/08/05/%E4%B8%80%E8%B5%B7%E8%AE%A4%E8%AF%86npm/" rel="prev" title="一起认识npm">
+                  <i class="fa fa-chevron-left"></i> 一起认识npm
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/09/27/%E5%AE%9E%E6%88%98%E4%B8%AD%E4%BA%86%E8%A7%A3useRef/" rel="next" title="实战中了解useRef">
+                  实战中了解useRef <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa-sharp fa-solid fa-star"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jun Yang</span>
+</div>
+<div class="busuanzi-count">
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/jjunyang" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
