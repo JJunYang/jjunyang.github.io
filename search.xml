@@ -34,7 +34,7 @@
   </entry>
   <entry>
     <title>NPM包依赖管理</title>
-    <url>/2022/10/13/NPM%E5%8C%85%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</url>
+    <url>/2022/08/05/NPM%E5%8C%85%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</url>
     <content><![CDATA[<p>npm 是 Node.js 的包管理工具，在实际使用过程中，我们经常会用 npm install 命令安装依赖包。</p>
 <p>npm 官方对包也做了定义，<a href="https://docs.npmjs.com/about-packages-and-modules">戳此进</a>：</p>
 <span id="more"></span>
@@ -43,7 +43,7 @@
 <li>a. 一个含有 package.json 文件描述的程序的文件夹</li>
 <li>b. 一个含有(a)的 gzip 压缩文件</li>
 <li>c. 一个指向(b)url 地址</li>
-<li>d. 格式为<code>&lt;name&gt;@&lt;version&gt;</code>的指向官方源的字符串，符合定义(c)，如果 <a href="mailto:&#x67;&#x75;&#108;&#x70;&#64;&#52;&#x2e;&#x30;&#46;&#x31;">&#x67;&#x75;&#108;&#x70;&#64;&#52;&#x2e;&#x30;&#46;&#x31;</a></li>
+<li>d. 格式为<code>&lt;name&gt;@&lt;version&gt;</code>的指向官方源的字符串，符合定义(c)，如果 <a href="mailto:&#103;&#117;&#x6c;&#x70;&#64;&#52;&#x2e;&#48;&#46;&#x31;">&#103;&#117;&#x6c;&#x70;&#64;&#52;&#x2e;&#48;&#46;&#x31;</a></li>
 <li>e. 格式为<code>&lt;name&gt;@&lt;tag&gt;</code>的指向 d 的字符串，如果 gulp@latest</li>
 <li>f. 格式为<code>&lt;name&gt;</code>的代表最新版本包的字符串，如 gulp</li>
 <li>g. 一个符合条件(a)的远程 git url</li>
@@ -68,10 +68,10 @@
 </ul>
 <h1 id="依赖介绍"><a href="#依赖介绍" class="headerlink" title="依赖介绍"></a>依赖介绍</h1><h2 id="dependencies"><a href="#dependencies" class="headerlink" title="dependencies"></a>dependencies</h2><p>dependencies 中包括了所有项目中使用到的包，其他用户要使用此包就需要安装 dependencies 中所有的包。</p>
 <h2 id="devDependencies"><a href="#devDependencies" class="headerlink" title="devDependencies"></a>devDependencies</h2><p>还有一类插件是在开发环境中使用的，比如我们可能会用 jest 来测试，用 eslint 进行代码样式规范，用 mock.js 来 mock 数据等等。其他用户可以正常使用我们的包但不需要安装此类依赖包，那么我们就可以将这类包列入 devDependencies 中。</p>
-<h2 id="peerDependencies"><a href="#peerDependencies" class="headerlink" title="peerDependencies"></a>peerDependencies</h2><p>通常情况下，npm 能够很好的管理我们的依赖包。假设我们的项目依赖<a href="mailto:&#80;&#x61;&#99;&#x6b;&#x61;&#x67;&#x65;&#x41;&#x40;&#50;&#x2e;&#49;&#x2e;&#x30;">&#80;&#x61;&#99;&#x6b;&#x61;&#x67;&#x65;&#x41;&#x40;&#50;&#x2e;&#49;&#x2e;&#x30;</a>，但是引用了依赖<a href="mailto:&#80;&#x61;&#x63;&#x6b;&#97;&#x67;&#x65;&#65;&#64;&#49;&#x2e;&#x39;&#46;&#48;">&#80;&#x61;&#x63;&#x6b;&#97;&#x67;&#x65;&#65;&#64;&#49;&#x2e;&#x39;&#46;&#48;</a>的包 PackageB，npm install 生成的依赖树如下：</p>
+<h2 id="peerDependencies"><a href="#peerDependencies" class="headerlink" title="peerDependencies"></a>peerDependencies</h2><p>通常情况下，npm 能够很好的管理我们的依赖包。假设我们的项目依赖<a href="mailto:&#x50;&#97;&#x63;&#107;&#97;&#103;&#x65;&#65;&#x40;&#50;&#x2e;&#49;&#46;&#48;">&#x50;&#97;&#x63;&#107;&#97;&#103;&#x65;&#65;&#x40;&#50;&#x2e;&#49;&#46;&#48;</a>，但是引用了依赖<a href="mailto:&#x50;&#97;&#99;&#x6b;&#x61;&#x67;&#101;&#65;&#64;&#49;&#x2e;&#57;&#x2e;&#x30;">&#x50;&#97;&#99;&#x6b;&#x61;&#x67;&#101;&#65;&#64;&#49;&#x2e;&#57;&#x2e;&#x30;</a>的包 PackageB，npm install 生成的依赖树如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├── PackageA@2.1.0</span><br><span class="line">└─┬ PackageB@1.0.0</span><br><span class="line">  └── PackageA@1.9.0</span><br></pre></td></tr></table></figure>
 
-<p>通常情况下这不会有问题，PackageB 内会有他可以用的版本为 1.9.0 的 PackageA，同时并不会和项目的<a href="mailto:&#80;&#97;&#x63;&#107;&#x61;&#103;&#101;&#65;&#64;&#x32;&#46;&#49;&#x2e;&#48;">&#80;&#97;&#x63;&#107;&#x61;&#103;&#101;&#65;&#64;&#x32;&#46;&#49;&#x2e;&#48;</a>的冲突。</p>
+<p>通常情况下这不会有问题，PackageB 内会有他可以用的版本为 1.9.0 的 PackageA，同时并不会和项目的<a href="mailto:&#80;&#x61;&#99;&#x6b;&#x61;&#103;&#101;&#65;&#x40;&#50;&#46;&#49;&#x2e;&#48;">&#80;&#x61;&#99;&#x6b;&#x61;&#103;&#101;&#65;&#x40;&#50;&#46;&#49;&#x2e;&#48;</a>的冲突。</p>
 <p>然而在插件的使用时我们有可能会遇到以下情况,，举个例子：项目中需要依赖包 gulp 版本为最新的@latest(4.0.2)，而 gulp 插件 gulp-plugin-example 依赖的 gulp 版本为@3.2.0，此时我们会安装多个包 gulp。package.json 文件可能如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;dependencies&quot;:&#123;</span><br><span class="line">    &quot;gulp&quot;:&quot;4.0.2&quot;</span><br><span class="line">    &quot;gulp-plugin-example&quot;:&quot;0.1.1&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -248,7 +248,7 @@
   </entry>
   <entry>
     <title>一起认识npm</title>
-    <url>/2022/08/05/%E4%B8%80%E8%B5%B7%E8%AE%A4%E8%AF%86npm/</url>
+    <url>/2022/05/19/%E4%B8%80%E8%B5%B7%E8%AE%A4%E8%AF%86npm/</url>
     <content><![CDATA[<h1 id="关于-npm"><a href="#关于-npm" class="headerlink" title="关于 npm"></a>关于 npm</h1><p>NPM（node package manager）是 Node.js 官方提供的包管理工具，用于 node 包的管理（包括安装、卸载、管理依赖等）。发展到现在 npm 已经成为世界上最大规模的包管理系统，为广大开发者构建了一个友好的开源平台，用户能够向 NPM 服务器上传自己编写的第三方包或者命令行程序，也可以下载别人编写的至本地使用。</p>
 <p>会使用 npm 最基本的 npm init、npm install 等命令几乎就可以将包管理实施在项目里，然后 npm 远不止这些。</p>
 <p>本文是笔者出于兴趣挖掘的一些 npm 常用的原理、特性以及个人实践。</p>
@@ -568,7 +568,7 @@
   </entry>
   <entry>
     <title>深入理解npm install原理</title>
-    <url>/2022/05/19/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3npm-install%E5%8E%9F%E7%90%86/</url>
+    <url>/2022/07/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3npm-install%E5%8E%9F%E7%90%86/</url>
     <content><![CDATA[<p>相信作为一个程序员对 npm 的基本使用命令应该了如指掌，但是你真的了解 npm install 执行的机制么？为什么 npm install 的时候会多出一个 package-lock.json 文件？为什么有时候执行 npm install 的时候会同步更新 package-lock.json 文件，有时候又不会更新？package-lock.json 文件什么时候需要更新，什么时候不需要更新？</p>
 <p>带着上述问题，笔者对 npm install 的原理和机制进行了一波研究，也作为自己对 npm 知识的学习总结。</p>
 <span id="more"></span>
@@ -612,7 +612,7 @@
 <li>模块 A 更新且依赖由 B1.0-&gt;B2.0</li>
 <li>模块 D 更新且依赖由 B1.0-&gt;B2.0</li>
 </ol>
-<p>发生场景 1: 当我们执行 npm install <a href="mailto:&#65;&#x40;&#50;&#x2e;&#x30;">&#65;&#x40;&#50;&#x2e;&#x30;</a> –save 后，npm3 会执行以下操作：</p>
+<p>发生场景 1: 当我们执行 npm install <a href="mailto:&#65;&#x40;&#50;&#x2e;&#48;">&#65;&#x40;&#50;&#x2e;&#48;</a> –save 后，npm3 会执行以下操作：</p>
 <ul>
 <li>移除模块 A1.0</li>
 <li>安装模块 A2.0</li>
