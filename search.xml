@@ -33,137 +33,6 @@
       </tags>
   </entry>
   <entry>
-    <title>NPM包依赖管理</title>
-    <url>/2022/08/05/NPM%E5%8C%85%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</url>
-    <content><![CDATA[<p>npm 是 Node.js 的包管理工具，在实际使用过程中，我们经常会用 npm install 命令安装依赖包。</p>
-<p>npm 官方对包也做了定义，<a href="https://docs.npmjs.com/about-packages-and-modules">戳此进</a>：</p>
-<span id="more"></span>
-
-<ul>
-<li>a. 一个含有 package.json 文件描述的程序的文件夹</li>
-<li>b. 一个含有(a)的 gzip 压缩文件</li>
-<li>c. 一个指向(b)url 地址</li>
-<li>d. 格式为<code>&lt;name&gt;@&lt;version&gt;</code>的指向官方源的字符串，符合定义(c)，如果 <a href="mailto:&#103;&#117;&#x6c;&#x70;&#64;&#52;&#x2e;&#48;&#46;&#x31;">&#103;&#117;&#x6c;&#x70;&#64;&#52;&#x2e;&#48;&#46;&#x31;</a></li>
-<li>e. 格式为<code>&lt;name&gt;@&lt;tag&gt;</code>的指向 d 的字符串，如果 gulp@latest</li>
-<li>f. 格式为<code>&lt;name&gt;</code>的代表最新版本包的字符串，如 gulp</li>
-<li>g. 一个符合条件(a)的远程 git url</li>
-</ul>
-<p>在项目中安装依赖包时，默认会将依赖包的信息加入到 package.json 的 dependencies 模块去。其实除了常见的 dependencies 以外，package.json 文件还有其他几项依赖类型，罗列如下：</p>
-<ul>
-<li>dependencies 生产环境依赖</li>
-<li>devDependencies 开发环境依赖</li>
-<li>optionalDependencies 可选依赖</li>
-<li>peerDependencies 前置依赖</li>
-<li>bundleDependencies 需要打包的依赖</li>
-</ul>
-<p>我们可以通过 npm install 的参数来指定依赖包需要添加到哪个依赖块，通用可选参数: <code>[-P|--save-prod|-D|--save-dev|-O|--save-optional] [-E|--save-exact] [-B|--save-bundle] [--no-save] [--dry-run]</code></p>
-<ul>
-<li>-P ｜ –save-prod：添加至 dependencies</li>
-<li>-D ｜ –save-dev：添加至 devDependencies</li>
-<li>-O | –save-optional：添加至 optionalDependencies</li>
-<li>-E | –save-exact：安装确切的包版本，而不带默认的版本匹配符号，如^或者～</li>
-<li>-B | –save-bundle：添加至 bundleDependencies 和 dependencies 中</li>
-<li>–no-save：不添加至 dependencies 中</li>
-<li>–dry-run：报告安装的状态而不是真正执行安装</li>
-</ul>
-<h1 id="依赖介绍"><a href="#依赖介绍" class="headerlink" title="依赖介绍"></a>依赖介绍</h1><h2 id="dependencies"><a href="#dependencies" class="headerlink" title="dependencies"></a>dependencies</h2><p>dependencies 中包括了所有项目中使用到的包，其他用户要使用此包就需要安装 dependencies 中所有的包。</p>
-<h2 id="devDependencies"><a href="#devDependencies" class="headerlink" title="devDependencies"></a>devDependencies</h2><p>还有一类插件是在开发环境中使用的，比如我们可能会用 jest 来测试，用 eslint 进行代码样式规范，用 mock.js 来 mock 数据等等。其他用户可以正常使用我们的包但不需要安装此类依赖包，那么我们就可以将这类包列入 devDependencies 中。</p>
-<h2 id="peerDependencies"><a href="#peerDependencies" class="headerlink" title="peerDependencies"></a>peerDependencies</h2><p>通常情况下，npm 能够很好的管理我们的依赖包。假设我们的项目依赖<a href="mailto:&#x50;&#97;&#x63;&#107;&#97;&#103;&#x65;&#65;&#x40;&#50;&#x2e;&#49;&#46;&#48;">&#x50;&#97;&#x63;&#107;&#97;&#103;&#x65;&#65;&#x40;&#50;&#x2e;&#49;&#46;&#48;</a>，但是引用了依赖<a href="mailto:&#x50;&#97;&#99;&#x6b;&#x61;&#x67;&#101;&#65;&#64;&#49;&#x2e;&#57;&#x2e;&#x30;">&#x50;&#97;&#99;&#x6b;&#x61;&#x67;&#101;&#65;&#64;&#49;&#x2e;&#57;&#x2e;&#x30;</a>的包 PackageB，npm install 生成的依赖树如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├── PackageA@2.1.0</span><br><span class="line">└─┬ PackageB@1.0.0</span><br><span class="line">  └── PackageA@1.9.0</span><br></pre></td></tr></table></figure>
-
-<p>通常情况下这不会有问题，PackageB 内会有他可以用的版本为 1.9.0 的 PackageA，同时并不会和项目的<a href="mailto:&#80;&#x61;&#99;&#x6b;&#x61;&#103;&#101;&#65;&#x40;&#50;&#46;&#49;&#x2e;&#48;">&#80;&#x61;&#99;&#x6b;&#x61;&#103;&#101;&#65;&#x40;&#50;&#46;&#49;&#x2e;&#48;</a>的冲突。</p>
-<p>然而在插件的使用时我们有可能会遇到以下情况,，举个例子：项目中需要依赖包 gulp 版本为最新的@latest(4.0.2)，而 gulp 插件 gulp-plugin-example 依赖的 gulp 版本为@3.2.0，此时我们会安装多个包 gulp。package.json 文件可能如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;dependencies&quot;:&#123;</span><br><span class="line">    &quot;gulp&quot;:&quot;4.0.2&quot;</span><br><span class="line">    &quot;gulp-plugin-example&quot;:&quot;0.1.1&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>但这时候如果执行 npm install 可能会导致我们不期望的依赖树</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├── gulp@4.0.2</span><br><span class="line">└─┬ gulp-plugin-example@0.1.1</span><br><span class="line">  └── gulp@3.2.0</span><br></pre></td></tr></table></figure>
-
-<p>此时插件使用的和宿主环境的 gulp 版本不一致，由于 gulp-plugin-example 只是插件，我们并不想因此安装多次 gulp，且希望宿主环境去安装满足插件 peerDependencies 所指定依赖的包，然后在插件 import 或者 require 依赖包时，永远引用的是宿主环境统一安装的 npm 包，最终解决插件与所依赖包不一致的问题。</p>
-<p>通常我们会用 peerDependencies 去表达：如果你要使用此插件，需要确保宿主环境的依赖关系版本为@xx.xx。拥有 peerDependencies 意味着你的包需要的依赖关系和其他安装此包的用户的现有依赖关系是需要保持一致的。所以在编写插件时，需要确定主依赖包的版本，并添加至插件 package.json 中的 peerDependencies 中。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line"> &quot;name&quot;: &quot;gulp-plugin-example&quot;,</span><br><span class="line"> &quot;peerDependencies&quot;: &#123;</span><br><span class="line">   &quot;gulp&quot;:&quot;^4.0.0&quot;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>如果这时候执行 npm install gulp-plugin-example，gulp 包也会随之安装。如果之后尝试去安装另一个 gulp 插件且依赖只依赖 gulp 3.x 版本的话，将会报错，这也成功解决了插件引用不同依赖包版本的问题！</p>
-<p>更新：npm 版本 1，2 和 7 会自动安装 peerDependencies 的依赖包如果其未在上层依赖树中明确。npm 版本 3 至 6，我们则会收到告警告知 peerDependencies 还未安装。</p>
-<p>peerDependencies 依赖包的版本要求与常规的 dependencies 不同，需要更加广。使用过程中不应该把 peer dependencies 的锁定在固定的版本。如果两个插件依赖的版本不一样，而使用者又懒得花时间去检查实际上符合条件的共用最低版本，这就会很糟心。</p>
-<p>最佳情况是根据<a href="https://semver.org/">semver</a>规则决定 peerDependencies 的版本要求，合理使用^以及～去匹配版本。如果依赖 1.5.4 版本的特性，也可以使用范围去匹配，如：”&gt;&#x3D; 1.5.4 &lt; 2”</p>
-<h2 id="optionalDependencies"><a href="#optionalDependencies" class="headerlink" title="optionalDependencies"></a>optionalDependencies</h2><p>如果一个依赖关系可以被使用，但是又希望 npm 在找不到他或者安装失败的情况下继续进行，那么其可以被放入 optionalDependencies 内。通常这对那些不是所有运行环境或机器都需要的依赖关系很有用。</p>
-<p>tips：optionalDependencies 会覆盖 dependencies 中的同名依赖包，所以不要把包同时写进这两个字段中。</p>
-<h2 id="bundleDependencies"><a href="#bundleDependencies" class="headerlink" title="bundleDependencies"></a>bundleDependencies</h2><p>bundleDependencies 是一个存放在主包发布时也需要同时打包的包名的数组。</p>
-<p>假设我们的有如下的包，执行 npm pack</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;name&quot;: &quot;test&quot;,</span><br><span class="line">  &quot;version&quot;: &quot;1.0.0&quot;,</span><br><span class="line">  &quot;dependencies&quot;: &#123;</span><br><span class="line">    &quot;moment&quot;: &quot;^2.29.3&quot;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;bundleDependencies&quot;: [</span><br><span class="line">    &quot;moment&quot;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>那么我们将会得到的 test-1.0.0.tgz 文件，执行 npm install test-1.0.0.tgz 后也会得到如下结构：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├─ node_modules</span><br><span class="line">    ├── test</span><br><span class="line">    │    └── moment</span><br><span class="line">    └── xxx</span><br></pre></td></tr></table></figure>
-
-<h1 id="package-lock-json-文件"><a href="#package-lock-json-文件" class="headerlink" title="package-lock.json 文件"></a>package-lock.json 文件</h1><p>package-lock.json 文件是 npm 修改了 node_modules 依赖树或者 package.json 文件自动生成的产物。它描述了生成的准确依赖树，以便后续安装或者其他人安装都能生成相同的树。</p>
-<p>假想现有的 package.json 文件的依赖是 “react” ：“^18.0.0”，因为有标识符^，所以如果 react 在 18 大版本下更新至 18.0.1，那么 npm install 的时候将会自动安装最新版本 18.0.1。这样可能就会让你本地的版本和其他人不一致，从而引起一些可能发生的相关问题。</p>
-<p>package-lock.json 的出现就很好的解决此问题，他的目的就是锁定具体版本号，使每一个使用者安装的版本都保持一致。</p>
-<p>npm install 时，node 会从 package.json 中读取到所有 dependencies 的信息与现有的 node_modules 模块进行对比，如果不存在的话就安装，并将依赖项确定的版本更新到 package-lock.json 文件中，不会更新其他依赖项版本；如果存在就检查更新，从 package-lock 文件中获取对应锁定的版本进行更新。</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><a href="https://nodejs.org/en/blog/npm/peer-dependencies/">nodejs-Peer Dependencies</a></li>
-<li><a href="https://segmentfault.com/a/1190000009927946">读懂 package.json – 依赖管理</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>NPM</category>
-      </categories>
-      <tags>
-        <tag>依赖</tag>
-        <tag>NPM</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>iframe内嵌父子页面路由同步</title>
-    <url>/2022/09/16/iframe%E5%86%85%E5%B5%8C%E7%88%B6%E5%AD%90%E9%A1%B5%E9%9D%A2%E8%B7%AF%E7%94%B1%E5%90%8C%E6%AD%A5/</url>
-    <content><![CDATA[<p><strong>背景：</strong>在前端的项目中，可能会遇到需要在一个项目中内嵌另一个完整项目。今天我们就来讨论讨论利用 iframe 内嵌项目的路由处理。</p>
-<p>首先内嵌项目和被内嵌项目都有各自的路由，并均配有路由跳转。假定我们现有两个 umi 项目 A 和 B 并且均已部署发布，url 分别为<code>https://www.myProjectA.com</code>和<code>https://www.myProjectB.com</code>，需要将项目 A 内嵌至项目 B 的<code>https://www.myProjectB.com/iframe</code>页面中。</p>
-<span id="more"></span>
-
-<p>在项目 B 的 config 文件夹中的 config.ts 文件中添加路由</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">export default <span class="punctuation">&#123;</span></span><br><span class="line">  <span class="comment">/** ---其他配置--- */</span></span><br><span class="line">  ...otherConfig</span><br><span class="line">  routes<span class="punctuation">:</span><span class="punctuation">[</span></span><br><span class="line">    <span class="comment">/** ---其他路由地址--- */</span></span><br><span class="line">    ...otherRoutes</span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      path<span class="punctuation">:</span> &#x27;/iframe&#x27;<span class="punctuation">,</span></span><br><span class="line">      component<span class="punctuation">:</span> &#x27;src/pages/iframe&#x27;<span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>在 src&#x2F;pages&#x2F;iframe&#x2F;index.tsx 文件中加入 iframe:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import React from &#x27;react&#x27;;</span><br><span class="line"></span><br><span class="line">const Iframe: React.FC = React.memo(() =&gt; &#123;</span><br><span class="line">  return (</span><br><span class="line">    &lt;iframe</span><br><span class="line">      src=&quot;https://www.myProjectA.com&quot;</span><br><span class="line">      name=&quot;iframe&quot;</span><br><span class="line">      allowFullScreen</span><br><span class="line">      id=&quot;iframe&quot;</span><br><span class="line">      style=&#123;&#123; width: &#x27;100%&#x27;, height: &#x27;100%&#x27; &#125;&#125;</span><br><span class="line">    &gt;&lt;/iframe&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">export default Iframe;</span><br></pre></td></tr></table></figure>
-
-<p>此时只要 projectA 的地址能够被 projectB 内嵌，那么内嵌就成功啦～不妨试试直接内嵌掘金官网<code>https://juejin.cn</code>吧。</p>
-<p>我们可以在项目 B 中访问操作内嵌的项目 A，和直接访问项目 A 几乎没有区别，但是细心的人就会发现，不管项目 A 地址怎么变，项目 B 始终只是 iframe 内嵌页的路由，即<code>https://www.myProjectB.com/iframe</code>。这样就会带来一个问题：我们无法直接在项目 B 中通过路由访问项目 A 的某一个页面，这也是本文探讨的核心问题。</p>
-<h1 id="子路由变化通知父页面"><a href="#子路由变化通知父页面" class="headerlink" title="子路由变化通知父页面"></a>子路由变化通知父页面</h1><p>首先我们知道项目 B 中的项目 A 要想跳转是其路由发生的改变，要想项目 B 也感知并体现，那么第一步就是要将子路由的改变通知父页面并进行路由改变。iframe 的页面间通信通过 postMessage 方法可以实现。</p>
-<p>思路：劫持子页面路由变化，通过 postMessage 通知父页面。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">const &#123; replaceState &#125; = window.history;</span><br><span class="line">// 劫持路由</span><br><span class="line">function hijackHistoryRoute() &#123;</span><br><span class="line">  Object.assign(window.history, &#123;</span><br><span class="line">    pushState(data: any, unused: string, url?: string | URL) &#123;</span><br><span class="line">      // 使用 replaceState</span><br><span class="line">      replaceState.call(this, data || &#123; key: Date.now() &#125;, unused, url);</span><br><span class="line">      top?.postMessage(&#123; type: &#x27;routePush&#x27;, payLoad: url &#125;, &#x27;*&#x27;);</span><br><span class="line">    &#125;,</span><br><span class="line">    replaceState(data: any, unused: string, url?: string | URL) &#123;</span><br><span class="line">      replaceState.call(this, data || &#123; key: Date.now() &#125;, unused, url);</span><br><span class="line">      top?.postMessage(&#123; type: &#x27;routeReplace&#x27;, payLoad: url &#125;, &#x27;*&#x27;);</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  // 如果是iframe内嵌页，为实现路由跳转，添加路由劫持</span><br><span class="line">  if (window.name === &#x27;iframe&#x27;) &#123;</span><br><span class="line">    hijackHistoryRoute();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;, []);</span><br></pre></td></tr></table></figure>
-
-<p>上述实现了子项目共用一个路由，同时增加了路由劫持并通知父页面，笔者将这部分功能加在了全局的一个 context 中，具体引入因项目而不同。此时在父页面操作回退发现，原本可以正常回退现在回退将会退出 iframe 页面，这是因为子项目中只有一个路由，所以相当于父页面当前页也只有一个路由。</p>
-<h1 id="父页面监听子页面路由变化改变路由"><a href="#父页面监听子页面路由变化改变路由" class="headerlink" title="父页面监听子页面路由变化改变路由"></a>父页面监听子页面路由变化改变路由</h1><p>在第一步中已经实现了子页面路由改变通知父页面，现在需要在父页面将路由的变化体现出来。</p>
-<p>思路：将子页面的路由地址作为父页面路由的一个参数，及父页面的路由改造为<code>https://www.myProjectB.com/iframe？url=&#123;子路由&#125;</code>。</p>
-<p>父页面增加监听并处理路由：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">export enum PostMessageType &#123;</span><br><span class="line">  ROUTE_PUSH = &#x27;routePush&#x27;,</span><br><span class="line">  ROUTE_REPLACE = &#x27;routeReplace&#x27;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">import &#123; history &#125; from &#x27;umi&#x27;;</span><br><span class="line"></span><br><span class="line">// 路由处理</span><br><span class="line">const handleRouteChange = (toRoute: string, postMessageType: string) =&gt; &#123;</span><br><span class="line">  const &#123; pathname, search &#125; = window.location;</span><br><span class="line">  const current = decodeURIComponent(search.slice(5));</span><br><span class="line">  if (current === toRoute) return;</span><br><span class="line">  const route = `$&#123;pathname&#125;?url=$&#123;encodeURIComponent(toRoute)&#125;`;</span><br><span class="line">  if (postMessageType === PostMessageType.ROUTE_PUSH) &#123;</span><br><span class="line">    history.push(route);</span><br><span class="line">  &#125; else if (postMessageType === PostMessageType.ROUTE_REPLACE) &#123;</span><br><span class="line">    history.replace(route);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  // 监听postMessage方法</span><br><span class="line">  window.addEventListener(</span><br><span class="line">    &#x27;message&#x27;,</span><br><span class="line">    (e) =&gt; &#123;</span><br><span class="line">      const postMessageType = e.data.type;</span><br><span class="line">      if (</span><br><span class="line">        postMessageType === PostMessageType.ROUTE_PUSH ||</span><br><span class="line">        postMessageType === PostMessageType.ROUTE_REPLACE</span><br><span class="line">      ) &#123;</span><br><span class="line">        handleRouteChange(e.data.payLoad, postMessageType);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    false,</span><br><span class="line">  );</span><br><span class="line">&#125;, []);</span><br></pre></td></tr></table></figure>
-
-<p>路由处理可以直接是子页面的完整路由，也可以是特定路径，为了支持 umi 的 replace 跳转，我这里会将路由处理为跳转目标页的路径。</p>
-<p>现在在内嵌页中点击其他路由，路由已经可以完成变化了，但是回退或者刷新页面，我们还是不能进入正确的指定页面。</p>
-<h1 id="父页面路由变化通知子页面"><a href="#父页面路由变化通知子页面" class="headerlink" title="父页面路由变化通知子页面"></a>父页面路由变化通知子页面</h1><p>子页面路由变化能够同步父页面，现在我们要完成父页面路由变化同步子页面。</p>
-<p>思路：监听父页面路由变化，通过 postMessage 告知子页面</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// 对象转为 query string方法</span><br><span class="line">export function objToQueryStr(obj: Record&lt;string, any&gt;) &#123;</span><br><span class="line">  if (!obj) return &#x27;&#x27;;</span><br><span class="line">  const str: string[] = [];</span><br><span class="line">  Object.keys(obj).forEach((key) =&gt; &#123;</span><br><span class="line">    str.push(`$&#123;encodeURIComponent(key)&#125;=$&#123;encodeURIComponent(obj[key])&#125;`);</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  return str.join(&#x27;&amp;&#x27;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">import &#123; history, useLocation &#125; from &#x27;umi&#x27;;</span><br><span class="line"></span><br><span class="line">const &#123; query &#125; = useLocation() as any;</span><br><span class="line"></span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  const iframe = document.getElementById(&#x27;iframe&#x27;) as any;</span><br><span class="line">  const iw = iframe?.contentWindow;</span><br><span class="line">  if (!iw) return;</span><br><span class="line">  iw?.postMessage(&#123; type: &#x27;routeChange&#x27;, payLoad: objToQueryStr(query).slice(4) &#125;, &#x27;*&#x27;);</span><br><span class="line">&#125;, [query]);</span><br></pre></td></tr></table></figure>
-
-<p>子项目监听 postMessage 并跳转路由：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">const current = `$&#123;window.location.pathname&#125;$&#123;window.location.search&#125;`;</span><br><span class="line">// 监听postMessage路由改变操作</span><br><span class="line">const handleListenMessage = useCallback(</span><br><span class="line">  debounce(</span><br><span class="line">    (e) =&gt; &#123;</span><br><span class="line">      const postMessageType = e.data.type;</span><br><span class="line">      if (postMessageType === &#x27;routeChange&#x27;) &#123;</span><br><span class="line">        if (!e.data.payLoad) return;</span><br><span class="line">        const route = decodeURIComponent(e.data.payLoad);</span><br><span class="line">        if (current === route) return;</span><br><span class="line">        history.replace(route);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    200,</span><br><span class="line">    &#123; trailing: true, leading: false &#125;,</span><br><span class="line">  ),</span><br><span class="line">  [current],</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">// 如果是内嵌页，添加页面事件监听</span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  if (window.name === &#x27;iframe&#x27;) &#123;</span><br><span class="line">    window.addEventListener(&#x27;message&#x27;, handleListenMessage);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  return () =&gt; &#123;</span><br><span class="line">    if (window.name === &#x27;iframe&#x27;) &#123;</span><br><span class="line">      window.removeEventListener(&#x27;message&#x27;, handleListenMessage);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;, [current]);</span><br></pre></td></tr></table></figure>
-
-<p>完成子页面监听父页面路由变化并跳转，就实现了父子页面的路由同步，点击内嵌页其他路由，或者点击后退前进按钮路由都能正常跳转。要想刷新页面能进入正确的页面只需支持 iframe 的 src 中带参数即可，子页面识别此地址进行跳转即可。</p>
-<p>父页面</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">const [toUrl, setToUrl] = useState(&#x27;/&#x27;);</span><br><span class="line"></span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  if (query.url) &#123;</span><br><span class="line">    setToUrl(query.url);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;,[]);</span><br><span class="line"></span><br><span class="line">return (</span><br><span class="line">  &lt;iframe</span><br><span class="line">    src=`https://www.myProjectA.com?to=&#123;toUrl&#125;`</span><br><span class="line">    name=&quot;iframe&quot;</span><br><span class="line">    allowFullScreen</span><br><span class="line">    id=&quot;iframe&quot;</span><br><span class="line">    style=&#123;&#123; width: &#x27;100%&#x27;, height: &#x27;100%&#x27; &#125;&#125;</span><br><span class="line">  &gt;&lt;/iframe&gt;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
-<p>子页面</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import useLocationQuery from &#x27;@/hooks/useLocationQuery&#x27;;</span><br><span class="line"></span><br><span class="line">const &#123; to = &#x27;/&#x27;, token = &#x27;&#x27;, tenantId &#125; = useLocationQuery();</span><br><span class="line"></span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  history.replace(to);</span><br><span class="line">&#125;, []);</span><br></pre></td></tr></table></figure>
-
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本文探讨实现了在 iframe 内嵌场景中如何实现父子页面的路由同步，也是踩了很多坑实现的，希望对你有帮助～</p>
-]]></content>
-      <categories>
-        <category>iframe</category>
-      </categories>
-      <tags>
-        <tag>路由</tag>
-        <tag>iframe</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>whistle使用实践</title>
     <url>/2022/05/06/whistle%E4%BD%BF%E7%94%A8%E5%AE%9E%E8%B7%B5/</url>
     <content><![CDATA[<h1 id="关于-whistle"><a href="#关于-whistle" class="headerlink" title="关于 whistle"></a>关于 whistle</h1><p>whistle 基于 Node 实现的跨平台 web 调试代理工具，主要用于查看、修改 HTTP、HTTPS、Websocket 请求、相应，也可以作为 HTTP 代理服务器使用。一切操作可以通过配置实现，支持域名、路径、正则表达式、通配符等多种匹配方式。</p>
@@ -244,6 +113,57 @@
       <tags>
         <tag>whistle</tag>
         <tag>调试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>iframe内嵌父子页面路由同步</title>
+    <url>/2022/09/16/iframe%E5%86%85%E5%B5%8C%E7%88%B6%E5%AD%90%E9%A1%B5%E9%9D%A2%E8%B7%AF%E7%94%B1%E5%90%8C%E6%AD%A5/</url>
+    <content><![CDATA[<p><strong>背景：</strong>在前端的项目中，可能会遇到需要在一个项目中内嵌另一个完整项目。今天我们就来讨论讨论利用 iframe 内嵌项目的路由处理。</p>
+<p>首先内嵌项目和被内嵌项目都有各自的路由，并均配有路由跳转。假定我们现有两个 umi 项目 A 和 B 并且均已部署发布，url 分别为<code>https://www.myProjectA.com</code>和<code>https://www.myProjectB.com</code>，需要将项目 A 内嵌至项目 B 的<code>https://www.myProjectB.com/iframe</code>页面中。</p>
+<span id="more"></span>
+
+<p>在项目 B 的 config 文件夹中的 config.ts 文件中添加路由</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">export default <span class="punctuation">&#123;</span></span><br><span class="line">  <span class="comment">/** ---其他配置--- */</span></span><br><span class="line">  ...otherConfig</span><br><span class="line">  routes<span class="punctuation">:</span><span class="punctuation">[</span></span><br><span class="line">    <span class="comment">/** ---其他路由地址--- */</span></span><br><span class="line">    ...otherRoutes</span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      path<span class="punctuation">:</span> &#x27;/iframe&#x27;<span class="punctuation">,</span></span><br><span class="line">      component<span class="punctuation">:</span> &#x27;src/pages/iframe&#x27;<span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>在 src&#x2F;pages&#x2F;iframe&#x2F;index.tsx 文件中加入 iframe:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import React from &#x27;react&#x27;;</span><br><span class="line"></span><br><span class="line">const Iframe: React.FC = React.memo(() =&gt; &#123;</span><br><span class="line">  return (</span><br><span class="line">    &lt;iframe</span><br><span class="line">      src=&quot;https://www.myProjectA.com&quot;</span><br><span class="line">      name=&quot;iframe&quot;</span><br><span class="line">      allowFullScreen</span><br><span class="line">      id=&quot;iframe&quot;</span><br><span class="line">      style=&#123;&#123; width: &#x27;100%&#x27;, height: &#x27;100%&#x27; &#125;&#125;</span><br><span class="line">    &gt;&lt;/iframe&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">export default Iframe;</span><br></pre></td></tr></table></figure>
+
+<p>此时只要 projectA 的地址能够被 projectB 内嵌，那么内嵌就成功啦～不妨试试直接内嵌掘金官网<code>https://juejin.cn</code>吧。</p>
+<p>我们可以在项目 B 中访问操作内嵌的项目 A，和直接访问项目 A 几乎没有区别，但是细心的人就会发现，不管项目 A 地址怎么变，项目 B 始终只是 iframe 内嵌页的路由，即<code>https://www.myProjectB.com/iframe</code>。这样就会带来一个问题：我们无法直接在项目 B 中通过路由访问项目 A 的某一个页面，这也是本文探讨的核心问题。</p>
+<h1 id="子路由变化通知父页面"><a href="#子路由变化通知父页面" class="headerlink" title="子路由变化通知父页面"></a>子路由变化通知父页面</h1><p>首先我们知道项目 B 中的项目 A 要想跳转是其路由发生的改变，要想项目 B 也感知并体现，那么第一步就是要将子路由的改变通知父页面并进行路由改变。iframe 的页面间通信通过 postMessage 方法可以实现。</p>
+<p>思路：劫持子页面路由变化，通过 postMessage 通知父页面。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">const &#123; replaceState &#125; = window.history;</span><br><span class="line">// 劫持路由</span><br><span class="line">function hijackHistoryRoute() &#123;</span><br><span class="line">  Object.assign(window.history, &#123;</span><br><span class="line">    pushState(data: any, unused: string, url?: string | URL) &#123;</span><br><span class="line">      // 使用 replaceState</span><br><span class="line">      replaceState.call(this, data || &#123; key: Date.now() &#125;, unused, url);</span><br><span class="line">      top?.postMessage(&#123; type: &#x27;routePush&#x27;, payLoad: url &#125;, &#x27;*&#x27;);</span><br><span class="line">    &#125;,</span><br><span class="line">    replaceState(data: any, unused: string, url?: string | URL) &#123;</span><br><span class="line">      replaceState.call(this, data || &#123; key: Date.now() &#125;, unused, url);</span><br><span class="line">      top?.postMessage(&#123; type: &#x27;routeReplace&#x27;, payLoad: url &#125;, &#x27;*&#x27;);</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  // 如果是iframe内嵌页，为实现路由跳转，添加路由劫持</span><br><span class="line">  if (window.name === &#x27;iframe&#x27;) &#123;</span><br><span class="line">    hijackHistoryRoute();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;, []);</span><br></pre></td></tr></table></figure>
+
+<p>上述实现了子项目共用一个路由，同时增加了路由劫持并通知父页面，笔者将这部分功能加在了全局的一个 context 中，具体引入因项目而不同。此时在父页面操作回退发现，原本可以正常回退现在回退将会退出 iframe 页面，这是因为子项目中只有一个路由，所以相当于父页面当前页也只有一个路由。</p>
+<h1 id="父页面监听子页面路由变化改变路由"><a href="#父页面监听子页面路由变化改变路由" class="headerlink" title="父页面监听子页面路由变化改变路由"></a>父页面监听子页面路由变化改变路由</h1><p>在第一步中已经实现了子页面路由改变通知父页面，现在需要在父页面将路由的变化体现出来。</p>
+<p>思路：将子页面的路由地址作为父页面路由的一个参数，及父页面的路由改造为<code>https://www.myProjectB.com/iframe？url=&#123;子路由&#125;</code>。</p>
+<p>父页面增加监听并处理路由：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">export enum PostMessageType &#123;</span><br><span class="line">  ROUTE_PUSH = &#x27;routePush&#x27;,</span><br><span class="line">  ROUTE_REPLACE = &#x27;routeReplace&#x27;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">import &#123; history &#125; from &#x27;umi&#x27;;</span><br><span class="line"></span><br><span class="line">// 路由处理</span><br><span class="line">const handleRouteChange = (toRoute: string, postMessageType: string) =&gt; &#123;</span><br><span class="line">  const &#123; pathname, search &#125; = window.location;</span><br><span class="line">  const current = decodeURIComponent(search.slice(5));</span><br><span class="line">  if (current === toRoute) return;</span><br><span class="line">  const route = `$&#123;pathname&#125;?url=$&#123;encodeURIComponent(toRoute)&#125;`;</span><br><span class="line">  if (postMessageType === PostMessageType.ROUTE_PUSH) &#123;</span><br><span class="line">    history.push(route);</span><br><span class="line">  &#125; else if (postMessageType === PostMessageType.ROUTE_REPLACE) &#123;</span><br><span class="line">    history.replace(route);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  // 监听postMessage方法</span><br><span class="line">  window.addEventListener(</span><br><span class="line">    &#x27;message&#x27;,</span><br><span class="line">    (e) =&gt; &#123;</span><br><span class="line">      const postMessageType = e.data.type;</span><br><span class="line">      if (</span><br><span class="line">        postMessageType === PostMessageType.ROUTE_PUSH ||</span><br><span class="line">        postMessageType === PostMessageType.ROUTE_REPLACE</span><br><span class="line">      ) &#123;</span><br><span class="line">        handleRouteChange(e.data.payLoad, postMessageType);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    false,</span><br><span class="line">  );</span><br><span class="line">&#125;, []);</span><br></pre></td></tr></table></figure>
+
+<p>路由处理可以直接是子页面的完整路由，也可以是特定路径，为了支持 umi 的 replace 跳转，我这里会将路由处理为跳转目标页的路径。</p>
+<p>现在在内嵌页中点击其他路由，路由已经可以完成变化了，但是回退或者刷新页面，我们还是不能进入正确的指定页面。</p>
+<h1 id="父页面路由变化通知子页面"><a href="#父页面路由变化通知子页面" class="headerlink" title="父页面路由变化通知子页面"></a>父页面路由变化通知子页面</h1><p>子页面路由变化能够同步父页面，现在我们要完成父页面路由变化同步子页面。</p>
+<p>思路：监听父页面路由变化，通过 postMessage 告知子页面</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// 对象转为 query string方法</span><br><span class="line">export function objToQueryStr(obj: Record&lt;string, any&gt;) &#123;</span><br><span class="line">  if (!obj) return &#x27;&#x27;;</span><br><span class="line">  const str: string[] = [];</span><br><span class="line">  Object.keys(obj).forEach((key) =&gt; &#123;</span><br><span class="line">    str.push(`$&#123;encodeURIComponent(key)&#125;=$&#123;encodeURIComponent(obj[key])&#125;`);</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  return str.join(&#x27;&amp;&#x27;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">import &#123; history, useLocation &#125; from &#x27;umi&#x27;;</span><br><span class="line"></span><br><span class="line">const &#123; query &#125; = useLocation() as any;</span><br><span class="line"></span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  const iframe = document.getElementById(&#x27;iframe&#x27;) as any;</span><br><span class="line">  const iw = iframe?.contentWindow;</span><br><span class="line">  if (!iw) return;</span><br><span class="line">  iw?.postMessage(&#123; type: &#x27;routeChange&#x27;, payLoad: objToQueryStr(query).slice(4) &#125;, &#x27;*&#x27;);</span><br><span class="line">&#125;, [query]);</span><br></pre></td></tr></table></figure>
+
+<p>子项目监听 postMessage 并跳转路由：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">const current = `$&#123;window.location.pathname&#125;$&#123;window.location.search&#125;`;</span><br><span class="line">// 监听postMessage路由改变操作</span><br><span class="line">const handleListenMessage = useCallback(</span><br><span class="line">  debounce(</span><br><span class="line">    (e) =&gt; &#123;</span><br><span class="line">      const postMessageType = e.data.type;</span><br><span class="line">      if (postMessageType === &#x27;routeChange&#x27;) &#123;</span><br><span class="line">        if (!e.data.payLoad) return;</span><br><span class="line">        const route = decodeURIComponent(e.data.payLoad);</span><br><span class="line">        if (current === route) return;</span><br><span class="line">        history.replace(route);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    200,</span><br><span class="line">    &#123; trailing: true, leading: false &#125;,</span><br><span class="line">  ),</span><br><span class="line">  [current],</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">// 如果是内嵌页，添加页面事件监听</span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  if (window.name === &#x27;iframe&#x27;) &#123;</span><br><span class="line">    window.addEventListener(&#x27;message&#x27;, handleListenMessage);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  return () =&gt; &#123;</span><br><span class="line">    if (window.name === &#x27;iframe&#x27;) &#123;</span><br><span class="line">      window.removeEventListener(&#x27;message&#x27;, handleListenMessage);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;, [current]);</span><br></pre></td></tr></table></figure>
+
+<p>完成子页面监听父页面路由变化并跳转，就实现了父子页面的路由同步，点击内嵌页其他路由，或者点击后退前进按钮路由都能正常跳转。要想刷新页面能进入正确的页面只需支持 iframe 的 src 中带参数即可，子页面识别此地址进行跳转即可。</p>
+<p>父页面</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">const [toUrl, setToUrl] = useState(&#x27;/&#x27;);</span><br><span class="line"></span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  if (query.url) &#123;</span><br><span class="line">    setToUrl(query.url);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;,[]);</span><br><span class="line"></span><br><span class="line">return (</span><br><span class="line">  &lt;iframe</span><br><span class="line">    src=`https://www.myProjectA.com?to=&#123;toUrl&#125;`</span><br><span class="line">    name=&quot;iframe&quot;</span><br><span class="line">    allowFullScreen</span><br><span class="line">    id=&quot;iframe&quot;</span><br><span class="line">    style=&#123;&#123; width: &#x27;100%&#x27;, height: &#x27;100%&#x27; &#125;&#125;</span><br><span class="line">  &gt;&lt;/iframe&gt;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>子页面</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import useLocationQuery from &#x27;@/hooks/useLocationQuery&#x27;;</span><br><span class="line"></span><br><span class="line">const &#123; to = &#x27;/&#x27;, token = &#x27;&#x27;, tenantId &#125; = useLocationQuery();</span><br><span class="line"></span><br><span class="line">useEffect(() =&gt; &#123;</span><br><span class="line">  history.replace(to);</span><br><span class="line">&#125;, []);</span><br></pre></td></tr></table></figure>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本文探讨实现了在 iframe 内嵌场景中如何实现父子页面的路由同步，也是踩了很多坑实现的，希望对你有帮助～</p>
+]]></content>
+      <categories>
+        <category>iframe</category>
+      </categories>
+      <tags>
+        <tag>路由</tag>
+        <tag>iframe</tag>
       </tags>
   </entry>
   <entry>
@@ -612,7 +532,7 @@
 <li>模块 A 更新且依赖由 B1.0-&gt;B2.0</li>
 <li>模块 D 更新且依赖由 B1.0-&gt;B2.0</li>
 </ol>
-<p>发生场景 1: 当我们执行 npm install <a href="mailto:&#65;&#x40;&#50;&#x2e;&#48;">&#65;&#x40;&#50;&#x2e;&#48;</a> –save 后，npm3 会执行以下操作：</p>
+<p>发生场景 1: 当我们执行 npm install <a href="mailto:&#65;&#64;&#50;&#46;&#48;">&#65;&#64;&#50;&#46;&#48;</a> –save 后，npm3 会执行以下操作：</p>
 <ul>
 <li>移除模块 A1.0</li>
 <li>安装模块 A2.0</li>
@@ -654,6 +574,86 @@
       <tags>
         <tag>NPM</tag>
         <tag>npm install</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>NPM包依赖管理</title>
+    <url>/2022/08/05/NPM%E5%8C%85%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</url>
+    <content><![CDATA[<p>npm 是 Node.js 的包管理工具，在实际使用过程中，我们经常会用 npm install 命令安装依赖包。</p>
+<p>npm 官方对包也做了定义，<a href="https://docs.npmjs.com/about-packages-and-modules">戳此进</a>：</p>
+<span id="more"></span>
+
+<ul>
+<li>a. 一个含有 package.json 文件描述的程序的文件夹</li>
+<li>b. 一个含有(a)的 gzip 压缩文件</li>
+<li>c. 一个指向(b)url 地址</li>
+<li>d. 格式为<code>&lt;name&gt;@&lt;version&gt;</code>的指向官方源的字符串，符合定义(c)，如果 <a href="mailto:&#103;&#x75;&#108;&#112;&#x40;&#x34;&#x2e;&#x30;&#46;&#x31;">&#103;&#x75;&#108;&#112;&#x40;&#x34;&#x2e;&#x30;&#46;&#x31;</a></li>
+<li>e. 格式为<code>&lt;name&gt;@&lt;tag&gt;</code>的指向 d 的字符串，如果 gulp@latest</li>
+<li>f. 格式为<code>&lt;name&gt;</code>的代表最新版本包的字符串，如 gulp</li>
+<li>g. 一个符合条件(a)的远程 git url</li>
+</ul>
+<p>在项目中安装依赖包时，默认会将依赖包的信息加入到 package.json 的 dependencies 模块去。其实除了常见的 dependencies 以外，package.json 文件还有其他几项依赖类型，罗列如下：</p>
+<ul>
+<li>dependencies 生产环境依赖</li>
+<li>devDependencies 开发环境依赖</li>
+<li>optionalDependencies 可选依赖</li>
+<li>peerDependencies 前置依赖</li>
+<li>bundleDependencies 需要打包的依赖</li>
+</ul>
+<p>我们可以通过 npm install 的参数来指定依赖包需要添加到哪个依赖块，通用可选参数: <code>[-P|--save-prod|-D|--save-dev|-O|--save-optional] [-E|--save-exact] [-B|--save-bundle] [--no-save] [--dry-run]</code></p>
+<ul>
+<li>-P ｜ –save-prod：添加至 dependencies</li>
+<li>-D ｜ –save-dev：添加至 devDependencies</li>
+<li>-O | –save-optional：添加至 optionalDependencies</li>
+<li>-E | –save-exact：安装确切的包版本，而不带默认的版本匹配符号，如^或者～</li>
+<li>-B | –save-bundle：添加至 bundleDependencies 和 dependencies 中</li>
+<li>–no-save：不添加至 dependencies 中</li>
+<li>–dry-run：报告安装的状态而不是真正执行安装</li>
+</ul>
+<h1 id="依赖介绍"><a href="#依赖介绍" class="headerlink" title="依赖介绍"></a>依赖介绍</h1><h2 id="dependencies"><a href="#dependencies" class="headerlink" title="dependencies"></a>dependencies</h2><p>dependencies 中包括了所有项目中使用到的包，其他用户要使用此包就需要安装 dependencies 中所有的包。</p>
+<h2 id="devDependencies"><a href="#devDependencies" class="headerlink" title="devDependencies"></a>devDependencies</h2><p>还有一类插件是在开发环境中使用的，比如我们可能会用 jest 来测试，用 eslint 进行代码样式规范，用 mock.js 来 mock 数据等等。其他用户可以正常使用我们的包但不需要安装此类依赖包，那么我们就可以将这类包列入 devDependencies 中。</p>
+<h2 id="peerDependencies"><a href="#peerDependencies" class="headerlink" title="peerDependencies"></a>peerDependencies</h2><p>通常情况下，npm 能够很好的管理我们的依赖包。假设我们的项目依赖<a href="mailto:&#x50;&#97;&#99;&#x6b;&#97;&#103;&#101;&#x41;&#64;&#x32;&#x2e;&#49;&#x2e;&#x30;">&#x50;&#97;&#99;&#x6b;&#97;&#103;&#101;&#x41;&#64;&#x32;&#x2e;&#49;&#x2e;&#x30;</a>，但是引用了依赖<a href="mailto:&#x50;&#x61;&#99;&#x6b;&#97;&#x67;&#101;&#65;&#64;&#x31;&#46;&#x39;&#x2e;&#48;">&#x50;&#x61;&#99;&#x6b;&#97;&#x67;&#101;&#65;&#64;&#x31;&#46;&#x39;&#x2e;&#48;</a>的包 PackageB，npm install 生成的依赖树如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├── PackageA@2.1.0</span><br><span class="line">└─┬ PackageB@1.0.0</span><br><span class="line">  └── PackageA@1.9.0</span><br></pre></td></tr></table></figure>
+
+<p>通常情况下这不会有问题，PackageB 内会有他可以用的版本为 1.9.0 的 PackageA，同时并不会和项目的<a href="mailto:&#80;&#97;&#x63;&#107;&#97;&#x67;&#101;&#65;&#64;&#x32;&#x2e;&#x31;&#x2e;&#48;">&#80;&#97;&#x63;&#107;&#97;&#x67;&#101;&#65;&#64;&#x32;&#x2e;&#x31;&#x2e;&#48;</a>的冲突。</p>
+<p>然而在插件的使用时我们有可能会遇到以下情况,，举个例子：项目中需要依赖包 gulp 版本为最新的@latest(4.0.2)，而 gulp 插件 gulp-plugin-example 依赖的 gulp 版本为@3.2.0，此时我们会安装多个包 gulp。package.json 文件可能如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;dependencies&quot;:&#123;</span><br><span class="line">    &quot;gulp&quot;:&quot;4.0.2&quot;</span><br><span class="line">    &quot;gulp-plugin-example&quot;:&quot;0.1.1&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但这时候如果执行 npm install 可能会导致我们不期望的依赖树</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├── gulp@4.0.2</span><br><span class="line">└─┬ gulp-plugin-example@0.1.1</span><br><span class="line">  └── gulp@3.2.0</span><br></pre></td></tr></table></figure>
+
+<p>此时插件使用的和宿主环境的 gulp 版本不一致，由于 gulp-plugin-example 只是插件，我们并不想因此安装多次 gulp，且希望宿主环境去安装满足插件 peerDependencies 所指定依赖的包，然后在插件 import 或者 require 依赖包时，永远引用的是宿主环境统一安装的 npm 包，最终解决插件与所依赖包不一致的问题。</p>
+<p>通常我们会用 peerDependencies 去表达：如果你要使用此插件，需要确保宿主环境的依赖关系版本为@xx.xx。拥有 peerDependencies 意味着你的包需要的依赖关系和其他安装此包的用户的现有依赖关系是需要保持一致的。所以在编写插件时，需要确定主依赖包的版本，并添加至插件 package.json 中的 peerDependencies 中。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line"> &quot;name&quot;: &quot;gulp-plugin-example&quot;,</span><br><span class="line"> &quot;peerDependencies&quot;: &#123;</span><br><span class="line">   &quot;gulp&quot;:&quot;^4.0.0&quot;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果这时候执行 npm install gulp-plugin-example，gulp 包也会随之安装。如果之后尝试去安装另一个 gulp 插件且依赖只依赖 gulp 3.x 版本的话，将会报错，这也成功解决了插件引用不同依赖包版本的问题！</p>
+<p>更新：npm 版本 1，2 和 7 会自动安装 peerDependencies 的依赖包如果其未在上层依赖树中明确。npm 版本 3 至 6，我们则会收到告警告知 peerDependencies 还未安装。</p>
+<p>peerDependencies 依赖包的版本要求与常规的 dependencies 不同，需要更加广。使用过程中不应该把 peer dependencies 的锁定在固定的版本。如果两个插件依赖的版本不一样，而使用者又懒得花时间去检查实际上符合条件的共用最低版本，这就会很糟心。</p>
+<p>最佳情况是根据<a href="https://semver.org/">semver</a>规则决定 peerDependencies 的版本要求，合理使用^以及～去匹配版本。如果依赖 1.5.4 版本的特性，也可以使用范围去匹配，如：”&gt;&#x3D; 1.5.4 &lt; 2”</p>
+<h2 id="optionalDependencies"><a href="#optionalDependencies" class="headerlink" title="optionalDependencies"></a>optionalDependencies</h2><p>如果一个依赖关系可以被使用，但是又希望 npm 在找不到他或者安装失败的情况下继续进行，那么其可以被放入 optionalDependencies 内。通常这对那些不是所有运行环境或机器都需要的依赖关系很有用。</p>
+<p>tips：optionalDependencies 会覆盖 dependencies 中的同名依赖包，所以不要把包同时写进这两个字段中。</p>
+<h2 id="bundleDependencies"><a href="#bundleDependencies" class="headerlink" title="bundleDependencies"></a>bundleDependencies</h2><p>bundleDependencies 是一个存放在主包发布时也需要同时打包的包名的数组。</p>
+<p>假设我们的有如下的包，执行 npm pack</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;name&quot;: &quot;test&quot;,</span><br><span class="line">  &quot;version&quot;: &quot;1.0.0&quot;,</span><br><span class="line">  &quot;dependencies&quot;: &#123;</span><br><span class="line">    &quot;moment&quot;: &quot;^2.29.3&quot;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;bundleDependencies&quot;: [</span><br><span class="line">    &quot;moment&quot;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么我们将会得到的 test-1.0.0.tgz 文件，执行 npm install test-1.0.0.tgz 后也会得到如下结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├─ node_modules</span><br><span class="line">    ├── test</span><br><span class="line">    │    └── moment</span><br><span class="line">    └── xxx</span><br></pre></td></tr></table></figure>
+
+<h1 id="package-lock-json-文件"><a href="#package-lock-json-文件" class="headerlink" title="package-lock.json 文件"></a>package-lock.json 文件</h1><p>package-lock.json 文件是 npm 修改了 node_modules 依赖树或者 package.json 文件自动生成的产物。它描述了生成的准确依赖树，以便后续安装或者其他人安装都能生成相同的树。</p>
+<p>假想现有的 package.json 文件的依赖是 “react” ：“^18.0.0”，因为有标识符^，所以如果 react 在 18 大版本下更新至 18.0.1，那么 npm install 的时候将会自动安装最新版本 18.0.1。这样可能就会让你本地的版本和其他人不一致，从而引起一些可能发生的相关问题。</p>
+<p>package-lock.json 的出现就很好的解决此问题，他的目的就是锁定具体版本号，使每一个使用者安装的版本都保持一致。</p>
+<p>npm install 时，node 会从 package.json 中读取到所有 dependencies 的信息与现有的 node_modules 模块进行对比，如果不存在的话就安装，并将依赖项确定的版本更新到 package-lock.json 文件中，不会更新其他依赖项版本；如果存在就检查更新，从 package-lock 文件中获取对应锁定的版本进行更新。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://nodejs.org/en/blog/npm/peer-dependencies/">nodejs-Peer Dependencies</a></li>
+<li><a href="https://segmentfault.com/a/1190000009927946">读懂 package.json – 依赖管理</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>NPM</category>
+      </categories>
+      <tags>
+        <tag>NPM</tag>
+        <tag>依赖</tag>
       </tags>
   </entry>
   <entry>
