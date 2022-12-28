@@ -289,7 +289,7 @@
 <li>a. 一个含有 package.json 文件描述的程序的文件夹</li>
 <li>b. 一个含有(a)的 gzip 压缩文件</li>
 <li>c. 一个指向(b)url 地址</li>
-<li>d. 格式为<code>&lt;name&gt;@&lt;version&gt;</code>的指向官方源的字符串，符合定义(c)，如果 <a href="mailto:&#103;&#x75;&#108;&#112;&#x40;&#x34;&#x2e;&#x30;&#46;&#x31;">&#103;&#x75;&#108;&#112;&#x40;&#x34;&#x2e;&#x30;&#46;&#x31;</a></li>
+<li>d. 格式为<code>&lt;name&gt;@&lt;version&gt;</code>的指向官方源的字符串，符合定义(c)，如果 <a href="mailto:&#x67;&#x75;&#108;&#x70;&#64;&#52;&#x2e;&#x30;&#46;&#49;">&#x67;&#x75;&#108;&#x70;&#64;&#52;&#x2e;&#x30;&#46;&#49;</a></li>
 <li>e. 格式为<code>&lt;name&gt;@&lt;tag&gt;</code>的指向 d 的字符串，如果 gulp@latest</li>
 <li>f. 格式为<code>&lt;name&gt;</code>的代表最新版本包的字符串，如 gulp</li>
 <li>g. 一个符合条件(a)的远程 git url</li>
@@ -314,10 +314,10 @@
 </ul>
 <h1 id="依赖介绍"><a href="#依赖介绍" class="headerlink" title="依赖介绍"></a>依赖介绍</h1><h2 id="dependencies"><a href="#dependencies" class="headerlink" title="dependencies"></a>dependencies</h2><p>dependencies 中包括了所有项目中使用到的包，其他用户要使用此包就需要安装 dependencies 中所有的包。</p>
 <h2 id="devDependencies"><a href="#devDependencies" class="headerlink" title="devDependencies"></a>devDependencies</h2><p>还有一类插件是在开发环境中使用的，比如我们可能会用 jest 来测试，用 eslint 进行代码样式规范，用 mock.js 来 mock 数据等等。其他用户可以正常使用我们的包但不需要安装此类依赖包，那么我们就可以将这类包列入 devDependencies 中。</p>
-<h2 id="peerDependencies"><a href="#peerDependencies" class="headerlink" title="peerDependencies"></a>peerDependencies</h2><p>通常情况下，npm 能够很好的管理我们的依赖包。假设我们的项目依赖<a href="mailto:&#x50;&#97;&#99;&#x6b;&#97;&#103;&#101;&#x41;&#64;&#x32;&#x2e;&#49;&#x2e;&#x30;">&#x50;&#97;&#99;&#x6b;&#97;&#103;&#101;&#x41;&#64;&#x32;&#x2e;&#49;&#x2e;&#x30;</a>，但是引用了依赖<a href="mailto:&#x50;&#x61;&#99;&#x6b;&#97;&#x67;&#101;&#65;&#64;&#x31;&#46;&#x39;&#x2e;&#48;">&#x50;&#x61;&#99;&#x6b;&#97;&#x67;&#101;&#65;&#64;&#x31;&#46;&#x39;&#x2e;&#48;</a>的包 PackageB，npm install 生成的依赖树如下：</p>
+<h2 id="peerDependencies"><a href="#peerDependencies" class="headerlink" title="peerDependencies"></a>peerDependencies</h2><p>通常情况下，npm 能够很好的管理我们的依赖包。假设我们的项目依赖<a href="mailto:&#x50;&#97;&#99;&#107;&#97;&#x67;&#x65;&#65;&#x40;&#x32;&#x2e;&#49;&#46;&#x30;">&#x50;&#97;&#99;&#107;&#97;&#x67;&#x65;&#65;&#x40;&#x32;&#x2e;&#49;&#46;&#x30;</a>，但是引用了依赖<a href="mailto:&#80;&#x61;&#x63;&#x6b;&#97;&#103;&#101;&#x41;&#x40;&#x31;&#x2e;&#x39;&#46;&#48;">&#80;&#x61;&#x63;&#x6b;&#97;&#103;&#101;&#x41;&#x40;&#x31;&#x2e;&#x39;&#46;&#48;</a>的包 PackageB，npm install 生成的依赖树如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">├── PackageA@2.1.0</span><br><span class="line">└─┬ PackageB@1.0.0</span><br><span class="line">  └── PackageA@1.9.0</span><br></pre></td></tr></table></figure>
 
-<p>通常情况下这不会有问题，PackageB 内会有他可以用的版本为 1.9.0 的 PackageA，同时并不会和项目的<a href="mailto:&#80;&#97;&#x63;&#107;&#97;&#x67;&#101;&#65;&#64;&#x32;&#x2e;&#x31;&#x2e;&#48;">&#80;&#97;&#x63;&#107;&#97;&#x67;&#101;&#65;&#64;&#x32;&#x2e;&#x31;&#x2e;&#48;</a>的冲突。</p>
+<p>通常情况下这不会有问题，PackageB 内会有他可以用的版本为 1.9.0 的 PackageA，同时并不会和项目的<a href="mailto:&#x50;&#97;&#99;&#x6b;&#x61;&#103;&#101;&#x41;&#64;&#x32;&#46;&#x31;&#46;&#48;">&#x50;&#97;&#99;&#x6b;&#x61;&#103;&#101;&#x41;&#64;&#x32;&#46;&#x31;&#46;&#48;</a>的冲突。</p>
 <p>然而在插件的使用时我们有可能会遇到以下情况,，举个例子：项目中需要依赖包 gulp 版本为最新的@latest(4.0.2)，而 gulp 插件 gulp-plugin-example 依赖的 gulp 版本为@3.2.0，此时我们会安装多个包 gulp。package.json 文件可能如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;dependencies&quot;:&#123;</span><br><span class="line">    &quot;gulp&quot;:&quot;4.0.2&quot;</span><br><span class="line">    &quot;gulp-plugin-example&quot;:&quot;0.1.1&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
