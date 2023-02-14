@@ -1,6 +1,305 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>JS 中的声明提升</title>
+    <url>/2021/11/03/JS%E4%B8%AD%E7%9A%84%E5%A3%B0%E6%98%8E%E6%8F%90%E5%8D%87/</url>
+    <content><![CDATA[<p>通常情况下变量都需要先声明后使用，但是在 js 中如果我们先使用变量再用 var 声明将不会抛异常，但是由于未赋值，该变量将会以 undefined 存在。</p>
+<p>Javascript 中，函数及变量的声明都将提升到作用域的顶部。</p>
+<span id="more"></span>
+
+<h1 id="变量提升"><a href="#变量提升" class="headerlink" title="变量提升"></a>变量提升</h1><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> x1 = <span class="number">1</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x1&#x27;</span>, x1);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 不会报错，输出undefined</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x2&#x27;</span>, x2);</span><br><span class="line"><span class="keyword">var</span> x2 = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<p>Javascript 允许先使用变量再用 var 去定义，像上述代码对于 x2 变量相当于：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> x2;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x2&#x27;</span>, x2);</span><br><span class="line">x2 = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<p>可以看出 var 声明会提升，但是变量定义不会提升，上述输出的 x2 为 undefined。</p>
+<p>除去 var 声明，javascript 中还有 const 和 let 声明变量，和 var 一样的是声明操作会被提升到代码块顶部，但是在未定义之前使用变量将会抛出 ReferenceError 错误。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> x1 = <span class="number">0</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x1&#x27;</span>, x1);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x2&#x27;</span>, x2); <span class="comment">// ReferenceError: Cannot access &#x27;x2&#x27; before initialization</span></span><br><span class="line"><span class="keyword">const</span> x2 = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x3&#x27;</span>, x3); <span class="comment">// ReferenceError: x3 is not defined</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="函数提升"><a href="#函数提升" class="headerlink" title="函数提升"></a>函数提升</h1><p>Javascript 中的函数 function 声明也会被提升至代码块顶部，但是函数表达式不会提升，在定义函数表达式之前不能使用函数表达式。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="title function_">testFn1</span>(); <span class="comment">// testFn1</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">testFn1</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ testFn1&#x27;</span>, <span class="string">&#x27;testFn1&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">testFn2</span>(); <span class="comment">// ReferenceError: Cannot access &#x27;testFn2&#x27; before initialization</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">testFn2</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ testFn2&#x27;</span>, <span class="string">&#x27;testFn2&#x27;</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="title function_">testFn3</span>(); <span class="comment">// TypeError: testFn3 is not a function</span></span><br><span class="line"><span class="keyword">var</span> <span class="title function_">testFn3</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ testFn2&#x27;</span>, <span class="string">&#x27;testFn2&#x27;</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h1 id="几个-🌰"><a href="#几个-🌰" class="headerlink" title="几个 🌰"></a>几个 🌰</h1><p>var 声明是全局作用域或函数作用域，而 let 和 const 是块作用域。var 变量可以在其范围内更新和重新声明，但是 let 只能被更新不能重新声明，const 不能更新也不能重新声明。</p>
+<p>结合 var，let 和 const 的特点，具体可以体现在下面两个代码块：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 将两块函数顺序互换输出不变</span></span><br><span class="line"><span class="keyword">var</span> test = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">1</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">test</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">test</span>(); <span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> test = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">1</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">test</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">test</span>(); <span class="comment">// SyntaxError: Identifier &#x27;test&#x27; has already been declared</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Javascript</category>
+      </categories>
+      <tags>
+        <tag>Javascript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>NPM包依赖管理</title>
+    <url>/2022/08/05/NPM%E5%8C%85%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</url>
+    <content><![CDATA[<p>npm 是 Node.js 的包管理工具，在实际使用过程中，我们经常会用 npm install 命令安装依赖包。</p>
+<p>npm 官方对包也做了定义，<a href="https://docs.npmjs.com/about-packages-and-modules">戳此进</a>：</p>
+<span id="more"></span>
+
+<ul>
+<li>a. 一个含有 package.json 文件描述的程序的文件夹</li>
+<li>b. 一个含有(a)的 gzip 压缩文件</li>
+<li>c. 一个指向(b)url 地址</li>
+<li>d. 格式为<code>&lt;name&gt;@&lt;version&gt;</code>的指向官方源的字符串，符合定义(c)，如果 <a href="mailto:&#103;&#x75;&#108;&#x70;&#64;&#x34;&#46;&#48;&#x2e;&#49;">&#103;&#x75;&#108;&#x70;&#64;&#x34;&#46;&#48;&#x2e;&#49;</a></li>
+<li>e. 格式为<code>&lt;name&gt;@&lt;tag&gt;</code>的指向 d 的字符串，如果 gulp@latest</li>
+<li>f. 格式为<code>&lt;name&gt;</code>的代表最新版本包的字符串，如 gulp</li>
+<li>g. 一个符合条件(a)的远程 git url</li>
+</ul>
+<p>在项目中安装依赖包时，默认会将依赖包的信息加入到 package.json 的 dependencies 模块去。其实除了常见的 dependencies 以外，package.json 文件还有其他几项依赖类型，罗列如下：</p>
+<ul>
+<li>dependencies 生产环境依赖</li>
+<li>devDependencies 开发环境依赖</li>
+<li>optionalDependencies 可选依赖</li>
+<li>peerDependencies 前置依赖</li>
+<li>bundleDependencies 需要打包的依赖</li>
+</ul>
+<p>我们可以通过 npm install 的参数来指定依赖包需要添加到哪个依赖块，通用可选参数: <code>[-P|--save-prod|-D|--save-dev|-O|--save-optional] [-E|--save-exact] [-B|--save-bundle] [--no-save] [--dry-run]</code></p>
+<ul>
+<li>-P ｜ –save-prod：添加至 dependencies</li>
+<li>-D ｜ –save-dev：添加至 devDependencies</li>
+<li>-O | –save-optional：添加至 optionalDependencies</li>
+<li>-E | –save-exact：安装确切的包版本，而不带默认的版本匹配符号，如^或者～</li>
+<li>-B | –save-bundle：添加至 bundleDependencies 和 dependencies 中</li>
+<li>–no-save：不添加至 dependencies 中</li>
+<li>–dry-run：报告安装的状态而不是真正执行安装</li>
+</ul>
+<h1 id="依赖介绍"><a href="#依赖介绍" class="headerlink" title="依赖介绍"></a>依赖介绍</h1><h2 id="dependencies"><a href="#dependencies" class="headerlink" title="dependencies"></a>dependencies</h2><p>dependencies 中包括了所有项目中使用到的包，其他用户要使用此包就需要安装 dependencies 中所有的包。</p>
+<h2 id="devDependencies"><a href="#devDependencies" class="headerlink" title="devDependencies"></a>devDependencies</h2><p>还有一类插件是在开发环境中使用的，比如我们可能会用 jest 来测试，用 eslint 进行代码样式规范，用 mock.js 来 mock 数据等等。其他用户可以正常使用我们的包但不需要安装此类依赖包，那么我们就可以将这类包列入 devDependencies 中。</p>
+<h2 id="peerDependencies"><a href="#peerDependencies" class="headerlink" title="peerDependencies"></a>peerDependencies</h2><p>通常情况下，npm 能够很好的管理我们的依赖包。假设我们的项目依赖<a href="mailto:&#x50;&#x61;&#x63;&#107;&#x61;&#103;&#101;&#65;&#x40;&#x32;&#46;&#49;&#x2e;&#x30;">&#x50;&#x61;&#x63;&#107;&#x61;&#103;&#101;&#65;&#x40;&#x32;&#46;&#49;&#x2e;&#x30;</a>，但是引用了依赖<a href="mailto:&#x50;&#x61;&#99;&#x6b;&#x61;&#x67;&#x65;&#x41;&#x40;&#49;&#46;&#x39;&#46;&#x30;">&#x50;&#x61;&#99;&#x6b;&#x61;&#x67;&#x65;&#x41;&#x40;&#49;&#46;&#x39;&#46;&#x30;</a>的包 PackageB，npm install 生成的依赖树如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├── PackageA@2.1.0</span><br><span class="line">└─┬ PackageB@1.0.0</span><br><span class="line">  └── PackageA@1.9.0</span><br></pre></td></tr></table></figure>
+
+<p>通常情况下这不会有问题，PackageB 内会有他可以用的版本为 1.9.0 的 PackageA，同时并不会和项目的<a href="mailto:&#x50;&#x61;&#x63;&#107;&#97;&#x67;&#x65;&#x41;&#x40;&#x32;&#x2e;&#x31;&#x2e;&#48;">&#x50;&#x61;&#x63;&#107;&#97;&#x67;&#x65;&#x41;&#x40;&#x32;&#x2e;&#x31;&#x2e;&#48;</a>的冲突。</p>
+<p>然而在插件的使用时我们有可能会遇到以下情况,，举个例子：项目中需要依赖包 gulp 版本为最新的@latest(4.0.2)，而 gulp 插件 gulp-plugin-example 依赖的 gulp 版本为@3.2.0，此时我们会安装多个包 gulp。package.json 文件可能如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;dependencies&quot;:&#123;</span><br><span class="line">    &quot;gulp&quot;:&quot;4.0.2&quot;</span><br><span class="line">    &quot;gulp-plugin-example&quot;:&quot;0.1.1&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但这时候如果执行 npm install 可能会导致我们不期望的依赖树</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├── gulp@4.0.2</span><br><span class="line">└─┬ gulp-plugin-example@0.1.1</span><br><span class="line">  └── gulp@3.2.0</span><br></pre></td></tr></table></figure>
+
+<p>此时插件使用的和宿主环境的 gulp 版本不一致，由于 gulp-plugin-example 只是插件，我们并不想因此安装多次 gulp，且希望宿主环境去安装满足插件 peerDependencies 所指定依赖的包，然后在插件 import 或者 require 依赖包时，永远引用的是宿主环境统一安装的 npm 包，最终解决插件与所依赖包不一致的问题。</p>
+<p>通常我们会用 peerDependencies 去表达：如果你要使用此插件，需要确保宿主环境的依赖关系版本为@xx.xx。拥有 peerDependencies 意味着你的包需要的依赖关系和其他安装此包的用户的现有依赖关系是需要保持一致的。所以在编写插件时，需要确定主依赖包的版本，并添加至插件 package.json 中的 peerDependencies 中。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line"> &quot;name&quot;: &quot;gulp-plugin-example&quot;,</span><br><span class="line"> &quot;peerDependencies&quot;: &#123;</span><br><span class="line">   &quot;gulp&quot;:&quot;^4.0.0&quot;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果这时候执行 npm install gulp-plugin-example，gulp 包也会随之安装。如果之后尝试去安装另一个 gulp 插件且依赖只依赖 gulp 3.x 版本的话，将会报错，这也成功解决了插件引用不同依赖包版本的问题！</p>
+<p>更新：npm 版本 1，2 和 7 会自动安装 peerDependencies 的依赖包如果其未在上层依赖树中明确。npm 版本 3 至 6，我们则会收到告警告知 peerDependencies 还未安装。</p>
+<p>peerDependencies 依赖包的版本要求与常规的 dependencies 不同，需要更加广。使用过程中不应该把 peer dependencies 的锁定在固定的版本。如果两个插件依赖的版本不一样，而使用者又懒得花时间去检查实际上符合条件的共用最低版本，这就会很糟心。</p>
+<p>最佳情况是根据<a href="https://semver.org/">semver</a>规则决定 peerDependencies 的版本要求，合理使用^以及～去匹配版本。如果依赖 1.5.4 版本的特性，也可以使用范围去匹配，如：”&gt;&#x3D; 1.5.4 &lt; 2”</p>
+<h2 id="optionalDependencies"><a href="#optionalDependencies" class="headerlink" title="optionalDependencies"></a>optionalDependencies</h2><p>如果一个依赖关系可以被使用，但是又希望 npm 在找不到他或者安装失败的情况下继续进行，那么其可以被放入 optionalDependencies 内。通常这对那些不是所有运行环境或机器都需要的依赖关系很有用。</p>
+<p>tips：optionalDependencies 会覆盖 dependencies 中的同名依赖包，所以不要把包同时写进这两个字段中。</p>
+<h2 id="bundleDependencies"><a href="#bundleDependencies" class="headerlink" title="bundleDependencies"></a>bundleDependencies</h2><p>bundleDependencies 是一个存放在主包发布时也需要同时打包的包名的数组。</p>
+<p>假设我们的有如下的包，执行 npm pack</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;name&quot;: &quot;test&quot;,</span><br><span class="line">  &quot;version&quot;: &quot;1.0.0&quot;,</span><br><span class="line">  &quot;dependencies&quot;: &#123;</span><br><span class="line">    &quot;moment&quot;: &quot;^2.29.3&quot;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;bundleDependencies&quot;: [</span><br><span class="line">    &quot;moment&quot;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么我们将会得到的 test-1.0.0.tgz 文件，执行 npm install test-1.0.0.tgz 后也会得到如下结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├─ node_modules</span><br><span class="line">    ├── test</span><br><span class="line">    │    └── moment</span><br><span class="line">    └── xxx</span><br></pre></td></tr></table></figure>
+
+<h1 id="package-lock-json-文件"><a href="#package-lock-json-文件" class="headerlink" title="package-lock.json 文件"></a>package-lock.json 文件</h1><p>package-lock.json 文件是 npm 修改了 node_modules 依赖树或者 package.json 文件自动生成的产物。它描述了生成的准确依赖树，以便后续安装或者其他人安装都能生成相同的树。</p>
+<p>假想现有的 package.json 文件的依赖是 “react” ：“^18.0.0”，因为有标识符^，所以如果 react 在 18 大版本下更新至 18.0.1，那么 npm install 的时候将会自动安装最新版本 18.0.1。这样可能就会让你本地的版本和其他人不一致，从而引起一些可能发生的相关问题。</p>
+<p>package-lock.json 的出现就很好的解决此问题，他的目的就是锁定具体版本号，使每一个使用者安装的版本都保持一致。</p>
+<p>npm install 时，node 会从 package.json 中读取到所有 dependencies 的信息与现有的 node_modules 模块进行对比，如果不存在的话就安装，并将依赖项确定的版本更新到 package-lock.json 文件中，不会更新其他依赖项版本；如果存在就检查更新，从 package-lock 文件中获取对应锁定的版本进行更新。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://nodejs.org/en/blog/npm/peer-dependencies/">nodejs-Peer Dependencies</a></li>
+<li><a href="https://segmentfault.com/a/1190000009927946">读懂 package.json – 依赖管理</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>NPM</category>
+      </categories>
+      <tags>
+        <tag>依赖</tag>
+        <tag>NPM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>一些前端常见规范</title>
+    <url>/2023/02/14/front-end-standard/</url>
+    <content><![CDATA[<p>最近花了丢丢时间稍微整理了下前端项目的规范，包括编码格式、提交规范等等，做了个小记录。</p>
+<span id="more"></span>
+
+<h1 id="代码要求"><a href="#代码要求" class="headerlink" title="代码要求"></a>代码要求</h1><ol>
+<li>使用 VSCode 编辑器请安装 vscode 插件 Prettier 和 ESLint。</li>
+<li>请安装 Code Spell Checker 插件，避免错别字；error lens 插件将错误显示在当前行。</li>
+<li>commit 提交请遵守 commit 提交规则，提交类别具体请查看下方 Commitlint 模块</li>
+</ol>
+<h1 id="开发要求："><a href="#开发要求：" class="headerlink" title="开发要求："></a>开发要求：</h1><ul>
+<li>代码中不需要 console.log() 输出</li>
+<li>节点尽量不使用内联样式，通过 class 设置样式，less 文件存在同级组件目录中</li>
+<li>Js 尽量不进行 dom 操作，渲染和数据尽量分离</li>
+<li>不允许存在未引用的变量或函数</li>
+<li>any 类型尽量不用</li>
+<li>涉及定量和类型定义可以考虑在同级目录中新建 const.ts 或 types.ts 文件管理</li>
+<li>业务组件请存在业务文件下，全局公共组件才允许放入 src&#x2F;components 文件</li>
+<li>组件传入参数类型定义命名以组件名+Props 为准，如：MyComponentProps</li>
+<li>合理使用空格行和注释，增加代码可读性</li>
+</ul>
+<h1 id="文件名命名规范"><a href="#文件名命名规范" class="headerlink" title="文件名命名规范"></a>文件名命名规范</h1><ul>
+<li>项目：全部小写字母命名，中划线分割，如 my-project</li>
+<li>目录：全部小驼峰命名，如 firstDir</li>
+<li>组件或组件文件：全部大驼峰命名，如 FirstComponent</li>
+<li>其他文件：全部小写，下划线连接，如 helper.js</li>
+<li>class&#x2F;id：全部小写，中划线连接</li>
+<li>常量：全部大写</li>
+<li>变量函数：小驼峰命名，且字母打头，如 myFunction</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>常见分类</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>UpperCamelCase</td>
+<td>class &#x2F; interface &#x2F; type &#x2F; enum &#x2F; decorator &#x2F; type parameters</td>
+</tr>
+<tr>
+<td>lowerCamelCase</td>
+<td>variable &#x2F; parameter &#x2F; function &#x2F; method &#x2F; property &#x2F; module alias</td>
+</tr>
+<tr>
+<td>CONSTANT_CASE</td>
+<td>global constant values, including enum values.</td>
+</tr>
+</tbody></table>
+<h1 id="Prettier"><a href="#Prettier" class="headerlink" title="Prettier"></a>Prettier</h1><p>引入代码格式化工具 Prettier。它一般不会检查我们的代码质量，但是会对代码的结构风格进行统一管理，通常在执行保存操作的时候生效。能够清除原先代码的结构风格，并替换为项目团队统一制定的代码风格。</p>
+<p>优点：</p>
+<ol>
+<li>统一项目代码风格</li>
+<li>减少开发者在代码整理上花费精力</li>
+<li>清理并规范已有代码</li>
+<li>减少潜在 bug 可能性</li>
+</ol>
+<p>使用：<br>安装包：<code>npm install prettier -D</code>；安装 vscode 的 Prettier 插件</p>
+<p>在项目根目录下的.Prettierrc 文件中添加 Prettier 应用规则，在.prettierignore 文件中添加 prettier 规则需要忽视的文件。</p>
+<p>Prettier 规则具体：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;printWidth&quot;</span><span class="punctuation">:</span> <span class="number">80</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;singleQuote&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;trailingComma&quot;</span><span class="punctuation">:</span> <span class="string">&quot;all&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;proseWrap&quot;</span><span class="punctuation">:</span> <span class="string">&quot;never&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;overrides&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;files&quot;</span><span class="punctuation">:</span> <span class="string">&quot;.prettierrc&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;options&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;parser&quot;</span><span class="punctuation">:</span> <span class="string">&quot;json&quot;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;plugins&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;prettier-plugin-organize-imports&quot;</span><span class="punctuation">,</span> <span class="string">&quot;prettier-plugin-packagejson&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>更多可选配置<a href="https://prettier.io/docs/en/configuration.html">点击查看</a></p>
+<p>给项目添加 vscode 工作区配置，当然此设置也可以设置为你的 vscode 全局配置。</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;eslint.enable&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;editor.formatOnSave&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;editor.codeActionsOnSave&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;source.fixAll.tslint&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;source.fixAll.eslint&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;editor.defaultFormatter&quot;</span><span class="punctuation">:</span> <span class="string">&quot;esbenp.prettier-vscode&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;[javascript]&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;editor.formatOnSave&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;editor.defaultFormatter&quot;</span><span class="punctuation">:</span> <span class="string">&quot;esbenp.prettier-vscode&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;[typescript]&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;editor.defaultFormatter&quot;</span><span class="punctuation">:</span> <span class="string">&quot;esbenp.prettier-vscode&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;[json]&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;editor.defaultFormatter&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vscode.json-language-features&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;cSpell.words&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;umijs&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="ESLint"><a href="#ESLint" class="headerlink" title="ESLint"></a>ESLint</h1><p>ESLint 是一款优秀的代码检测工具，通过配置对应的规则能够实现对代码的格式以及代码质量进行检测，提高项目的质量。</p>
+<p>代码检测都是通过 ESLint 包执行的，如果没有安装插件，则错误的信息需要在调用 eslint 检查命令后通过终端来查看；安装了插件，我们可以直接在 vscode 编辑器的代码对应部分看见红色波浪错误提示。</p>
+<p>.eslintrc.js 文件</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = &#123;</span><br><span class="line">  <span class="attr">extends</span>: <span class="built_in">require</span>.<span class="title function_">resolve</span>(<span class="string">&#x27;@umijs/max/eslint&#x27;</span>),</span><br><span class="line">  <span class="attr">rules</span>: &#123;</span><br><span class="line">    <span class="comment">// 有可能会触发自动fix强制加上deps，暂时屏蔽</span></span><br><span class="line">    <span class="string">&#x27;react-hooks/exhaustive-deps&#x27;</span>: <span class="string">&#x27;warn&#x27;</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 允许 &lt;a target=&quot;_blank&quot;...</span></span><br><span class="line">    <span class="string">&#x27;react/jsx-no-target-blank&#x27;</span>: <span class="string">&#x27;off&#x27;</span>,</span><br><span class="line"></span><br><span class="line">    <span class="string">&#x27;no-underscore-dangle&#x27;</span>: <span class="string">&#x27;off&#x27;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><strong>强烈推荐安装 ESLint 插件！</strong></p>
+<p>具体请前往根目录中的.eslintrc.js 文件进行配置。<a href="https://eslint.bootcss.com/docs/user-guide/configuring">更多配置</a></p>
+<h1 id="Stylelint"><a href="#Stylelint" class="headerlink" title="Stylelint"></a>Stylelint</h1><p>利用 Stylelint 帮助规避 CSS 代码中的错误并保持一致的编码风格。</p>
+<p>.stylelintrc.js 文件</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = &#123;</span><br><span class="line">  <span class="attr">extends</span>: <span class="built_in">require</span>.<span class="title function_">resolve</span>(<span class="string">&#x27;@umijs/max/stylelint&#x27;</span>),</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h1 id="husky-amp-lint-staged"><a href="#husky-amp-lint-staged" class="headerlink" title="husky &amp; lint-staged"></a>husky &amp; lint-staged</h1><p>husky 本质上是 Git 的钩子，支持 Git 操作进行到某一阶段时，执行开发者希望的操作。比如在提交 commit 前进行代码质量检测。Lint-staged 支持只对更改的文件进行操作，避免了对整个项目进行操作的巨大耗时。</p>
+<ol>
+<li>安装 husky<br><code>npm install husky --save-dev</code></li>
+<li>启用 husky<br><code>npx husky install</code> 或者通过在 package.json 中添加 prepare script 实现自动启动<code>npm set-script prepare &quot;husky install&quot;</code></li>
+<li>添加 precommit hook</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npx husky add .husky/pre-commit &quot;npm run lint-staged&quot;</span><br><span class="line"></span><br><span class="line">git add .husky/pre-commit</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>设置 lint-staged 运行<br>方式一：配置 json 文件</li>
+</ol>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="attr">&quot;lint-staged&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;&#123;src,mock&#125;/**/*.&#123;ts,tsx,js,jsx&#125;&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="string">&quot;eslint --fix --max-warnings 0&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;prettier --write&quot;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>方式二：配置.lintstagedrc 文件(优先)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;*.&#123;md,json&#125;&quot;: [</span><br><span class="line">    &quot;prettier --cache --write&quot;</span><br><span class="line">  ],</span><br><span class="line">  &quot;*.&#123;js,jsx&#125;&quot;: [</span><br><span class="line">    &quot;max lint --fix --eslint-only&quot;,</span><br><span class="line">    &quot;prettier --cache --write&quot;</span><br><span class="line">  ],</span><br><span class="line">  &quot;*.&#123;css,less&#125;&quot;: [</span><br><span class="line">    &quot;max lint --fix --stylelint-only&quot;,</span><br><span class="line">    &quot;prettier --cache --write&quot;</span><br><span class="line">  ],</span><br><span class="line">  &quot;*.ts?(x)&quot;: [</span><br><span class="line">    &quot;max lint --fix --eslint-only&quot;,</span><br><span class="line">    &quot;prettier --cache --parser=typescript --write&quot;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Commitlint"><a href="#Commitlint" class="headerlink" title="Commitlint"></a>Commitlint</h1><p>通过利用 Husky 的 Git 钩子能力，我们可以在代码的提交阶段对提交 commit 信息进行格式规定。</p>
+<p>提交类别：</p>
+<ul>
+<li>build：项目构建相关变更</li>
+<li>ci：集成流程变更</li>
+<li>docs: 文档更新</li>
+<li>feat：新增功能</li>
+<li>fix：bug 修复</li>
+<li>perf：性能优化</li>
+<li>refactor：代码重构，没新增功能也不是 bug 修复</li>
+<li>style：代码风格调整</li>
+<li>test：测试相关</li>
+<li>revert：回滚</li>
+<li>chore：不属于以上类型的其他类型提交</li>
+</ul>
+<p>安装：<code>npm install --save-dev @commitlint/config-conventional @commitlint/cli</code></p>
+<p>添加 commitlint：<code>npx husky add .husky/commit-msg &#39;npx --no -- commitlint --edit &quot;$1&quot;&#39;</code></p>
+<p>.commitlintrc.js 文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">module.exports = &#123;</span><br><span class="line">  extends: [&#x27;@commitlint/config-conventional&#x27;],</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>项目引用 commitlint 推荐的配置<a href="https://github.com/conventional-changelog/commitlint/tree/master/@commitlint/config-conventional">@commitlint&#x2F;config-conventional</a>。如需添加其他配置请遵守配置规范，如<code>&#39;type&#39;:[Level, Applicable, Value]</code></p>
+<ul>
+<li>Level: 0-不启用规则、1-视为 warnning、2-视为 error。</li>
+<li>Applicable：always 或者 never</li>
+<li>Value：此规则适用的 value</li>
+</ul>
+<p>更多配置可参考<a href="https://github.com/conventional-changelog/commitlint">官网</a></p>
+]]></content>
+      <categories>
+        <category>工具</category>
+      </categories>
+      <tags>
+        <tag>规范</tag>
+        <tag>插件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Javascript中的事件循环</title>
+    <url>/2023/01/20/event-loop/</url>
+    <content><![CDATA[<p>本文是笔者花了点时间重新学习了下 javascript 中的事件循环总结的个人博客，本文的例子是网上摘录，仅供学习哈～</p>
+<span id="more"></span>
+
+<h1 id="认识-Event-Loop"><a href="#认识-Event-Loop" class="headerlink" title="认识 Event Loop"></a>认识 Event Loop</h1><p>Javascript 语言的最大特点就是单线程，这也就意味着引擎只有在执行完前一个任务后才会执行后一个任务。就算前置任务耗时长，后续任务也不能执行，就想现实中的飞行航班的前序航班延误，那么后续航班也会因此延误。</p>
+<p>正是因为此特性，所以 JS 中有了任务队列这说法，任务队列是一个先进先出的数据结构，前面的事件会优先被主线程读取。主线程循环不断从任务队列中读取事件执行这种运行机制就叫 Event Loop。</p>
+<p>任务又分为同步任务（synchronous）和异步任务（asynchronous）。同步任务是指在主线程上排队待执行的任务；异步任务是指不进入主线程，而进入任务队列的任务。当异步任务可以执行时才进入任务队列，等待主线程空闲时读取执行。</p>
+<p>运行机制：</p>
+<ol>
+<li>主线程依次执行所有同步任务，形成一个任务执行栈。</li>
+<li>主线程如果执行异步任务，任务有结果之后，将回调事件加入任务队列。</li>
+<li>主线程所有同步任务执行完毕，系统依次读取任务队列事件加入执行栈并执行，如果有新的异步事件会形成新的任务队列。</li>
+<li>主线程重复直至所有任务执行完毕。</li>
+</ol>
+<p>不同的异步任务也被分为两类：微任务（micro task）和宏任务（macro task）。</p>
+<p>宏任务：</p>
+<ul>
+<li>setTimeout()</li>
+<li>setInterval()</li>
+<li>setImmediate （Nodejs 环境）</li>
+</ul>
+<p>微任务：</p>
+<ul>
+<li>promise.[then&#x2F;catch&#x2F;finally]</li>
+<li>process.nextTick（Nodejs 环境）</li>
+<li>Object.observe</li>
+</ul>
+<p>在一个事件循环中，异步事件返回结果会被放到任务队列中，根据异步事件的类型会被放入对应的宏任务队列或者微任务队列。当当前执行栈为空时，主线程会查看微任务队列并执行所有任务直至微任务队列为空，然后从宏任务队列取出一个事件推入执行栈，如此反复。</p>
+<p>同一次事件循环中，微任务永远在宏任务前执行。</p>
+<h1 id="几个例子"><a href="#几个例子" class="headerlink" title="几个例子"></a>几个例子</h1><p>举例 1：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">console.log(&#x27;script start&#x27;);</span><br><span class="line">async function async1() &#123;</span><br><span class="line">  await async2();</span><br><span class="line">  console.log(&#x27;async1 end&#x27;);</span><br><span class="line">&#125;</span><br><span class="line">async function async2() &#123;</span><br><span class="line">  console.log(&#x27;async2 end&#x27;);</span><br><span class="line">&#125;</span><br><span class="line">setTimeout(function () &#123;</span><br><span class="line">  console.log(&#x27;setTimeout&#x27;);</span><br><span class="line">&#125;, 0);</span><br><span class="line">new Promise((resolve) =&gt; &#123;</span><br><span class="line">  console.log(&#x27;Promise&#x27;);</span><br><span class="line">  resolve();</span><br><span class="line">&#125;)</span><br><span class="line">  .then(function () &#123;</span><br><span class="line">    console.log(&#x27;promise1&#x27;);</span><br><span class="line">  &#125;)</span><br><span class="line">  .then(function () &#123;</span><br><span class="line">    console.log(&#x27;promise2&#x27;);</span><br><span class="line">  &#125;);</span><br><span class="line">async1();</span><br><span class="line">console.log(&#x27;script end&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">script start</span><br><span class="line">Promise</span><br><span class="line">async2 end</span><br><span class="line">script end</span><br><span class="line">promise1</span><br><span class="line">async1 end</span><br><span class="line">promise2</span><br><span class="line">setTimeout</span><br></pre></td></tr></table></figure>
+
+<p>举例 2：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">console.log(&#x27;sync statement 1&#x27;);</span><br><span class="line">Promise.resolve()</span><br><span class="line">  .then(function () &#123;</span><br><span class="line">    console.log(&#x27;micro task 1&#x27;);</span><br><span class="line">    setTimeout(function () &#123;</span><br><span class="line">      console.log(&#x27;macro task 1&#x27;);</span><br><span class="line">    &#125;, 0);</span><br><span class="line">  &#125;)</span><br><span class="line">  .then(function () &#123;</span><br><span class="line">    console.log(&#x27;micro task 2&#x27;);</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">setTimeout(function () &#123;</span><br><span class="line">  console.log(&#x27;macro task 2&#x27;);</span><br><span class="line">  Promise.resolve().then(function () &#123;</span><br><span class="line">    console.log(&#x27;micro task 3&#x27;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;, 0);</span><br><span class="line">console.log(&#x27;sync statement 2&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sync statement 1</span><br><span class="line">sync statement 2</span><br><span class="line">micro task 1</span><br><span class="line">micro task 2</span><br><span class="line">macro task 2</span><br><span class="line">micro task 3</span><br><span class="line">macro task 1</span><br></pre></td></tr></table></figure>
+
+<p>举例 3：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">console.log(&#x27;1&#x27;);</span><br><span class="line">setTimeout(function () &#123;</span><br><span class="line">  console.log(&#x27;2&#x27;);</span><br><span class="line">  new Promise(function (resolve) &#123;</span><br><span class="line">    console.log(&#x27;3&#x27;);</span><br><span class="line">    resolve();</span><br><span class="line">  &#125;).then(function () &#123;</span><br><span class="line">    console.log(&#x27;4&#x27;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;, 0);</span><br><span class="line">new Promise(function (resolve) &#123;</span><br><span class="line">  console.log(&#x27;5&#x27;);</span><br><span class="line">  resolve();</span><br><span class="line">&#125;).then(function () &#123;</span><br><span class="line">  console.log(&#x27;6&#x27;);</span><br><span class="line">&#125;);</span><br><span class="line">setTimeout(function () &#123;</span><br><span class="line">  console.log(&#x27;7&#x27;);</span><br><span class="line">  new Promise(function (resolve) &#123;</span><br><span class="line">    console.log(&#x27;8&#x27;);</span><br><span class="line">    resolve();</span><br><span class="line">  &#125;).then(function () &#123;</span><br><span class="line">    console.log(&#x27;9&#x27;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Javascript</category>
+      </categories>
+      <tags>
+        <tag>事件</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>iframe内嵌父子页面路由同步</title>
     <url>/2022/09/16/iframe%E5%86%85%E5%B5%8C%E7%88%B6%E5%AD%90%E9%A1%B5%E9%9D%A2%E8%B7%AF%E7%94%B1%E5%90%8C%E6%AD%A5/</url>
     <content><![CDATA[<p><strong>背景：</strong>在前端的项目中，可能会遇到需要在一个项目中内嵌另一个完整项目。今天我们就来讨论讨论利用 iframe 内嵌项目的路由处理。</p>
@@ -500,7 +799,7 @@
 <li>模块 A 更新且依赖由 B1.0-&gt;B2.0</li>
 <li>模块 D 更新且依赖由 B1.0-&gt;B2.0</li>
 </ol>
-<p>发生场景 1: 当我们执行 npm install <a href="mailto:&#65;&#x40;&#50;&#x2e;&#48;">&#65;&#x40;&#50;&#x2e;&#48;</a> –save 后，npm3 会执行以下操作：</p>
+<p>发生场景 1: 当我们执行 npm install <a href="mailto:&#65;&#x40;&#x32;&#46;&#x30;">&#65;&#x40;&#x32;&#46;&#x30;</a> –save 后，npm3 会执行以下操作：</p>
 <ul>
 <li>移除模块 A1.0</li>
 <li>安装模块 A2.0</li>
@@ -542,118 +841,6 @@
       <tags>
         <tag>NPM</tag>
         <tag>npm install</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>NPM包依赖管理</title>
-    <url>/2022/08/05/NPM%E5%8C%85%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</url>
-    <content><![CDATA[<p>npm 是 Node.js 的包管理工具，在实际使用过程中，我们经常会用 npm install 命令安装依赖包。</p>
-<p>npm 官方对包也做了定义，<a href="https://docs.npmjs.com/about-packages-and-modules">戳此进</a>：</p>
-<span id="more"></span>
-
-<ul>
-<li>a. 一个含有 package.json 文件描述的程序的文件夹</li>
-<li>b. 一个含有(a)的 gzip 压缩文件</li>
-<li>c. 一个指向(b)url 地址</li>
-<li>d. 格式为<code>&lt;name&gt;@&lt;version&gt;</code>的指向官方源的字符串，符合定义(c)，如果 <a href="mailto:&#x67;&#x75;&#108;&#x70;&#64;&#52;&#x2e;&#x30;&#46;&#49;">&#x67;&#x75;&#108;&#x70;&#64;&#52;&#x2e;&#x30;&#46;&#49;</a></li>
-<li>e. 格式为<code>&lt;name&gt;@&lt;tag&gt;</code>的指向 d 的字符串，如果 gulp@latest</li>
-<li>f. 格式为<code>&lt;name&gt;</code>的代表最新版本包的字符串，如 gulp</li>
-<li>g. 一个符合条件(a)的远程 git url</li>
-</ul>
-<p>在项目中安装依赖包时，默认会将依赖包的信息加入到 package.json 的 dependencies 模块去。其实除了常见的 dependencies 以外，package.json 文件还有其他几项依赖类型，罗列如下：</p>
-<ul>
-<li>dependencies 生产环境依赖</li>
-<li>devDependencies 开发环境依赖</li>
-<li>optionalDependencies 可选依赖</li>
-<li>peerDependencies 前置依赖</li>
-<li>bundleDependencies 需要打包的依赖</li>
-</ul>
-<p>我们可以通过 npm install 的参数来指定依赖包需要添加到哪个依赖块，通用可选参数: <code>[-P|--save-prod|-D|--save-dev|-O|--save-optional] [-E|--save-exact] [-B|--save-bundle] [--no-save] [--dry-run]</code></p>
-<ul>
-<li>-P ｜ –save-prod：添加至 dependencies</li>
-<li>-D ｜ –save-dev：添加至 devDependencies</li>
-<li>-O | –save-optional：添加至 optionalDependencies</li>
-<li>-E | –save-exact：安装确切的包版本，而不带默认的版本匹配符号，如^或者～</li>
-<li>-B | –save-bundle：添加至 bundleDependencies 和 dependencies 中</li>
-<li>–no-save：不添加至 dependencies 中</li>
-<li>–dry-run：报告安装的状态而不是真正执行安装</li>
-</ul>
-<h1 id="依赖介绍"><a href="#依赖介绍" class="headerlink" title="依赖介绍"></a>依赖介绍</h1><h2 id="dependencies"><a href="#dependencies" class="headerlink" title="dependencies"></a>dependencies</h2><p>dependencies 中包括了所有项目中使用到的包，其他用户要使用此包就需要安装 dependencies 中所有的包。</p>
-<h2 id="devDependencies"><a href="#devDependencies" class="headerlink" title="devDependencies"></a>devDependencies</h2><p>还有一类插件是在开发环境中使用的，比如我们可能会用 jest 来测试，用 eslint 进行代码样式规范，用 mock.js 来 mock 数据等等。其他用户可以正常使用我们的包但不需要安装此类依赖包，那么我们就可以将这类包列入 devDependencies 中。</p>
-<h2 id="peerDependencies"><a href="#peerDependencies" class="headerlink" title="peerDependencies"></a>peerDependencies</h2><p>通常情况下，npm 能够很好的管理我们的依赖包。假设我们的项目依赖<a href="mailto:&#x50;&#97;&#99;&#107;&#97;&#x67;&#x65;&#65;&#x40;&#x32;&#x2e;&#49;&#46;&#x30;">&#x50;&#97;&#99;&#107;&#97;&#x67;&#x65;&#65;&#x40;&#x32;&#x2e;&#49;&#46;&#x30;</a>，但是引用了依赖<a href="mailto:&#80;&#x61;&#x63;&#x6b;&#97;&#103;&#101;&#x41;&#x40;&#x31;&#x2e;&#x39;&#46;&#48;">&#80;&#x61;&#x63;&#x6b;&#97;&#103;&#101;&#x41;&#x40;&#x31;&#x2e;&#x39;&#46;&#48;</a>的包 PackageB，npm install 生成的依赖树如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├── PackageA@2.1.0</span><br><span class="line">└─┬ PackageB@1.0.0</span><br><span class="line">  └── PackageA@1.9.0</span><br></pre></td></tr></table></figure>
-
-<p>通常情况下这不会有问题，PackageB 内会有他可以用的版本为 1.9.0 的 PackageA，同时并不会和项目的<a href="mailto:&#x50;&#97;&#99;&#x6b;&#x61;&#103;&#101;&#x41;&#64;&#x32;&#46;&#x31;&#46;&#48;">&#x50;&#97;&#99;&#x6b;&#x61;&#103;&#101;&#x41;&#64;&#x32;&#46;&#x31;&#46;&#48;</a>的冲突。</p>
-<p>然而在插件的使用时我们有可能会遇到以下情况,，举个例子：项目中需要依赖包 gulp 版本为最新的@latest(4.0.2)，而 gulp 插件 gulp-plugin-example 依赖的 gulp 版本为@3.2.0，此时我们会安装多个包 gulp。package.json 文件可能如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;dependencies&quot;:&#123;</span><br><span class="line">    &quot;gulp&quot;:&quot;4.0.2&quot;</span><br><span class="line">    &quot;gulp-plugin-example&quot;:&quot;0.1.1&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>但这时候如果执行 npm install 可能会导致我们不期望的依赖树</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├── gulp@4.0.2</span><br><span class="line">└─┬ gulp-plugin-example@0.1.1</span><br><span class="line">  └── gulp@3.2.0</span><br></pre></td></tr></table></figure>
-
-<p>此时插件使用的和宿主环境的 gulp 版本不一致，由于 gulp-plugin-example 只是插件，我们并不想因此安装多次 gulp，且希望宿主环境去安装满足插件 peerDependencies 所指定依赖的包，然后在插件 import 或者 require 依赖包时，永远引用的是宿主环境统一安装的 npm 包，最终解决插件与所依赖包不一致的问题。</p>
-<p>通常我们会用 peerDependencies 去表达：如果你要使用此插件，需要确保宿主环境的依赖关系版本为@xx.xx。拥有 peerDependencies 意味着你的包需要的依赖关系和其他安装此包的用户的现有依赖关系是需要保持一致的。所以在编写插件时，需要确定主依赖包的版本，并添加至插件 package.json 中的 peerDependencies 中。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line"> &quot;name&quot;: &quot;gulp-plugin-example&quot;,</span><br><span class="line"> &quot;peerDependencies&quot;: &#123;</span><br><span class="line">   &quot;gulp&quot;:&quot;^4.0.0&quot;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>如果这时候执行 npm install gulp-plugin-example，gulp 包也会随之安装。如果之后尝试去安装另一个 gulp 插件且依赖只依赖 gulp 3.x 版本的话，将会报错，这也成功解决了插件引用不同依赖包版本的问题！</p>
-<p>更新：npm 版本 1，2 和 7 会自动安装 peerDependencies 的依赖包如果其未在上层依赖树中明确。npm 版本 3 至 6，我们则会收到告警告知 peerDependencies 还未安装。</p>
-<p>peerDependencies 依赖包的版本要求与常规的 dependencies 不同，需要更加广。使用过程中不应该把 peer dependencies 的锁定在固定的版本。如果两个插件依赖的版本不一样，而使用者又懒得花时间去检查实际上符合条件的共用最低版本，这就会很糟心。</p>
-<p>最佳情况是根据<a href="https://semver.org/">semver</a>规则决定 peerDependencies 的版本要求，合理使用^以及～去匹配版本。如果依赖 1.5.4 版本的特性，也可以使用范围去匹配，如：”&gt;&#x3D; 1.5.4 &lt; 2”</p>
-<h2 id="optionalDependencies"><a href="#optionalDependencies" class="headerlink" title="optionalDependencies"></a>optionalDependencies</h2><p>如果一个依赖关系可以被使用，但是又希望 npm 在找不到他或者安装失败的情况下继续进行，那么其可以被放入 optionalDependencies 内。通常这对那些不是所有运行环境或机器都需要的依赖关系很有用。</p>
-<p>tips：optionalDependencies 会覆盖 dependencies 中的同名依赖包，所以不要把包同时写进这两个字段中。</p>
-<h2 id="bundleDependencies"><a href="#bundleDependencies" class="headerlink" title="bundleDependencies"></a>bundleDependencies</h2><p>bundleDependencies 是一个存放在主包发布时也需要同时打包的包名的数组。</p>
-<p>假设我们的有如下的包，执行 npm pack</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;name&quot;: &quot;test&quot;,</span><br><span class="line">  &quot;version&quot;: &quot;1.0.0&quot;,</span><br><span class="line">  &quot;dependencies&quot;: &#123;</span><br><span class="line">    &quot;moment&quot;: &quot;^2.29.3&quot;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;bundleDependencies&quot;: [</span><br><span class="line">    &quot;moment&quot;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>那么我们将会得到的 test-1.0.0.tgz 文件，执行 npm install test-1.0.0.tgz 后也会得到如下结构：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├─ node_modules</span><br><span class="line">    ├── test</span><br><span class="line">    │    └── moment</span><br><span class="line">    └── xxx</span><br></pre></td></tr></table></figure>
-
-<h1 id="package-lock-json-文件"><a href="#package-lock-json-文件" class="headerlink" title="package-lock.json 文件"></a>package-lock.json 文件</h1><p>package-lock.json 文件是 npm 修改了 node_modules 依赖树或者 package.json 文件自动生成的产物。它描述了生成的准确依赖树，以便后续安装或者其他人安装都能生成相同的树。</p>
-<p>假想现有的 package.json 文件的依赖是 “react” ：“^18.0.0”，因为有标识符^，所以如果 react 在 18 大版本下更新至 18.0.1，那么 npm install 的时候将会自动安装最新版本 18.0.1。这样可能就会让你本地的版本和其他人不一致，从而引起一些可能发生的相关问题。</p>
-<p>package-lock.json 的出现就很好的解决此问题，他的目的就是锁定具体版本号，使每一个使用者安装的版本都保持一致。</p>
-<p>npm install 时，node 会从 package.json 中读取到所有 dependencies 的信息与现有的 node_modules 模块进行对比，如果不存在的话就安装，并将依赖项确定的版本更新到 package-lock.json 文件中，不会更新其他依赖项版本；如果存在就检查更新，从 package-lock 文件中获取对应锁定的版本进行更新。</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><a href="https://nodejs.org/en/blog/npm/peer-dependencies/">nodejs-Peer Dependencies</a></li>
-<li><a href="https://segmentfault.com/a/1190000009927946">读懂 package.json – 依赖管理</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>NPM</category>
-      </categories>
-      <tags>
-        <tag>NPM</tag>
-        <tag>依赖</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>JS 中的声明提升</title>
-    <url>/2021/11/03/JS%E4%B8%AD%E7%9A%84%E5%A3%B0%E6%98%8E%E6%8F%90%E5%8D%87/</url>
-    <content><![CDATA[<p>通常情况下变量都需要先声明后使用，但是在 js 中如果我们先使用变量再用 var 声明将不会抛异常，但是由于未赋值，该变量将会以 undefined 存在。</p>
-<p>Javascript 中，函数及变量的声明都将提升到作用域的顶部。</p>
-<span id="more"></span>
-
-<h1 id="变量提升"><a href="#变量提升" class="headerlink" title="变量提升"></a>变量提升</h1><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> x1 = <span class="number">1</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x1&#x27;</span>, x1);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 不会报错，输出undefined</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x2&#x27;</span>, x2);</span><br><span class="line"><span class="keyword">var</span> x2 = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
-
-<p>Javascript 允许先使用变量再用 var 去定义，像上述代码对于 x2 变量相当于：</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> x2;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x2&#x27;</span>, x2);</span><br><span class="line">x2 = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
-
-<p>可以看出 var 声明会提升，但是变量定义不会提升，上述输出的 x2 为 undefined。</p>
-<p>除去 var 声明，javascript 中还有 const 和 let 声明变量，和 var 一样的是声明操作会被提升到代码块顶部，但是在未定义之前使用变量将会抛出 ReferenceError 错误。</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> x1 = <span class="number">0</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x1&#x27;</span>, x1);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x2&#x27;</span>, x2); <span class="comment">// ReferenceError: Cannot access &#x27;x2&#x27; before initialization</span></span><br><span class="line"><span class="keyword">const</span> x2 = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x3&#x27;</span>, x3); <span class="comment">// ReferenceError: x3 is not defined</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="函数提升"><a href="#函数提升" class="headerlink" title="函数提升"></a>函数提升</h1><p>Javascript 中的函数 function 声明也会被提升至代码块顶部，但是函数表达式不会提升，在定义函数表达式之前不能使用函数表达式。</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="title function_">testFn1</span>(); <span class="comment">// testFn1</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">testFn1</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ testFn1&#x27;</span>, <span class="string">&#x27;testFn1&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">testFn2</span>(); <span class="comment">// ReferenceError: Cannot access &#x27;testFn2&#x27; before initialization</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">testFn2</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ testFn2&#x27;</span>, <span class="string">&#x27;testFn2&#x27;</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="title function_">testFn3</span>(); <span class="comment">// TypeError: testFn3 is not a function</span></span><br><span class="line"><span class="keyword">var</span> <span class="title function_">testFn3</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ testFn2&#x27;</span>, <span class="string">&#x27;testFn2&#x27;</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h1 id="几个-🌰"><a href="#几个-🌰" class="headerlink" title="几个 🌰"></a>几个 🌰</h1><p>var 声明是全局作用域或函数作用域，而 let 和 const 是块作用域。var 变量可以在其范围内更新和重新声明，但是 let 只能被更新不能重新声明，const 不能更新也不能重新声明。</p>
-<p>结合 var，let 和 const 的特点，具体可以体现在下面两个代码块：</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 将两块函数顺序互换输出不变</span></span><br><span class="line"><span class="keyword">var</span> test = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">1</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">test</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">test</span>(); <span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> test = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">1</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">test</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">test</span>(); <span class="comment">// SyntaxError: Identifier &#x27;test&#x27; has already been declared</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Javascript</category>
-      </categories>
-      <tags>
-        <tag>Javascript</tag>
       </tags>
   </entry>
   <entry>
@@ -1353,8 +1540,8 @@
         <category>工具</category>
       </categories>
       <tags>
-        <tag>VScode</tag>
         <tag>插件</tag>
+        <tag>VScode</tag>
       </tags>
   </entry>
 </search>
