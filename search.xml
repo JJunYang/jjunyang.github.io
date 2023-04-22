@@ -1544,4 +1544,71 @@
         <tag>VScode</tag>
       </tags>
   </entry>
+  <entry>
+    <title>D3.js实战系列1--认识selections</title>
+    <url>/2023/04/19/D3.js%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%971-%E8%AE%A4%E8%AF%86selections/</url>
+    <content><![CDATA[<p>D3 名称的由来是 Data-Driven Documents，数据驱动文档。D3.js 是一个 JavaScript 库，支持基于数据操作文档。通过使用 HTML、SVG 和 CSS 能够让数据有效的展示。D3 强调 web 标准，提供了全部现代浏览器的能力而不需要我们受限于框架，为操作 DOM 提供了结合了强大的可视化组件和数据驱动的方案。</p>
+<p>D3 允许将任意数据绑定到 DOM，然后基于数据高效操作文档，具有开销小、速度快，支持大型数据集以及交互和动画的动态行为。</p>
+<p>本文是笔者了解 D3 的第一步，同时也会介绍 D3 的一个核心 API：selections。</p>
+<span id="more"></span>
+
+<p>使用 W3C DOM API 修改文档非常繁琐，特别是如果是操作一组节点，通常我们会使用如 document.getElementByTagName(‘div’)的方式获取到节点集，然后通过循环统一修改节点的 style 或者其他属性。</p>
+<p>D3 中采用声明方法，运行于被称为 selections 的任意节点集，如：d3.selectAll(“div”).style(“color”,’red’)</p>
+<p>Selections 允许对文档对象模型(DOM)进行强大的数据驱动转换：设置 attributes、styles、properties、HTML、或者 text 等。通过使用 data join 中的 enter 和 exit selections，我们也可以根据绑定的数据添加或者移除节点元素。官方 Selections API Reference<a href="https://github.com/d3/d3-selection/blob/v3.0.0/README.md#api-reference">戳此进</a>。</p>
+<p>d3-selection 提供了一个 d3.select()方法，其实可以对标原生的 document.querySelector()。d3.selectAll()方法可以对标原生的 document.querySelectorAll()。通过调用 select 或者 selectAll 后，生成的内置 d3 对象也提供了可以进行链式调用的针对节点的操作方法，常见的如下：</p>
+<ul>
+<li>处理 dom 属性：attr，classed，style，property</li>
+<li>处理 dom 内容：text，html</li>
+<li>操作 dom 节点：append，remove，insert</li>
+<li>处理事件：on，dispatch，pointer</li>
+</ul>
+<p>下面是一个简单的示例：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> svg1 = d3</span><br><span class="line">  .<span class="title function_">select</span>(<span class="string">&#x27;#canvas&#x27;</span>)</span><br><span class="line">  .<span class="title function_">append</span>(<span class="string">&#x27;svg&#x27;</span>)</span><br><span class="line">  .<span class="title function_">attr</span>(<span class="string">&#x27;width&#x27;</span>, <span class="string">&#x27;100px&#x27;</span>)</span><br><span class="line">  .<span class="title function_">attr</span>(<span class="string">&#x27;height&#x27;</span>, <span class="string">&#x27;100px&#x27;</span>)</span><br><span class="line">  .<span class="title function_">append</span>(<span class="string">&#x27;rect&#x27;</span>)</span><br><span class="line">  .<span class="title function_">attr</span>(<span class="string">&#x27;x&#x27;</span>, <span class="number">50</span>)</span><br><span class="line">  .<span class="title function_">attr</span>(<span class="string">&#x27;y&#x27;</span>, <span class="number">50</span>)</span><br><span class="line">  .<span class="title function_">attr</span>(<span class="string">&#x27;width&#x27;</span>, <span class="number">50</span>)</span><br><span class="line">  .<span class="title function_">attr</span>(<span class="string">&#x27;height&#x27;</span>, <span class="number">50</span>)</span><br><span class="line">  .<span class="title function_">style</span>(<span class="string">&#x27;fill&#x27;</span>, <span class="string">&#x27;red&#x27;</span>)</span><br><span class="line">  .<span class="title function_">on</span>(<span class="string">&#x27;mouseover&#x27;</span>, <span class="keyword">function</span> (<span class="params">d, i</span>) &#123;</span><br><span class="line">    svg1.<span class="title function_">style</span>(<span class="string">&#x27;fill&#x27;</span>, <span class="string">&#x27;blue&#x27;</span>);</span><br><span class="line">  &#125;)</span><br><span class="line">  .<span class="title function_">on</span>(<span class="string">&#x27;mouseout&#x27;</span>, <span class="keyword">function</span> (<span class="params">d, i</span>) &#123;</span><br><span class="line">    svg1.<span class="title function_">style</span>(<span class="string">&#x27;fill&#x27;</span>, <span class="string">&#x27;red&#x27;</span>);</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>这样我们就能成功生成一个 svg，其含有一个长宽为 50px 的矩形，填充色为红色，且在鼠标移入的同时能够改变填充色为蓝色，移出后恢复。</p>
+<p>好了，我们已经向 D3.js 迈出第一步了，初次接触可能会无从入手，但是不要紧<a href="https://d3js.org/">D3 官网</a>提供了很多文档、示例，一起探索 D3 吧~</p>
+]]></content>
+      <categories>
+        <category>实战</category>
+      </categories>
+      <tags>
+        <tag>D3.js</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>D3.js实战系列2--缩放&amp;平移</title>
+    <url>/2023/04/20/D3.js%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%972-%E7%BC%A9%E6%94%BE&amp;%E5%B9%B3%E7%A7%BB/</url>
+    <content><![CDATA[<p>本文系 D3.js 实战系列第二弹，主要讲述了如何让 svg 图形能够监听鼠标的事件进行缩放和平移，以及如何将对图形的初始化进行操作。</p>
+<span id="more"></span>
+
+<h1 id="基础缩放"><a href="#基础缩放" class="headerlink" title="基础缩放"></a>基础缩放</h1><h2 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h2><ol>
+<li>创建 svg 元素及内部矩形元素</li>
+<li>创建缩放函数</li>
+<li>给 svg 元素绑定缩放事件</li>
+</ol>
+<h2 id="实例展示"><a href="#实例展示" class="headerlink" title="实例展示"></a>实例展示</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// 创建一个svg元素，并设置宽高</span><br><span class="line">const svg = d3.select(&#x27;#canvas&#x27;).append(&#x27;svg&#x27;).attr(&#x27;width&#x27;, 500).attr(&#x27;height&#x27;, 500);</span><br><span class="line"></span><br><span class="line">// 创建一个矩形元素</span><br><span class="line">const rect = svg.append(&#x27;rect&#x27;).attr(&#x27;width&#x27;, 200).attr(&#x27;height&#x27;, 100).attr(&#x27;fill&#x27;, &#x27;red&#x27;);</span><br><span class="line"></span><br><span class="line">// 创建缩放函数</span><br><span class="line">const zoom = d3.zoom().on(&#x27;zoom&#x27;, (e) =&gt; &#123;</span><br><span class="line">  rect.attr(&#x27;transform&#x27;, e.transform); // 更新矩形的位置</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">// 给svg元素绑定缩放事件</span><br><span class="line">svg.call(zoom);</span><br></pre></td></tr></table></figure>
+
+<h1 id="初始图形居中"><a href="#初始图形居中" class="headerlink" title="初始图形居中"></a>初始图形居中</h1><h2 id="业务需求场景"><a href="#业务需求场景" class="headerlink" title="业务需求场景"></a>业务需求场景</h2><p>现有一场景，绘制的 svg 的图的左上角坐标不是（0，0），并且绘制的 svg 图大于屏幕中的容器，需要将 svg 图初始展示缩小至全图可见的状态，且不能超过容器的范围。</p>
+<h2 id="基本思想-1"><a href="#基本思想-1" class="headerlink" title="基本思想"></a>基本思想</h2><ol>
+<li>获取容器的长宽</li>
+<li>获取 svg 图形的长宽和左上角的坐标</li>
+<li>计算初始缩放比 scale 的值</li>
+<li>计算在容器中居中所需的平移量</li>
+<li>给 svg 绑定缩放事件</li>
+</ol>
+<h2 id="实例展示-1"><a href="#实例展示-1" class="headerlink" title="实例展示"></a>实例展示</h2><p>现有的 div 容器：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;div id=&quot;canvas&quot; style=&#123;&#123; width: &#x27;1200px&#x27;, height: &#x27;1200px&#x27; &#125;&#125;&gt;&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在实现监听缩放事件的同时，实现首次缩放和首次平移至容器中心：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建svg</span></span><br><span class="line"><span class="keyword">let</span> svg = d3.<span class="title function_">select</span>(<span class="string">&#x27;#canvas&#x27;</span>).<span class="title function_">append</span>(<span class="string">&#x27;svg&#x27;</span>).<span class="title function_">attr</span>(<span class="string">&#x27;width&#x27;</span>, <span class="string">&#x27;1200px&#x27;</span>).<span class="title function_">attr</span>(<span class="string">&#x27;height&#x27;</span>, <span class="string">&#x27;1200px&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// svg绘制start</span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="comment">// svg绘制end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 容器的节点元素</span></span><br><span class="line"><span class="keyword">const</span> element = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;canvas&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// svg图片元素</span></span><br><span class="line"><span class="keyword">const</span> svgElement = svg.<span class="title function_">node</span>()?.<span class="title function_">getBBox</span>();</span><br><span class="line"><span class="keyword">if</span> (!element || !svgElement) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> boxWidth = element.<span class="property">clientWidth</span>;</span><br><span class="line"><span class="keyword">const</span> boxHeight = element.<span class="property">clientHeight</span>;</span><br><span class="line"><span class="keyword">const</span> svgWidth = svgElement.<span class="property">width</span>;</span><br><span class="line"><span class="keyword">const</span> svgHeight = svgElement.<span class="property">height</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 计算获取首次缩放值</span></span><br><span class="line"><span class="keyword">const</span> scaleX = boxWidth / svgWidth;</span><br><span class="line"><span class="keyword">const</span> scaleY = boxHeight / svgHeight;</span><br><span class="line"><span class="keyword">const</span> scale = <span class="title class_">Math</span>.<span class="title function_">min</span>(scaleX, scaleY);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 计算首次偏移量</span></span><br><span class="line"><span class="keyword">const</span> translateX = (boxWidth - svgWidth * scale) / <span class="number">2</span> - svgElement.<span class="property">x</span> * scale;</span><br><span class="line"><span class="keyword">const</span> translateY = (boxHeight - svgHeight * scale) / <span class="number">2</span> - svgElement.<span class="property">y</span> * scale;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 缩放函数</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">handleZoom</span> = (<span class="params">e: any</span>) =&gt; &#123;</span><br><span class="line">  d3.<span class="title function_">selectAll</span>(<span class="string">&#x27;svg g&#x27;</span>).<span class="title function_">attr</span>(<span class="string">&#x27;transform&#x27;</span>, e.<span class="property">transform</span>);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">let</span> zoom = d3.<span class="title function_">zoom</span>().<span class="title function_">on</span>(<span class="string">&#x27;zoom&#x27;</span>, handleZoom) <span class="keyword">as</span> any;</span><br><span class="line"><span class="keyword">const</span> initIdentity = d3.<span class="property">zoomIdentity</span>.<span class="title function_">translate</span>(translateX, translateY).<span class="title function_">scale</span>(scale);</span><br><span class="line"><span class="comment">// 实现首次缩放及平移</span></span><br><span class="line">svg.<span class="title function_">call</span>(zoom.<span class="property">transform</span>, initIdentity);</span><br><span class="line"><span class="comment">// 监听缩放</span></span><br><span class="line">svg.<span class="title function_">call</span>(zoom);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>本文只是一种业务场景的实现，可以为其他场景提供参考思路，当然 zoom 的监听函数 handleZoom 也可以按业务需求自定义。此外，d3.zoom 还有其他很多 API 规范 zoom 的行为，去<a href="https://github.com/d3/d3-zoom">d3-zoom 官网</a>可以查看更多。</p>
+]]></content>
+      <categories>
+        <category>实战</category>
+      </categories>
+      <tags>
+        <tag>D3.js</tag>
+      </tags>
+  </entry>
 </search>

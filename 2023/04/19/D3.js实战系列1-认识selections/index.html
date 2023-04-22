@@ -22,28 +22,28 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.13.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="通常情况下变量都需要先声明后使用，但是在 js 中如果我们先使用变量再用 var 声明将不会抛异常，但是由于未赋值，该变量将会以 undefined 存在。 Javascript 中，函数及变量的声明都将提升到作用域的顶部。">
+    <meta name="description" content="D3 名称的由来是 Data-Driven Documents，数据驱动文档。D3.js 是一个 JavaScript 库，支持基于数据操作文档。通过使用 HTML、SVG 和 CSS 能够让数据有效的展示。D3 强调 web 标准，提供了全部现代浏览器的能力而不需要我们受限于框架，为操作 DOM 提供了结合了强大的可视化组件和数据驱动的方案。 D3 允许将任意数据绑定到 DOM，然后基于数据高效">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JS 中的声明提升">
-<meta property="og:url" content="http://example.com/2021/11/03/JS%E4%B8%AD%E7%9A%84%E5%A3%B0%E6%98%8E%E6%8F%90%E5%8D%87/index.html">
+<meta property="og:title" content="D3.js实战系列1--认识selections">
+<meta property="og:url" content="http://example.com/2023/04/19/D3.js%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%971-%E8%AE%A4%E8%AF%86selections/index.html">
 <meta property="og:site_name" content="蓝扬阳的博客">
-<meta property="og:description" content="通常情况下变量都需要先声明后使用，但是在 js 中如果我们先使用变量再用 var 声明将不会抛异常，但是由于未赋值，该变量将会以 undefined 存在。 Javascript 中，函数及变量的声明都将提升到作用域的顶部。">
+<meta property="og:description" content="D3 名称的由来是 Data-Driven Documents，数据驱动文档。D3.js 是一个 JavaScript 库，支持基于数据操作文档。通过使用 HTML、SVG 和 CSS 能够让数据有效的展示。D3 强调 web 标准，提供了全部现代浏览器的能力而不需要我们受限于框架，为操作 DOM 提供了结合了强大的可视化组件和数据驱动的方案。 D3 允许将任意数据绑定到 DOM，然后基于数据高效">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-11-02T16:00:00.000Z">
-<meta property="article:modified_time" content="2022-12-02T02:56:35.263Z">
+<meta property="article:published_time" content="2023-04-18T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-22T13:24:52.711Z">
 <meta property="article:author" content="Jun Yang">
-<meta property="article:tag" content="Javascript">
+<meta property="article:tag" content="D3.js">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://example.com/2021/11/03/JS%E4%B8%AD%E7%9A%84%E5%A3%B0%E6%98%8E%E6%8F%90%E5%8D%87/">
+<link rel="canonical" href="http://example.com/2023/04/19/D3.js%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%971-%E8%AE%A4%E8%AF%86selections/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2021/11/03/JS%E4%B8%AD%E7%9A%84%E5%A3%B0%E6%98%8E%E6%8F%90%E5%8D%87/","path":"2021/11/03/JS中的声明提升/","title":"JS 中的声明提升"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/04/19/D3.js%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%971-%E8%AE%A4%E8%AF%86selections/","path":"2023/04/19/D3.js实战系列1-认识selections/","title":"D3.js实战系列1--认识selections"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>JS 中的声明提升 | 蓝扬阳的博客</title>
+<title>D3.js实战系列1--认识selections | 蓝扬阳的博客</title>
   
 
   <script src="/js/third-party/analytics/baidu-analytics.js"></script>
@@ -134,7 +134,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+    <div class="sidebar-inner sidebar-overview-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -147,7 +147,6 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E6%8F%90%E5%8D%87"><span class="nav-text">变量提升</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E6%8F%90%E5%8D%87"><span class="nav-text">函数提升</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%87%A0%E4%B8%AA-%F0%9F%8C%B0"><span class="nav-text">几个 🌰</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -208,7 +207,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/03/JS%E4%B8%AD%E7%9A%84%E5%A3%B0%E6%98%8E%E6%8F%90%E5%8D%87/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/19/D3.js%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%971-%E8%AE%A4%E8%AF%86selections/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/uploads/avatar.jpeg">
@@ -221,12 +220,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="JS 中的声明提升 | 蓝扬阳的博客">
+      <meta itemprop="name" content="D3.js实战系列1--认识selections | 蓝扬阳的博客">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          JS 中的声明提升
+          D3.js实战系列1--认识selections
         </h1>
 
         <div class="post-meta-container">
@@ -237,7 +236,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2021-11-03 00:00:00" itemprop="dateCreated datePublished" datetime="2021-11-03T00:00:00+08:00">2021-11-03</time>
+      <time title="创建时间：2023-04-19 00:00:00" itemprop="dateCreated datePublished" datetime="2023-04-19T00:00:00+08:00">2023-04-19</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -245,7 +244,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Javascript/" itemprop="url" rel="index"><span itemprop="name">Javascript</span></a>
+          <a href="/categories/%E5%AE%9E%E6%88%98/" itemprop="url" rel="index"><span itemprop="name">实战</span></a>
         </span>
     </span>
 
@@ -262,7 +261,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>468</span>
+      <span>621</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -280,27 +279,26 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>通常情况下变量都需要先声明后使用，但是在 js 中如果我们先使用变量再用 var 声明将不会抛异常，但是由于未赋值，该变量将会以 undefined 存在。</p>
-<p>Javascript 中，函数及变量的声明都将提升到作用域的顶部。</p>
+        <p>D3 名称的由来是 Data-Driven Documents，数据驱动文档。D3.js 是一个 JavaScript 库，支持基于数据操作文档。通过使用 HTML、SVG 和 CSS 能够让数据有效的展示。D3 强调 web 标准，提供了全部现代浏览器的能力而不需要我们受限于框架，为操作 DOM 提供了结合了强大的可视化组件和数据驱动的方案。</p>
+<p>D3 允许将任意数据绑定到 DOM，然后基于数据高效操作文档，具有开销小、速度快，支持大型数据集以及交互和动画的动态行为。</p>
+<p>本文是笔者了解 D3 的第一步，同时也会介绍 D3 的一个核心 API：selections。</p>
 <span id="more"></span>
 
-<h1 id="变量提升"><a href="#变量提升" class="headerlink" title="变量提升"></a>变量提升</h1><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> x1 = <span class="number">1</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x1&#x27;</span>, x1);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 不会报错，输出undefined</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x2&#x27;</span>, x2);</span><br><span class="line"><span class="keyword">var</span> x2 = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+<p>使用 W3C DOM API 修改文档非常繁琐，特别是如果是操作一组节点，通常我们会使用如 document.getElementByTagName(‘div’)的方式获取到节点集，然后通过循环统一修改节点的 style 或者其他属性。</p>
+<p>D3 中采用声明方法，运行于被称为 selections 的任意节点集，如：d3.selectAll(“div”).style(“color”,’red’)</p>
+<p>Selections 允许对文档对象模型(DOM)进行强大的数据驱动转换：设置 attributes、styles、properties、HTML、或者 text 等。通过使用 data join 中的 enter 和 exit selections，我们也可以根据绑定的数据添加或者移除节点元素。官方 Selections API Reference<a target="_blank" rel="noopener" href="https://github.com/d3/d3-selection/blob/v3.0.0/README.md#api-reference">戳此进</a>。</p>
+<p>d3-selection 提供了一个 d3.select()方法，其实可以对标原生的 document.querySelector()。d3.selectAll()方法可以对标原生的 document.querySelectorAll()。通过调用 select 或者 selectAll 后，生成的内置 d3 对象也提供了可以进行链式调用的针对节点的操作方法，常见的如下：</p>
+<ul>
+<li>处理 dom 属性：attr，classed，style，property</li>
+<li>处理 dom 内容：text，html</li>
+<li>操作 dom 节点：append，remove，insert</li>
+<li>处理事件：on，dispatch，pointer</li>
+</ul>
+<p>下面是一个简单的示例：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> svg1 = d3</span><br><span class="line">  .<span class="title function_">select</span>(<span class="string">&#x27;#canvas&#x27;</span>)</span><br><span class="line">  .<span class="title function_">append</span>(<span class="string">&#x27;svg&#x27;</span>)</span><br><span class="line">  .<span class="title function_">attr</span>(<span class="string">&#x27;width&#x27;</span>, <span class="string">&#x27;100px&#x27;</span>)</span><br><span class="line">  .<span class="title function_">attr</span>(<span class="string">&#x27;height&#x27;</span>, <span class="string">&#x27;100px&#x27;</span>)</span><br><span class="line">  .<span class="title function_">append</span>(<span class="string">&#x27;rect&#x27;</span>)</span><br><span class="line">  .<span class="title function_">attr</span>(<span class="string">&#x27;x&#x27;</span>, <span class="number">50</span>)</span><br><span class="line">  .<span class="title function_">attr</span>(<span class="string">&#x27;y&#x27;</span>, <span class="number">50</span>)</span><br><span class="line">  .<span class="title function_">attr</span>(<span class="string">&#x27;width&#x27;</span>, <span class="number">50</span>)</span><br><span class="line">  .<span class="title function_">attr</span>(<span class="string">&#x27;height&#x27;</span>, <span class="number">50</span>)</span><br><span class="line">  .<span class="title function_">style</span>(<span class="string">&#x27;fill&#x27;</span>, <span class="string">&#x27;red&#x27;</span>)</span><br><span class="line">  .<span class="title function_">on</span>(<span class="string">&#x27;mouseover&#x27;</span>, <span class="keyword">function</span> (<span class="params">d, i</span>) &#123;</span><br><span class="line">    svg1.<span class="title function_">style</span>(<span class="string">&#x27;fill&#x27;</span>, <span class="string">&#x27;blue&#x27;</span>);</span><br><span class="line">  &#125;)</span><br><span class="line">  .<span class="title function_">on</span>(<span class="string">&#x27;mouseout&#x27;</span>, <span class="keyword">function</span> (<span class="params">d, i</span>) &#123;</span><br><span class="line">    svg1.<span class="title function_">style</span>(<span class="string">&#x27;fill&#x27;</span>, <span class="string">&#x27;red&#x27;</span>);</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
 
-<p>Javascript 允许先使用变量再用 var 去定义，像上述代码对于 x2 变量相当于：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> x2;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x2&#x27;</span>, x2);</span><br><span class="line">x2 = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
-
-<p>可以看出 var 声明会提升，但是变量定义不会提升，上述输出的 x2 为 undefined。</p>
-<p>除去 var 声明，javascript 中还有 const 和 let 声明变量，和 var 一样的是声明操作会被提升到代码块顶部，但是在未定义之前使用变量将会抛出 ReferenceError 错误。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> x1 = <span class="number">0</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x1&#x27;</span>, x1);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x2&#x27;</span>, x2); <span class="comment">// ReferenceError: Cannot access &#x27;x2&#x27; before initialization</span></span><br><span class="line"><span class="keyword">const</span> x2 = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ x3&#x27;</span>, x3); <span class="comment">// ReferenceError: x3 is not defined</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="函数提升"><a href="#函数提升" class="headerlink" title="函数提升"></a>函数提升</h1><p>Javascript 中的函数 function 声明也会被提升至代码块顶部，但是函数表达式不会提升，在定义函数表达式之前不能使用函数表达式。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">testFn1</span>(); <span class="comment">// testFn1</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">testFn1</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ testFn1&#x27;</span>, <span class="string">&#x27;testFn1&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">testFn2</span>(); <span class="comment">// ReferenceError: Cannot access &#x27;testFn2&#x27; before initialization</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">testFn2</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ testFn2&#x27;</span>, <span class="string">&#x27;testFn2&#x27;</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="title function_">testFn3</span>(); <span class="comment">// TypeError: testFn3 is not a function</span></span><br><span class="line"><span class="keyword">var</span> <span class="title function_">testFn3</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;🚀 ~ testFn2&#x27;</span>, <span class="string">&#x27;testFn2&#x27;</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h1 id="几个-🌰"><a href="#几个-🌰" class="headerlink" title="几个 🌰"></a>几个 🌰</h1><p>var 声明是全局作用域或函数作用域，而 let 和 const 是块作用域。var 变量可以在其范围内更新和重新声明，但是 let 只能被更新不能重新声明，const 不能更新也不能重新声明。</p>
-<p>结合 var，let 和 const 的特点，具体可以体现在下面两个代码块：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将两块函数顺序互换输出不变</span></span><br><span class="line"><span class="keyword">var</span> test = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">1</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">test</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">test</span>(); <span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> test = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">1</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">test</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">test</span>(); <span class="comment">// SyntaxError: Identifier &#x27;test&#x27; has already been declared</span></span><br></pre></td></tr></table></figure>
+<p>这样我们就能成功生成一个 svg，其含有一个长宽为 50px 的矩形，填充色为红色，且在鼠标移入的同时能够改变填充色为蓝色，移出后恢复。</p>
+<p>好了，我们已经向 D3.js 迈出第一步了，初次接触可能会无从入手，但是不要紧<a target="_blank" rel="noopener" href="https://d3js.org/">D3 官网</a>提供了很多文档、示例，一起探索 D3 吧~</p>
 
     </div>
 
@@ -310,20 +308,20 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Javascript/" rel="tag"><i class="fa fa-tag"></i> Javascript</a>
+              <a href="/tags/D3-js/" rel="tag"><i class="fa fa-tag"></i> D3.js</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2021/02/10/%E6%89%93%E9%80%A0%E4%BD%A0%E7%9A%84%E5%BC%80%E5%8F%91%E5%88%A9%E5%99%A8/" rel="prev" title="打造你的开发利器">
-                  <i class="fa fa-chevron-left"></i> 打造你的开发利器
+                <a href="/2023/02/14/front-end-standard/" rel="prev" title="一些前端常见规范">
+                  <i class="fa fa-chevron-left"></i> 一些前端常见规范
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2022/02/24/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E9%95%BF%E5%88%97%E8%A1%A8%E6%B8%B2%E6%9F%93%E5%88%9D%E6%8E%A2/" rel="next" title="小程序长列表渲染初探">
-                  小程序长列表渲染初探 <i class="fa fa-chevron-right"></i>
+                <a href="/2023/04/20/D3.js%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%972-%E7%BC%A9%E6%94%BE&%E5%B9%B3%E7%A7%BB/" rel="next" title="D3.js实战系列2--缩放&平移">
+                  D3.js实战系列2--缩放&平移 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
