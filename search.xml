@@ -343,7 +343,7 @@
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本文探讨实现了在 iframe 内嵌场景中如何实现父子页面的路由同步，也是踩了很多坑实现的，希望对你有帮助～</p>
 ]]></content>
       <categories>
-        <category>iframe</category>
+        <category>实战</category>
       </categories>
       <tags>
         <tag>路由</tag>
