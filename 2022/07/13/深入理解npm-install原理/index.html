@@ -29,23 +29,23 @@
 <meta property="og:site_name" content="蓝扬阳的博客">
 <meta property="og:description" content="相信作为一个程序员对 npm 的基本使用命令应该了如指掌，但是你真的了解 npm install 执行的机制么？为什么 npm install 的时候会多出一个 package-lock.json 文件？为什么有时候执行 npm install 的时候会同步更新 package-lock.json 文件，有时候又不会更新？package-lock.json 文件什么时候需要更新，什么时候不需要更新">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2022/07/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3npm-install%E5%8E%9F%E7%90%86/intro1.png">
-<meta property="og:image" content="http://example.com/2022/07/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3npm-install%E5%8E%9F%E7%90%86/intro2.png">
-<meta property="og:image" content="http://example.com/2022/07/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3npm-install%E5%8E%9F%E7%90%86/intro3.png">
-<meta property="og:image" content="http://example.com/2022/07/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3npm-install%E5%8E%9F%E7%90%86/intro4.png">
-<meta property="og:image" content="http://example.com/2022/07/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3npm-install%E5%8E%9F%E7%90%86/intro5.png">
-<meta property="og:image" content="http://example.com/2022/07/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3npm-install%E5%8E%9F%E7%90%86/intro6.png">
-<meta property="og:image" content="http://example.com/2022/07/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3npm-install%E5%8E%9F%E7%90%86/intro7.png">
-<meta property="og:image" content="http://example.com/2022/07/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3npm-install%E5%8E%9F%E7%90%86/intro8.png">
-<meta property="og:image" content="http://example.com/2022/07/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3npm-install%E5%8E%9F%E7%90%86/intro9.png">
-<meta property="og:image" content="http://example.com/2022/07/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3npm-install%E5%8E%9F%E7%90%86/intro10.png">
+<meta property="og:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro1.png">
+<meta property="og:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro2.png">
+<meta property="og:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro3.png">
+<meta property="og:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro4.png">
+<meta property="og:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro5.png">
+<meta property="og:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro6.png">
+<meta property="og:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro7.png">
+<meta property="og:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro8.png">
+<meta property="og:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro9.png">
+<meta property="og:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro10.png">
 <meta property="article:published_time" content="2022-07-12T16:00:00.000Z">
-<meta property="article:modified_time" content="2022-12-02T03:04:33.450Z">
+<meta property="article:modified_time" content="2023-04-22T13:52:20.845Z">
 <meta property="article:author" content="Jun Yang">
 <meta property="article:tag" content="NPM">
 <meta property="article:tag" content="npm install">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2022/07/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3npm-install%E5%8E%9F%E7%90%86/intro1.png">
+<meta name="twitter:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro1.png">
 
 
 <link rel="canonical" href="http://example.com/2022/07/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3npm-install%E5%8E%9F%E7%90%86/">
@@ -306,10 +306,10 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">├─ node_modules</span><br><span class="line">    ├── packageA@1.0.0</span><br><span class="line">    └── packageB@2.0.0</span><br><span class="line">    └── packageC@1.0.0</span><br></pre></td></tr></table></figure>
 
 <h1 id="安装机制差异"><a href="#安装机制差异" class="headerlink" title="安装机制差异"></a>安装机制差异</h1><h2 id="npm2-安装机制"><a href="#npm2-安装机制" class="headerlink" title="npm2 安装机制"></a>npm2 安装机制</h2><p>还是上述假设的场景，依赖包 A 依赖 v1.0 版本的包 C，包 B 依赖 v2.0 版本的包 C，此时我们创建项目 My Project 依赖包 A 和 B 如下：</p>
-<p><img src="intro1.png"></p>
+<p><img src="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro1.png"></p>
 <p>我们知道 npm install 会安装所有项目的依赖包以及所有依赖包自身的依赖，那么 My Project 这个项目所依赖的包 C 版本是 v1.0 还是 v2.0？</p>
 <p>在 npm2 中，npm 不会去考虑 C 包的具体使用版本，每个版本都会被加入到依赖树中，存放在其被引用的模块下。从而生成如下依赖树：</p>
-<p><img src="intro2.png"></p>
+<p><img src="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro2.png"></p>
 <p>使用 npm ls 查看全部依赖和关系会得到：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">├─ node_modules</span><br><span class="line">    ├── packageA@1.0.0</span><br><span class="line">    │    └── packageC@1.0.0</span><br><span class="line">    └── packageB@1.0.0</span><br><span class="line">         └── packageC@2.0.0</span><br></pre></td></tr></table></figure>
 
@@ -324,25 +324,25 @@
 <li>依赖树的生成会受安装的顺序所影响</li>
 </ol>
 <p>假设项目依赖于 A 模块，且 A 模块依赖于 B 模块，则 A、B 两模块都会作为顶级模块引入，此时生成的依赖树为：</p>
-<p><img src="intro3.png"></p>
+<p><img src="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro3.png"></p>
 <p>此时项目新增了模块 C，且依赖于模块 B 的 2.0 版本，由于模块 B 的 1.0 版本已经存在于顶级模块，所以 B2.0 模块的还是以嵌套的方式安装在 C 模块下，具体如下：</p>
-<p><img src="intro4.png"></p>
+<p><img src="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro4.png"></p>
 <p>tips：尽管同样处在一级目录，不代表模块 A 和模块 B 之间没有依赖关系</p>
 <p>假设现在依次又要新增模块 D（依赖 B1.0 版本）和模块 E（依赖 B2.0 版本），由于模块 B1.0 已经存在于顶级，所以不需要再复制此依赖，然而依赖 B2.0 需要重新在 E 模块中再复制一份：</p>
-<p><img src="intro5.png"></p>
+<p><img src="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro5.png"></p>
 <p>接下来考虑依次发送以下两个依赖变更的场景</p>
 <ol>
 <li>模块 A 更新且依赖由 B1.0-&gt;B2.0</li>
 <li>模块 D 更新且依赖由 B1.0-&gt;B2.0</li>
 </ol>
-<p>发生场景 1: 当我们执行 npm install <a href="mailto:&#65;&#x40;&#x32;&#46;&#x30;">&#65;&#x40;&#x32;&#46;&#x30;</a> –save 后，npm3 会执行以下操作：</p>
+<p>发生场景 1: 当我们执行 npm install <a href="mailto:&#x41;&#64;&#x32;&#x2e;&#48;">&#x41;&#64;&#x32;&#x2e;&#48;</a> –save 后，npm3 会执行以下操作：</p>
 <ul>
 <li>移除模块 A1.0</li>
 <li>安装模块 A2.0</li>
 <li>保留 B1.0，因为模块 D 依旧依赖模块 A1.0</li>
 <li>模块 A2.0 下安装依赖 B2.0，因为 B1.0 已经存在顶层依赖结构</li>
 </ul>
-<p><img src="intro6.png"></p>
+<p><img src="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro6.png"></p>
 <p>发生场景 2:npm3 会执行以下操作：</p>
 <ul>
 <li>移除模块 D1.0</li>
@@ -350,17 +350,19 @@
 <li>移除模块 B1.0，因为没有模块再依赖此模块</li>
 <li>安装模块 B2.0 至顶级，因为此时不存在其他 B 模块依赖</li>
 </ul>
-<p><img src="intro7.png"></p>
+<p><img src="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro7.png"></p>
 <p>运行<strong>npm dedupe</strong>可以去除多余的重复，得到全新的依赖树：</p>
-<p><img src="intro8.png"></p>
+<p><img src="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro8.png"></p>
 <p>npm3 的弊端：不确定性<br>如果你和你的开发团队使用了 package.json 同时又用了 npm install 添加了依赖包，这就会有可能出现本地的 node_modules 目录和其他团队成员的不一致。</p>
 <p>为什么会出现这种情况呢？</p>
 <p>这和上述提到的，npm 依赖树的生成会受依赖包的顺序所影响。</p>
-<p>回到上面的例子：在本地模块 A 由 1.0 版本更新至 2.0 后生成如下依赖树：<br><img src="intro9.png"><br>对应的 package.json 文件如下：</p>
+<p>回到上面的例子：在本地模块 A 由 1.0 版本更新至 2.0 后生成如下依赖树：</p>
+<p><img src="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro9.png"></p>
+<p>对应的 package.json 文件如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  ...,</span><br><span class="line">  &quot;dependencies&quot;:&#123;</span><br><span class="line">    &quot;a&quot;:&quot;^2.0&quot;,</span><br><span class="line">    &quot;c&quot;:&quot;^1.0&quot;,</span><br><span class="line">    &quot;d&quot;:&quot;^1.0&quot;,</span><br><span class="line">    &quot;e&quot;:&quot;^1.0&quot;,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>但如果项目其他成员拿到此文件运行<strong>npm install</strong>后生成的依赖树会如下：</p>
-<p><img src="intro10.png"></p>
+<p><img src="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-install/intro10.png"></p>
 <p>牢记安装顺序会影响依赖树的生成！</p>
 <p>由于 npm install 会按字母排序进行依赖包的安装，此时模块 A2.0 会第一个安装，同时在顶级安装模块 B2.0，和之前最后安装更新不同，从而引起了依赖树的不同。</p>
 <p>不用担心，另外尽管依赖树不同，但是只要全部安装了依赖包就算构建的依赖树不同也不会有问题。</p>

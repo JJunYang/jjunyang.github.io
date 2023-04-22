@@ -29,15 +29,15 @@
 <meta property="og:site_name" content="蓝扬阳的博客">
 <meta property="og:description" content="背景近日收到产品的反馈，说小程序商品列表页中的商品卡片连续快速点击跳转商品详情页的话有时会出现两次跳转。小程序跳转为什么会跳转两次呢，如果这问题存在，小程序其他涉及跳转的地方是否都会有这问题呢？带着疑问，笔者开始了对项目此部分的探究。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2022/10/12/%E4%B8%89%E6%8B%9B%E5%BA%94%E5%AF%B9%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%A4%9A%E6%AC%A1%E8%B7%B3%E8%BD%AC/view1.gif">
-<meta property="og:image" content="http://example.com/2022/10/12/%E4%B8%89%E6%8B%9B%E5%BA%94%E5%AF%B9%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%A4%9A%E6%AC%A1%E8%B7%B3%E8%BD%AC/view2.png">
+<meta property="og:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/mini-jump/view1.gif">
+<meta property="og:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/mini-jump/view2.png">
 <meta property="article:published_time" content="2022-10-11T16:00:00.000Z">
-<meta property="article:modified_time" content="2022-12-01T12:44:42.973Z">
+<meta property="article:modified_time" content="2023-04-22T13:48:02.351Z">
 <meta property="article:author" content="Jun Yang">
 <meta property="article:tag" content="小程序">
 <meta property="article:tag" content="路由跳转">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2022/10/12/%E4%B8%89%E6%8B%9B%E5%BA%94%E5%AF%B9%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%A4%9A%E6%AC%A1%E8%B7%B3%E8%BD%AC/view1.gif">
+<meta name="twitter:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/mini-jump/view1.gif">
 
 
 <link rel="canonical" href="http://example.com/2022/10/12/%E4%B8%89%E6%8B%9B%E5%BA%94%E5%AF%B9%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%A4%9A%E6%AC%A1%E8%B7%B3%E8%BD%AC/">
@@ -288,7 +288,7 @@
 <span id="more"></span>
 
 <h1 id="问题探究"><a href="#问题探究" class="headerlink" title="问题探究"></a>问题探究</h1><h2 id="场景复现"><a href="#场景复现" class="headerlink" title="场景复现"></a>场景复现</h2><p>首先展示下多次跳转的场景，确实路由跳转了两次，这时执行回退，第一次会回退到相同的商品详情页需要再次回退才能回到商品列表页。</p>
-<p><img src="view1.gif"></p>
+<p><img src="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/mini-jump/view1.gif"></p>
 <h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><p>首先对这部分的前端 <strong>wxml</strong> 结构进行分析：</p>
 <p>商品列表页为小程序 <strong>tab</strong> 页面，页面中引入了<code>goods-category-list</code>自定义组件，这组件依赖于<code>category-goods-list</code>自定义组件，这组件引入了<code>biz-goods-list</code>项目公共自定义组件，此组件中包含了<code>goods-item</code>组件用于专门展示每一个商品卡的样式。</p>
 <p>看到这你是不是会吐槽为什么一个商品列表如此复杂，直接用<code>wx:for</code>配合<code>goods-item</code>组件不就可以实现了嘛。由于历史原因，项目中有很多商品列表的场景且样式各样，估计为了统一维护就把所有场景都整合入一个公共组件造成了现在这模样。当然公共组件抽取复用可以避免很多造轮子重复工作，但是如果每一个场景都要重新写的话那就不能称之为公共组件，不能为了抽取组件而抽取。当然这不在本文的探讨范围内，就不深究啦～</p>
@@ -297,7 +297,7 @@
 <p>从代码层面看路由的跳转没有问题，封装的 <strong>Navigator</strong> 在项目其他地方也都用的没问题，不会出现多次跳转的情况。因此排除是项目中封装的 <strong>Navigator</strong> 引起的问题。</p>
 <p>从体验上看，每次能复现两次跳转的情况中，点击商品卡片跳转至商品详情页到页面展示耗时很长，期间会有空白页面的情况，且两次跳转也只会出现在第一次进入商品详情页，用真机高性能机模拟的时候又很难复现。如果改用跳转至那些内容相对简单的页面，跳转速度很快且页面渲染也快，这时就几乎复现不了多次跳转的场景。</p>
 <h2 id="原因总结"><a href="#原因总结" class="headerlink" title="原因总结"></a>原因总结</h2><p>为了查看各个时间点，我在路由跳转的 <strong>complete</strong> 回调中以及在页面的 <strong>onLoad</strong>，<strong>onShow</strong> 和 <strong>onReady</strong> 三个生命周期中分别输出当前的时间点做对比，结果如下：</p>
-<p><img src="view2.png"></p>
+<p><img src="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/mini-jump/view2.png"></p>
 <p>由上可以看出在页面 <strong>onReady</strong> 的之前还会执行新的路由跳转引起新一轮的生命周期，并在最后页面执行了两次 <strong>onReady</strong> 生命周期，因此引起了路由的二次跳转。</p>
 <p>在小程序中，虽然每个页面都有一个渲染页面的 WebView 线程，但是运行脚本的逻辑层线程是共享的，因此虽然页面调整会切换页面层级，但我们的业务代码执行上下文依旧在同一个线程中。所以跳转过程中原本执行的逻辑会继续执行。考虑到微信侧应该在跳转做了节流处理避免了点击几次跳转几次的情况，所以连续点击触发跳转只有那些未能被节流拦截的请求将会引起再次跳转。</p>
 <p>至于为什么跳转快的场景不会多次跳转，是因为在跳转过程中，新页面能更快的 ready，使得我们可能触发多次点击跳转的时机变短。简单来说就是本来在旧页面被切换移除到新页面准备好的 0.5s 内用户都能点击触发路由跳转，现在只有 0.1s 的时间。</p>

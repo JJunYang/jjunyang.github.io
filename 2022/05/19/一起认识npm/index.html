@@ -29,18 +29,18 @@
 <meta property="og:site_name" content="蓝扬阳的博客">
 <meta property="og:description" content="关于 npmNPM（node package manager）是 Node.js 官方提供的包管理工具，用于 node 包的管理（包括安装、卸载、管理依赖等）。发展到现在 npm 已经成为世界上最大规模的包管理系统，为广大开发者构建了一个友好的开源平台，用户能够向 NPM 服务器上传自己编写的第三方包或者命令行程序，也可以下载别人编写的至本地使用。 会使用 npm 最基本的 npm init、np">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2022/05/19/%E4%B8%80%E8%B5%B7%E8%AE%A4%E8%AF%86npm/init.png">
-<meta property="og:image" content="http://example.com/2022/05/19/%E4%B8%80%E8%B5%B7%E8%AE%A4%E8%AF%86npm/install1.png">
-<meta property="og:image" content="http://example.com/2022/05/19/%E4%B8%80%E8%B5%B7%E8%AE%A4%E8%AF%86npm/install2.png">
-<meta property="og:image" content="http://example.com/2022/05/19/%E4%B8%80%E8%B5%B7%E8%AE%A4%E8%AF%86npm/install3.png">
-<meta property="og:image" content="http://example.com/2022/05/19/%E4%B8%80%E8%B5%B7%E8%AE%A4%E8%AF%86npm/info.png">
-<meta property="og:image" content="http://example.com/2022/05/19/%E4%B8%80%E8%B5%B7%E8%AE%A4%E8%AF%86npm/umi.png">
+<meta property="og:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-info/init.png">
+<meta property="og:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-info/install1.png">
+<meta property="og:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-info/install2.png">
+<meta property="og:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-info/install3.png">
+<meta property="og:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-info/info.png">
+<meta property="og:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-info/umi.png">
 <meta property="article:published_time" content="2022-05-18T16:00:00.000Z">
-<meta property="article:modified_time" content="2022-12-02T03:04:23.844Z">
+<meta property="article:modified_time" content="2023-04-22T13:56:01.604Z">
 <meta property="article:author" content="Jun Yang">
 <meta property="article:tag" content="NPM">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2022/05/19/%E4%B8%80%E8%B5%B7%E8%AE%A4%E8%AF%86npm/init.png">
+<meta name="twitter:image" content="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-info/init.png">
 
 
 <link rel="canonical" href="http://example.com/2022/05/19/%E4%B8%80%E8%B5%B7%E8%AE%A4%E8%AF%86npm/">
@@ -318,7 +318,7 @@
 <p>推荐使用～为主，可以保证项目不出大问题的情况下又能让包中的小 bug 修复。使用^和* 需要谨慎防止因为包的改动过大造成项目代码错误。</p>
 <h1 id="npm-常用命令"><a href="#npm-常用命令" class="headerlink" title="npm 常用命令"></a>npm 常用命令</h1><h2 id="npm-init"><a href="#npm-init" class="headerlink" title="npm init"></a>npm init</h2><p>npm init 命令用于创建一个新的或者已存在的 npm 包，随之在目录下生成或者更新一个名为 package.json 的文件。</p>
 <p>使用此命令时，会向用户提出一系列默认问题并根据此生成 package.json 文件的最初版</p>
-<p><img src="init.png"></p>
+<p><img src="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-info/init.png"></p>
 <p>如果不希望回答而直接生成 package.json 文件，可以一路回车完成创建，毕竟 package.json 文件后续还是可以更改。</p>
 <p>或者添加 init 的配置 -f（代表 force）、-y（代表 yes）跳过提问阶段，直接生成新的 package.json 文件</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm init -y</span><br></pre></td></tr></table></figure>
@@ -334,17 +334,17 @@
 <li>yarn.lock</li>
 </ul>
 <p>命令行 <code>npm install [&lt;@scope&gt;/]&lt;name&gt;</code> 则会下载安装一个依赖包以及其依赖的所有其他依赖包。</p>
-<p>具体命令详情：<br><img src="install1.png"></p>
+<p>具体命令详情：<br><img src="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-info/install1.png"></p>
 <p>运行上述命令，在 npm init 创建的默认 package.json 文件中的 dependencies 字段中会添加入对应的插件包：</p>
-<p><img src="install2.png"></p>
+<p><img src="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-info/install2.png"></p>
 <p>通用可选参数: [-P|–save-prod|-D|–save-dev|-O|–save-optional] [-E|–save-exact] [-B|–save-bundle] [–no-save] [–dry-run]</p>
 <p>具体参数说明：</p>
-<p><img src="install3.png"></p>
+<p><img src="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-info/install3.png"></p>
 <h2 id="npm-uninstall"><a href="#npm-uninstall" class="headerlink" title="npm uninstall"></a>npm uninstall</h2><p>npm uninstall 用来卸载已经安装的包，参数与 install 的类似，可以通过在命令行后面加-g | -S | -D | -O | –no-save 等进行限制。</p>
 <p>如果有 npm-shrinkwrap.json 文件的话，也会被同时更新。</p>
 <h2 id="npm-search"><a href="#npm-search" class="headerlink" title="npm search"></a>npm search</h2><p><code>npm search &lt;name&gt;</code>用于搜索 npm 仓库对应的包名，如果搜索不成功有可能是 regisrty 改变导致的，注意查看.npmrc 内的 registry。</p>
 <h2 id="npm-info"><a href="#npm-info" class="headerlink" title="npm info"></a>npm info</h2><p>npm info 可以查看每个模块的具体信息，比如查看已经安装的 moment 包信息：</p>
-<p><img src="info.png"></p>
+<p><img src="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-info/info.png"></p>
 <h2 id="npm-update"><a href="#npm-update" class="headerlink" title="npm update"></a>npm update</h2><p>通常使用 npm update 命令去更新一个包，同样如果加了参数-g 表示更新全局的包版本，否则则是更新项目中的版本</p>
 <h2 id="npm-list"><a href="#npm-list" class="headerlink" title="npm list"></a>npm list</h2><p>npm list 用于查看已安装的模块。-g 参数表示查询全局安装的包，–depth 0 可以限制查询深度。</p>
 <h2 id="npm-run"><a href="#npm-run" class="headerlink" title="npm run"></a>npm run</h2><p>通常我们用 npm run 执行脚本命令。package.json 文件中的 scripts 字段存放着可以供 npm 直接调用的脚本命令。</p>
@@ -352,7 +352,7 @@
 <p><strong>原理：</strong><br>npm 在执行 install 时，会根据第三方依赖中的 package.json 文件中的 bin 配置，在项目 node_modules 下面的.bin 目录中生成一个可执行文件。</p>
 <p>npm 运行 scripts 脚本时会自动给脚本路径加上 node_modules&#x2F;.bin 前缀，这意味着每次运行 script 脚本时，实际上运行的是 node_modules&#x2F;.bin 下对应的软链接文件，此软连接在 npm i 时就已经完成配置，相当于一种映射。</p>
 <p>以 umi 包为例：<br>在执行 npm i umi 命令之后，node_modules 目录中会生成 umi 文件夹，且.bin 目录中也会生成 umi 文件。</p>
-<p><img src="umi.png"></p>
+<p><img src="https://blog-1306401315.cos.ap-shanghai.myqcloud.com/blog/npm-info/umi.png"></p>
 <p>从 umi 包的 package.json 中可知，npm 将 bin&#x2F;umi.js 作为 bin 声明了。所以 npm i 的时候，npm 读取此配置并将此文件软链接到.&#x2F;node_modules&#x2F;.bin 目录中。</p>
 <p>另外 npm run 会将 node_modules&#x2F;.bin 加入到 PATH 中以支持脚本的运行。所以在编写 scripts 命令时如果需要运行安装的可执行文件时不需要添加前缀 node_modules&#x2F;.bin，如 gulp 的使用：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&quot;scripts&quot;:&#123;</span><br><span class="line">  &quot;clear&quot;: &quot;gulp clear:dist&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
